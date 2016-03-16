@@ -1,6 +1,7 @@
-#pragma once
+﻿#pragma once
 //Test edit from HOI VU PC 
-//Comit tiep 2 3 4 5
+
+//sửa tại Hội Vũ 3:30p PM
 class GPlayer {
 	public:
 	GPlayer();
