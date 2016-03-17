@@ -1,4 +1,4 @@
-#ifndef __CARD_SPRITE_H__
+﻿#ifndef __CARD_SPRITE_H__
 #define __CARD_SPRITE_H__
 
 #include "cocos2d.h"
@@ -30,9 +30,10 @@ class Card : public cocos2d::Sprite {
 	void putprop(bool j) {
 		_state = j;
 		if (!_state) {
-			
+			//Set RECT vao ảnh quân bài
 
 		}else {
+			//Bài đang xấp
 			
 		}
 	}
