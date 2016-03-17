@@ -1,5 +1,6 @@
 #include "HelloWorldScene.h"
 #include "RankingScene.h"
+#include "Card.h"
 
 USING_NS_CC;
 
@@ -47,6 +48,7 @@ bool HelloWorld::init()
 void HelloWorld::onEnter() {
 	Layer::onEnter();
 	this->scheduleOnce(schedule_selector(HelloWorld::finishSplash), 2.0f);
+	Cards::LoadData();
 }
 
 void HelloWorld::finishSplash(float dt) {

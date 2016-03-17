@@ -15,5 +15,6 @@ class GPlayer {
 	public:
 	GPlayer();
 	~GPlayer();
+
 };
 

@@ -1,5 +1,6 @@
 #include "cocos2d.h"
 #include "RankingScene.h"
+#include "Card.h"
 
 USING_NS_CC;
 

@@ -6,20 +6,47 @@
 
 USING_NS_CC;
 
+#define XAP false
+#define NGUA true
+
 class Card : public cocos2d::Sprite {
 	public:
+	static Texture2D* cardsImage;
+	static int cardWidth;
+	static int cardHeight;
+
 	Card();
 	~Card();
-	Card* create(std::string filename, Rect rect);
+	static Card* create(int index, int element, bool state);
 	//Sprite
 	//void initOptions();
-	//void addEvents();
+	void addTouchEvents();
 	//Bai
 	int cardIndex = 0, cardElement = 0;
 	int zIndex = 1;
-
+	__declspec(property(get = getprop, put = putprop)) bool cardState;
 	//Method
+	bool _state = false;
+	void putprop(bool j) {
+		_state = j;
+		if (!_state) {
+			
+
+		}else {
+			
+		}
+	}
+
+	bool getprop() {
+		return _state;
+	}
 	private:
+	
 };
 
+class Cards {
+	public:
+	static Card* allCard[52];
+	static void LoadData();
+};
 #endif
