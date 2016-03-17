@@ -16,10 +16,11 @@ Card* Card::create(std::string filename, Rect rect) {
 	auto pSprite = new Card();
 	if (pSprite->initWithTexture(texture, rect)) {
 		pSprite->autorelease();
-		pSprite->initOptions();
-		pSprite->addEvents();
+		//pSprite->initOptions();
+		//pSprite->addEvents();
 		return pSprite;
 	}
 	CC_SAFE_DELETE(pSprite);
 	return nullptr;
 }
+

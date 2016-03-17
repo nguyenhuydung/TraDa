@@ -9,6 +9,8 @@
 //Edit them tai nha` 3:50 pm
 
 //Abc
+
+//OK
 class GPlayer {
 	public:
 	GPlayer();

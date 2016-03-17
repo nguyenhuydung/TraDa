@@ -12,8 +12,8 @@ class Card : public cocos2d::Sprite {
 	~Card();
 	Card* create(std::string filename, Rect rect);
 	//Sprite
-	void initOptions();
-	void addEvents();
+	//void initOptions();
+	//void addEvents();
 	//Bai
 	int cardIndex = 0, cardElement = 0;
 	int zIndex = 1;

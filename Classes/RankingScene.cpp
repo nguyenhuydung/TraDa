@@ -17,8 +17,8 @@ bool RankingScene::init() {
 		return false;
 	}
 
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto origin = Director::getInstance()->getVisibleOrigin();
 
 	// add "HelloWorld" splash screen"
 	auto sprite = Sprite::create("board.png");
