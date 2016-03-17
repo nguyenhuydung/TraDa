@@ -10,6 +10,7 @@ class Card : public cocos2d::Sprite {
 	public:
 	Card();
 	~Card();
+	Card* create(std::string filename, Rect rect);
 	//Sprite
 	void initOptions();
 	void addEvents();
