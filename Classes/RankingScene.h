@@ -8,7 +8,6 @@ class RankingScene : public cocos2d::Layer {
 	RankingScene();
 	~RankingScene();
 	static cocos2d::Scene* createScene();
-
 	bool init() override;
 	// implement the "static create()" method manually
 	static RankingScene* create() {
@@ -20,8 +19,4 @@ class RankingScene : public cocos2d::Layer {
 		return nullptr;
 	};
 };
-	
-
-
-
 #endif

@@ -3,25 +3,23 @@
 
 #include "cocos2d.h"
 
-class HelloWorld : public cocos2d::Layer
-{
-public:
-    static cocos2d::Scene* createScene();
+class HelloWorld : public cocos2d::Layer {
+	public:
+	static cocos2d::Scene* createScene();
 	bool init() override;
 	void onEnter() override;
 	void finishSplash(float dt);
-    // a selector callback
-    void menuCloseCallback(cocos2d::Ref* pSender);
-    
-    // implement the "static create()" method manually
-    static HelloWorld* create() {
-		auto pRet = new(std::nothrow) HelloWorld(); 
+	// a selector callback
+	void menuCloseCallback(cocos2d::Ref* pSender);
+
+	// implement the "static create()" method manually
+	static HelloWorld* create() {
+		auto pRet = new(std::nothrow) HelloWorld();
 		if (pRet && pRet->init()) {
 			pRet->autorelease(); return pRet;
 		}
-	    delete pRet;
-	    return nullptr;
-    };
+		delete pRet;
+		return nullptr;
+	};
 };
-
 #endif // __HELLOWORLD_SCENE_H__

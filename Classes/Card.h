@@ -16,7 +16,6 @@ class Card : public cocos2d::Sprite {
 	~Card();
 	static Card* create(int index, int element, bool state);
 	//Sprite
-	//void initOptions();
 	void addTouchEvents();
 	//Bai
 	int cardIndex = 0, cardElement = 0;
@@ -28,6 +27,6 @@ class Card : public cocos2d::Sprite {
 class Cards {
 	public:
 	static Card* allCard[52];
-	static void LoadData();
+	static void loadData();
 };
 #endif

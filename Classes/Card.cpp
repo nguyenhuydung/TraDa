@@ -74,7 +74,7 @@ void Card::ChangeState(bool state) {
 	}
 }
 
-void Cards::LoadData() {
+void Cards::loadData() {
 	Card::cardsImage = Director::getInstance()->getTextureCache()->addImage("cards.png");
 	Card::cardWidth = Card::cardsImage->getContentSize().width / 13;
 	Card::cardHeight = Card::cardsImage->getContentSize().height / 5;

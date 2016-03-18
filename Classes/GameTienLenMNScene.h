@@ -2,16 +2,24 @@
 #define __TIENLENMN_SCENE_H__
 
 #include "cocos2d.h"
-USING_NS_CC;
 
-typedef void(*functiontype)();
-
-class GameTienLenMNScene : public Layer {
+class GameTienLenMNScene : public cocos2d::Layer {
 	public:
-	static Scene* createScene();
-	static GameTienLenMNScene* loadScene(std::function<void ()> onCompleted);
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
+
+	static cocos2d::Scene* createScene();
+	bool init() override;
+	
+	//static GameTienLenMNScene* loadScene(std::function<void ()> onCompleted);
+	static GameTienLenMNScene* create() {
+		auto pRet = new(std::nothrow) GameTienLenMNScene();
+		if (pRet && pRet->init()) {
+			pRet->autorelease(); return pRet;
+		}
+		delete pRet;
+		return nullptr;
+	};
 };
 
 #endif
