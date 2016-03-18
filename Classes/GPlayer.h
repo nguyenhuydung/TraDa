@@ -1,20 +1,15 @@
-﻿#pragma once
-//Test edit from HOI VU PC 
+﻿#ifndef __PLAYER_SCENE_H__
+#define __PLAYER_SCENE_H__
+#include "Card.h"
 
-//sửa tại Hội Vũ 3:30p PM
-
-//Sua tai Hoi Vu 3:56 PM
-
-
-//Edit them tai nha` 3:50 pm
-
-//Abc
-
-//OK
 class GPlayer {
 	public:
 	GPlayer();
 	~GPlayer();
 
+	Card Bai[13];
+
 };
 
+
+#endif
