@@ -9,15 +9,17 @@ Card::~Card() {
 }
 
 Texture2D* Card::cardsImage = nullptr;
-int Card::cardWidth = 0;
-int Card::cardHeight = 0;
+float Card::cardWidth = 0;
+float Card::cardHeight = 0;
 
 Card* Card::create(int index, int element, bool state) {
 	auto pSprite = new Card();
 	pSprite->cardIndex = index;
 	pSprite->cardElement = element;
-	pSprite->cardState = state;
+	pSprite->ChangeState(state);
+	//pSprite->seTe
 	pSprite->addTouchEvents();
+	//pSprite->initWithFile("", Rect(0, 0, 11, 11));
 	return pSprite;
 }
 
@@ -30,6 +32,7 @@ void Card::addTouchEvents() {
 		if (rect.containsPoint(p)) {
 			this->zIndex = this->getGlobalZOrder();
 			this->setGlobalZOrder(100);
+			this->ChangeState(!this->cardState);
 			return true; // to indicate that we have consumed it.
 		}
 		return false; // we did not consume this event, pass thru.
@@ -47,18 +50,38 @@ void Card::addTouchEvents() {
 	};
 	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
 }
-
 /*-----*/
+
 Card* Cards::allCard[52];
 
-void Cards::LoadData() {
-	auto* image = new Image();
-	image->initWithImageFile("Cards.png");
-	Card::cardsImage = new Texture2D();
-	Card::cardsImage->initWithImage(image);
+void Card::ChangeState(bool state) {
+	cardState = state;
+	if (cardState) {
+		//Set RECT vao ảnh quân bài
+		if (this->getTexture() == nullptr) {
+			this->initWithTexture(Card::cardsImage, Rect(cardIndex* Card::cardWidth, cardElement* Card::cardHeight, Card::cardWidth, Card::cardHeight));
+		} else {
+			this->setTextureRect(Rect(cardIndex* Card::cardWidth, cardElement* Card::cardHeight, Card::cardWidth, Card::cardHeight));
+		}
+	} else {
+		//Bài đang xấp
+		if (this->getTexture() != nullptr) {
+			this->setTextureRect(Rect(0, Card::cardHeight * 4, Card::cardWidth, Card::cardHeight));
+		} else {
+			this->initWithTexture(Card::cardsImage, Rect(0, Card::cardHeight * 4, Card::cardWidth, Card::cardHeight));
+		}
 
-	for (auto i = 0; i < 52; i++) {
-		allCard[i] = Card::create(i % 13, i / 13, false);
+	}
+}
+
+void Cards::LoadData() {
+	Card::cardsImage = Director::getInstance()->getTextureCache()->addImage("cards.png");
+	Card::cardWidth = Card::cardsImage->getContentSize().width / 13;
+	Card::cardHeight = Card::cardsImage->getContentSize().height / 5;
+	if (Card::cardsImage) {
+		for (auto i = 0; i < 52; i++) {
+			allCard[i] = Card::create(i % 13, i / 13, RandomHelper::random_int(0, 1) == 0);
+		}
 	}
 }
 

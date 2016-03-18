@@ -30,7 +30,13 @@ bool RankingScene::init() {
 	sprite->setScaleY(visibleSize.height / sprite->getContentSize().height);
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
-
+	for (auto i = 0; i < 52; i++) {
+		Cards::allCard[i]->setPosition(Vec2(RandomHelper::random_int<int>(0, 1280), RandomHelper::random_int<int>(0, 720)));
+		Cards::allCard[i]->ChangeState(i < 30);
+		Cards::allCard[i]->setScaleX(visibleSize.width / sprite->getContentSize().width);
+		Cards::allCard[i]->setScaleY(visibleSize.height / sprite->getContentSize().height);
+		addChild(Cards::allCard[i], 1);
+	}
 	return true;
 }
 

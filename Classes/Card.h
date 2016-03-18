@@ -6,15 +6,12 @@
 
 USING_NS_CC;
 
-#define XAP false
-#define NGUA true
-
 class Card : public cocos2d::Sprite {
 	public:
 	static Texture2D* cardsImage;
-	static int cardWidth;
-	static int cardHeight;
-
+	static float cardWidth;
+	static float cardHeight;
+	
 	Card();
 	~Card();
 	static Card* create(int index, int element, bool state);
@@ -24,25 +21,8 @@ class Card : public cocos2d::Sprite {
 	//Bai
 	int cardIndex = 0, cardElement = 0;
 	int zIndex = 1;
-	__declspec(property(get = getprop, put = putprop)) bool cardState;
-	//Method
-	bool _state = false;
-	void putprop(bool j) {
-		_state = j;
-		if (!_state) {
-			//Set RECT vao ảnh quân bài
-
-		}else {
-			//Bài đang xấp
-			
-		}
-	}
-
-	bool getprop() {
-		return _state;
-	}
-	private:
-	
+	bool cardState = false;
+	void ChangeState(bool state);
 };
 
 class Cards {
