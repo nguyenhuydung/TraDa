@@ -1,5 +1,6 @@
 ﻿#include "GameTienLenMNScene.h"
 #include "Card.h"
+#include "ui/CocosGUI.h"
 
 USING_NS_CC;
 
@@ -39,9 +40,46 @@ bool GameTienLenMNScene::init() {
 		addChild(Cards::allCard[i], 1);
 	}
 	//Vẽ nút quit và nut Config
+	auto btnConfig = ui::Button::create("play.back.nor.png", "play.back.put.png", "play.back.dis.png");
+	btnConfig->setPosition(Vec2(visibleSize.width - btnConfig->getContentSize().width - btnConfig->getContentSize().width, visibleSize.height - btnConfig->getContentSize().height));
+	btnConfig->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		switch (type) {
+			case ui::Widget::TouchEventType::BEGAN:
+				break;
+			case ui::Widget::TouchEventType::ENDED:
+				//Director::getInstance()->replaceScene(TransitionFade::create(1, GameTienLenMNScene::createScene(), Color3B(0, 0, 0)));
+				break;
+			default:
+				break;
+		}
+	});
+	this->addChild(btnConfig);
 
+	auto btnBack = ui::Button::create("play.back.nor.png", "play.back.put.png", "play.back.dis.png");
+	btnBack->setPosition(Vec2(visibleSize.width - btnConfig->getContentSize().width, visibleSize.height - btnConfig->getContentSize().height));
+	btnBack->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		switch (type) {
+			case ui::Widget::TouchEventType::BEGAN:
+				break;
+			case ui::Widget::TouchEventType::ENDED:
+				//Director::getInstance()->replaceScene(TransitionFade::create(1, GameTienLenMNScene::createScene(), Color3B(0, 0, 0)));
+				break;
+			default:
+				break;
+		}
+	});
+	this->addChild(btnBack);
 	//Vẽ nút điều khiển đánh bài
+	do {
 
+
+		//Chia bai
+
+		//Chọn người đánh đầu tiên:
+
+		//
+		return true;
+	} while (true);
 	return true;
 }
 
