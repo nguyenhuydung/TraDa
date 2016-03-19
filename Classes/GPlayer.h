@@ -7,8 +7,7 @@ class GPlayer {
 	GPlayer();
 	~GPlayer();
 
-	Card Bai[13];
-
+	Card* Bai[13];
 };
 
 

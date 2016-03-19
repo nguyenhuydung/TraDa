@@ -20,7 +20,7 @@ class Card : public cocos2d::Sprite {
 	//Bai
 	int cardIndex = 0, cardElement = 0;
 	int zIndex = 1;
-	bool cardState = false;
+	bool cardState = false, daChia = false;
 	void ChangeState(bool state);
 };
 

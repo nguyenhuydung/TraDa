@@ -24,9 +24,9 @@ Card* Card::create(int index, int element, bool state) {
 }
 
 void Card::addTouchEvents() {
-	auto listener = cocos2d::EventListenerTouchOneByOne::create();
+	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
-	listener->onTouchBegan = [&](cocos2d::Touch* touch, cocos2d::Event* event) {
+	listener->onTouchBegan = [&](Touch* touch, Event* event) {
 		auto p = touch->getLocation();
 		auto rect = this->getBoundingBox();
 		if (rect.containsPoint(p)) {
@@ -38,17 +38,17 @@ void Card::addTouchEvents() {
 		return false; // we did not consume this event, pass thru.
 	};
 
-	listener->onTouchMoved = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+	listener->onTouchMoved = [=](Touch* touch, Event* event) {
 		this->setPosition(this->getPosition() + touch->getDelta());
 	};
 
-	listener->onTouchEnded = [=](cocos2d::Touch* touch, cocos2d::Event* event) {
+	listener->onTouchEnded = [=](Touch* touch, Event* event) {
 		this->setPosition(this->getPosition() + touch->getDelta());
 		this->setGlobalZOrder(this->zIndex);
 		//Snap bai vao vị trí bàn user:
 
 	};
-	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
 }
 /*-----*/
 
@@ -59,16 +59,16 @@ void Card::ChangeState(bool state) {
 	if (cardState) {
 		//Set RECT vao ảnh quân bài
 		if (this->getTexture() == nullptr) {
-			this->initWithTexture(Card::cardsImage, Rect(cardIndex* Card::cardWidth, cardElement* Card::cardHeight, Card::cardWidth, Card::cardHeight));
+			this->initWithTexture(cardsImage, Rect(cardIndex* cardWidth, cardElement* cardHeight, cardWidth, cardHeight));
 		} else {
-			this->setTextureRect(Rect(cardIndex* Card::cardWidth, cardElement* Card::cardHeight, Card::cardWidth, Card::cardHeight));
+			this->setTextureRect(Rect(cardIndex* cardWidth, cardElement* cardHeight, cardWidth, cardHeight));
 		}
 	} else {
 		//Bài đang xấp
 		if (this->getTexture() != nullptr) {
-			this->setTextureRect(Rect(0, Card::cardHeight * 4, Card::cardWidth, Card::cardHeight));
+			this->setTextureRect(Rect(0, cardHeight * 4, cardWidth, cardHeight));
 		} else {
-			this->initWithTexture(Card::cardsImage, Rect(0, Card::cardHeight * 4, Card::cardWidth, Card::cardHeight));
+			this->initWithTexture(cardsImage, Rect(0, cardHeight * 4, cardWidth, cardHeight));
 		}
 
 	}
