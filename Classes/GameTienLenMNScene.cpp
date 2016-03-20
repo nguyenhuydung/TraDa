@@ -2,6 +2,8 @@
 #include "Card.h"
 #include "ui/CocosGUI.h"
 #include "GPlayer.h"
+#include "RankingScene.h"
+#include "HelloWorldScene.h"
 
 USING_NS_CC;
 
@@ -60,7 +62,7 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				//Director::getInstance()->replaceScene(TransitionFade::create(1, GameTienLenMNScene::createScene(), Color3B(0, 0, 0)));
+				Director::getInstance()->replaceScene(TransitionFade::create(1, HelloWorld::createScene(), Color3B(0, 0, 0)));
 				break;
 			default:
 				break;
@@ -75,24 +77,25 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				//Director::getInstance()->replaceScene(TransitionFade::create(1, GameTienLenMNScene::createScene(), Color3B(0, 0, 0)));
+				Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
 				break;
 			default:
 				break;
 		}
 	});
 	this->addChild(btnBack);
+	//return true;
 	//Vẽ nút điều khiển đánh bài
-	do {
+	//do {
 		//Chia bai
-		chiaBai();
+	GameTienLenMNScene::chiaBai();
 
 		//Chọn người đánh đầu tiên:
 
 		//
 		return true;
-	} while (true);
-	return true;
+	//} while (true);
+	//return true;
 }
 
 void GameTienLenMNScene::chiaBai() {
@@ -102,13 +105,14 @@ void GameTienLenMNScene::chiaBai() {
 		Cards::allCard[i]->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 		Cards::allCard[i]->ChangeState(false);
 	}
+
 	player[0] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
 		auto inx = cocos2d::RandomHelper::random_int(0, 51);
 		while (Cards::allCard[inx]->daChia) {
 			inx = cocos2d::RandomHelper::random_int(0, 51);
 		}
-		Cards::allCard[i]->daChia = true;
+		Cards::allCard[inx]->daChia = true;
 		player[0]->Bai[i] = Cards::allCard[inx];
 	}
 	player[1] = new GPlayer();
@@ -117,7 +121,7 @@ void GameTienLenMNScene::chiaBai() {
 		while (Cards::allCard[inx]->daChia) {
 			inx = cocos2d::RandomHelper::random_int(0, 51);
 		}
-		Cards::allCard[i]->daChia = true;
+		Cards::allCard[inx]->daChia = true;
 		player[1]->Bai[i] = Cards::allCard[inx];
 	}
 	player[2] = new GPlayer();
@@ -126,7 +130,7 @@ void GameTienLenMNScene::chiaBai() {
 		while (Cards::allCard[inx]->daChia) {
 			inx = cocos2d::RandomHelper::random_int(0, 51);
 		}
-		Cards::allCard[i]->daChia = true;
+		Cards::allCard[inx]->daChia = true;
 		player[2]->Bai[i] = Cards::allCard[inx];
 	}
 	player[3] = new GPlayer();
@@ -140,8 +144,11 @@ void GameTienLenMNScene::chiaBai() {
 	}
 	//create animation:
 	chiaBaiIndex = 0;
-	FiniteTimeAction* actionMove = MoveTo::create(0.1, Vec2(scaleX * PP0.x, scaleY * PP0.y));
-	FiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+	chiaBaiAnimation(nullptr);
+	return;
+
+	CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP0.x, scaleY * PP0.y));
+	CCFiniteTimeAction* actionMoveDone = CCCallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 	player[0]->Bai[0]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 }
 
@@ -150,32 +157,32 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex % 4 == 0) {
 		//Chia cho nguoi choi
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		FiniteTimeAction* actionMove = MoveTo::create(0.1, Vec2(scaleX * PP1.x, scaleY * PP1.y));
-		FiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		player[0]->Bai[baiso]->ChangeState(true);
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP1.x, scaleY * PP1.y));
+		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 1) {
 		//Chia cho CPU phai PP1
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		FiniteTimeAction* actionMove = MoveTo::create(0.1, Vec2(scaleX * PP2.x, scaleY * PP2.y));
-		FiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP2.x, scaleY * PP2.y));
+		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[1]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 2) {
 		//Chia cho CPU tren PP2
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		FiniteTimeAction* actionMove = MoveTo::create(0.1, Vec2(scaleX * PP3.x, scaleY * PP3.y));
-		FiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP3.x, scaleY * PP3.y));
+		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[2]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 3) {
 		//Chia cho CPU trai PP3
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		FiniteTimeAction* actionMove = MoveTo::create(0.1, Vec2(scaleX * PP0.x, scaleY * PP0.y));
-		FiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * (PP0.x + baiso*Card::cardWidth) , scaleY * PP0.y ));
+		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	chiaBaiIndex++;
-
 }
 
