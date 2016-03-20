@@ -157,31 +157,31 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex % 4 == 0) {
 		//Chia cho nguoi choi
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		player[0]->Bai[baiso]->ChangeState(true);
 		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP1.x, scaleY * PP1.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		player[1]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 1) {
 		//Chia cho CPU phai PP1
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP2.x, scaleY * PP2.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[1]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		player[2]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 2) {
 		//Chia cho CPU tren PP2
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP3.x, scaleY * PP3.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[2]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 3) {
 		//Chia cho CPU trai PP3
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
+		player[0]->Bai[baiso]->ChangeState(true);
 		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * (PP0.x + baiso*Card::cardWidth) , scaleY * PP0.y ));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	chiaBaiIndex++;
 }
