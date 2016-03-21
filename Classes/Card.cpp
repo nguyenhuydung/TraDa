@@ -30,23 +30,32 @@ void Card::addTouchEvents() {
 		auto p = touch->getLocation();
 		auto rect = this->getBoundingBox();
 		if (rect.containsPoint(p)) {
-			this->zIndex = this->getGlobalZOrder();
-			this->setGlobalZOrder(100);
-			this->ChangeState(!this->cardState);
+			//this->zIndex = this->getGlobalZOrder();
+			//this->setGlobalZOrder(100);
+			//this->ChangeState(!this->cardState);
+			
 			return true; // to indicate that we have consumed it.
 		}
 		return false; // we did not consume this event, pass thru.
 	};
 
 	listener->onTouchMoved = [=](Touch* touch, Event* event) {
-		this->setPosition(this->getPosition() + touch->getDelta());
+		//this->setPosition(this->getPosition() + touch->getDelta());
 	};
 
 	listener->onTouchEnded = [=](Touch* touch, Event* event) {
-		this->setPosition(this->getPosition() + touch->getDelta());
-		this->setGlobalZOrder(this->zIndex);
+		//this->setPosition(this->getPosition() + touch->getDelta());
+		//this->setGlobalZOrder(this->zIndex);
 		//Snap bai vao vị trí bàn user:
-
+		if (this->cardState) {
+			if (!this->selected) {
+				this->setPositionY(this->getPositionY() + 5);
+				this->selected = true;
+			} else {
+				this->setPositionY(this->getPositionY() - 5);
+				this->selected = false;
+			}
+		}
 	};
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
 }

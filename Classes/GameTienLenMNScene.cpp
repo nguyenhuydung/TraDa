@@ -86,16 +86,67 @@ bool GameTienLenMNScene::init() {
 	this->addChild(btnBack);
 	//return true;
 	//Vẽ nút điều khiển đánh bài
-	//do {
-		//Chia bai
-	GameTienLenMNScene::chiaBai();
-
-		//Chọn người đánh đầu tiên:
-
-		//
-		return true;
-	//} while (true);
-	//return true;
+	auto btnUserPlay = ui::Button::create("play.danh.nor.png", "play.danh.put.png", "play.danh.dis.png");
+	btnUserPlay->setPosition(Vec2(1145 * scaleX, 110 * scaleY));
+	btnUserPlay->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		switch (type) {
+			case ui::Widget::TouchEventType::BEGAN:
+				break;
+			case ui::Widget::TouchEventType::ENDED:
+				lopBaiDanhRa += 1;
+				danhBaiAnimation()
+				break;
+			default:
+				break;
+		}
+	});
+	//NUT THOI
+	this->addChild(btnUserPlay);
+	auto btnUserThoi = ui::Button::create("play.thoi.nor.png", "play.thoi.put.png", "play.thoi.dis.png");
+	btnUserThoi->setPosition(Vec2(1210 * scaleX, 40 * scaleY));
+	btnUserThoi->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		switch (type) {
+			case ui::Widget::TouchEventType::BEGAN:
+				break;
+			case ui::Widget::TouchEventType::ENDED:
+				//Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
+				break;
+			default:
+				break;
+		}
+	});
+	this->addChild(btnUserThoi);
+	//NUT XEP BAI
+	auto btnUserXep = ui::Button::create("play.xep.nor.png", "play.xep.put.png", "play.xep.dis.png");
+	btnUserXep->setPosition(Vec2(1080 * scaleX, 40 * scaleY));
+	btnUserXep->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		switch (type) {
+			case ui::Widget::TouchEventType::BEGAN:
+				break;
+			case ui::Widget::TouchEventType::ENDED:
+				for (auto i = 0; i < 13;i++) {
+					for (auto j = i + 1; j < 13;j++) {
+						if ((player[0]->Bai[i]->cardIndex > player[0]->Bai[j]->cardIndex) || (player[0]->Bai[i]->cardIndex == player[0]->Bai[j]->cardIndex && player[0]->Bai[i]->cardElement > player[0]->Bai[j]->cardElement)) {
+							auto tmp = player[0]->Bai[i];
+							player[0]->Bai[i] = player[0]->Bai[j];
+							player[0]->Bai[j] = tmp;
+						}
+					}
+				}
+				for (auto i = 0; i < 13;i++) {
+					auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * (PP0.x + i * Card::cardWidth), scaleY * PP0.y)));
+					auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
+					player[0]->Bai[i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+				}
+				break;
+			default:
+				break;
+		}
+	});
+	this->addChild(btnUserXep);
+	// -- NUT XEP BAI
+	newGameStart(-1);
+	return true;
 }
 
 void GameTienLenMNScene::chiaBai() {
@@ -104,6 +155,7 @@ void GameTienLenMNScene::chiaBai() {
 		Cards::allCard[i]->daChia = false;
 		Cards::allCard[i]->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 		Cards::allCard[i]->ChangeState(false);
+		Cards::allCard[i]->selected = false;
 	}
 
 	player[0] = new GPlayer();
@@ -146,10 +198,6 @@ void GameTienLenMNScene::chiaBai() {
 	chiaBaiIndex = 0;
 	chiaBaiAnimation(nullptr);
 	return;
-
-	CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP0.x, scaleY * PP0.y));
-	CCFiniteTimeAction* actionMoveDone = CCCallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-	player[0]->Bai[0]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 }
 
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
@@ -179,10 +227,28 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		//Chia cho CPU trai PP3
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		player[0]->Bai[baiso]->ChangeState(true);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * (PP0.x + baiso*Card::cardWidth) , scaleY * PP0.y ));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * (PP0.x + baiso * Card::cardWidth), scaleY * PP0.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	chiaBaiIndex++;
 }
 
+void GameTienLenMNScene::newGameStart(int lastWinPlayer) {
+	chiaBai();
+
+}
+
+
+void GameTienLenMNScene::danhBaiAnimation(int lopBai) {
+	lopBaiDanhRa = lopBai;
+	soBaiDanhRa = 0;
+	Card* cards[13];
+	for (auto i = 0; i < 52; i++) {
+		if (Cards::allCard[i]->selected) {
+			cards[soBaiDanhRa] = Cards::allCard[i];
+			soBaiDanhRa++;
+		}
+	}
+	
+}

@@ -2,6 +2,7 @@
 #define __TIENLENMN_SCENE_H__
 
 #include "cocos2d.h"
+#include "Card.h"
 
 const cocos2d::Vec2 PP0 = cocos2d::Vec2(290, 70);
 const cocos2d::Vec2 PP1 = cocos2d::Vec2(950, 370);
@@ -15,12 +16,17 @@ class GameTienLenMNScene : public cocos2d::Layer {
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
 	int chiaBaiIndex = 0;
+	int lopBaiDanhRa = 0;
+	int soBaiDanhRa = 0;
+	Card* baiDanhRa[100][13];
 
 	static cocos2d::Scene* createScene();
 	bool init() override;
 	
 	void chiaBai();
 	void chiaBaiAnimation(Node* sender);
+	void newGameStart(int lastWinPlayer);
+	void danhBaiAnimation(int lopBai);
 
 	//static GameTienLenMNScene* loadScene(std::function<void ()> onCompleted);
 	static GameTienLenMNScene* create() {

@@ -11,7 +11,7 @@ class Card : public cocos2d::Sprite {
 	static Texture2D* cardsImage;
 	static float cardWidth;
 	static float cardHeight;
-	
+
 	Card();
 	~Card();
 	static Card* create(int index, int element, bool state);
@@ -20,7 +20,10 @@ class Card : public cocos2d::Sprite {
 	//Bai
 	int cardIndex = 0, cardElement = 0;
 	int zIndex = 1;
-	bool cardState = false, daChia = false;
+	///trang thai xap
+	bool cardState = false;
+	bool daChia = false;
+	bool selected = false;
 	void ChangeState(bool state);
 };
 
@@ -30,3 +33,4 @@ class Cards {
 	static void loadData();
 };
 #endif
+
