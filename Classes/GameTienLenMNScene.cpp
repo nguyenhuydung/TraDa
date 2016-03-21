@@ -51,8 +51,8 @@ bool GameTienLenMNScene::init() {
 	for (auto i = 0; i < 52; i++) {
 		Cards::allCard[i]->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 		Cards::allCard[i]->ChangeState(true);
-		Cards::allCard[i]->setScaleX(76 / 52);
-		Cards::allCard[i]->setScaleY(76 / 52);
+		Cards::allCard[i]->setScaleX(scaleX);
+		Cards::allCard[i]->setScaleY(scaleY);
 		addChild(Cards::allCard[i], 1);
 	}
 	//Vẽ nút quit và nut Config

@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "Card.h"
 
-const cocos2d::Vec2 PP0 = cocos2d::Vec2(290, 70);
+const cocos2d::Vec2 PP0 = cocos2d::Vec2(310, 70);
 const cocos2d::Vec2 PP1 = cocos2d::Vec2(950, 370);
 const cocos2d::Vec2 PP2 = cocos2d::Vec2(640, 490);
 const cocos2d::Vec2 PP3 = cocos2d::Vec2(320, 370);
