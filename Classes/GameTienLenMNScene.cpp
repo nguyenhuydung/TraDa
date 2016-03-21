@@ -4,6 +4,7 @@
 #include "GPlayer.h"
 #include "RankingScene.h"
 #include "HelloWorldScene.h"
+#include <complex>
 
 USING_NS_CC;
 
@@ -50,8 +51,8 @@ bool GameTienLenMNScene::init() {
 	for (auto i = 0; i < 52; i++) {
 		Cards::allCard[i]->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 		Cards::allCard[i]->ChangeState(true);
-		Cards::allCard[i]->setScaleX(scaleX);
-		Cards::allCard[i]->setScaleY(scaleY);
+		Cards::allCard[i]->setScaleX(76 / 52);
+		Cards::allCard[i]->setScaleY(76 / 52);
 		addChild(Cards::allCard[i], 1);
 	}
 	//Vẽ nút quit và nut Config
@@ -93,8 +94,7 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				lopBaiDanhRa += 1;
-				danhBaiAnimation()
+				danhBaiAnimation();
 				break;
 			default:
 				break;
@@ -205,21 +205,21 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex % 4 == 0) {
 		//Chia cho nguoi choi
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP1.x, scaleY * PP1.y));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP1.x, scaleY * PP1.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[1]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 1) {
 		//Chia cho CPU phai PP1
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP2.x, scaleY * PP2.y));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP2.x, scaleY * PP2.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[2]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 2) {
 		//Chia cho CPU tren PP2
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * PP3.x, scaleY * PP3.y));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP3.x, scaleY * PP3.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
@@ -227,7 +227,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		//Chia cho CPU trai PP3
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		player[0]->Bai[baiso]->ChangeState(true);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.1, Vec2(scaleX * (PP0.x + baiso * Card::cardWidth), scaleY * PP0.y));
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.08, Vec2(scaleX * (PP0.x + baiso * Card::cardWidth), scaleY * PP0.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
@@ -240,15 +240,35 @@ void GameTienLenMNScene::newGameStart(int lastWinPlayer) {
 }
 
 
-void GameTienLenMNScene::danhBaiAnimation(int lopBai) {
-	lopBaiDanhRa = lopBai;
-	soBaiDanhRa = 0;
-	Card* cards[13];
+void GameTienLenMNScene::danhBaiAnimation() {
+	//tìm số lượng bài sẽ đánh
+	auto soBaiDanhRa = 0;
 	for (auto i = 0; i < 52; i++) {
 		if (Cards::allCard[i]->selected) {
-			cards[soBaiDanhRa] = Cards::allCard[i];
+			baiDanhRa[lopBaiDanhRa][soBaiDanhRa] = Cards::allCard[i];
 			soBaiDanhRa++;
 		}
 	}
-	
+	if (soBaiDanhRa == 0) {
+		return;
+	}
+
+	baiDanhRaCount[lopBaiDanhRa] = soBaiDanhRa;
+	//dồn bài cũ
+	auto donCount = lopBaiDanhRa - lopBaiDanhRaCuoi;
+	/*
+	for (auto dong = lopBaiDanhRa - 1; dong >= lopBaiDanhRaCuoi; dong--) {
+		for (auto j = 0; j < baiDanhRaCount[dong]; j++) {
+			auto actionMove = MoveTo::create(0.5, Vec2(Vec2(baiDanhRa[dong][j]->getPositionX(), baiDanhRa[dong][j]->getPositionY() + 30)));
+			baiDanhRa[dong][j]->runAction(CCSequence::create(actionMove, NULL, NULL));
+		}
+	}*/
+	for (auto i = 0; i < baiDanhRaCount[lopBaiDanhRa]; i++) {
+		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 600 + i* Card::cardWidth, scaleY * 390 - donCount * 30)));
+		auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
+		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->selected = false;
+		baiDanhRa[lopBaiDanhRa][i]->setLocalZOrder(lopBaiDanhRa);
+	}
+	lopBaiDanhRa++;
 }

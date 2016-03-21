@@ -16,9 +16,10 @@ class GameTienLenMNScene : public cocos2d::Layer {
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
 	int chiaBaiIndex = 0;
-	int lopBaiDanhRa = 0;
-	int soBaiDanhRa = 0;
+
+	int lopBaiDanhRa = 0, lopBaiDanhRaCuoi = 0;
 	Card* baiDanhRa[100][13];
+	int baiDanhRaCount[100];
 
 	static cocos2d::Scene* createScene();
 	bool init() override;
@@ -26,7 +27,7 @@ class GameTienLenMNScene : public cocos2d::Layer {
 	void chiaBai();
 	void chiaBaiAnimation(Node* sender);
 	void newGameStart(int lastWinPlayer);
-	void danhBaiAnimation(int lopBai);
+	void danhBaiAnimation();
 
 	//static GameTienLenMNScene* loadScene(std::function<void ()> onCompleted);
 	static GameTienLenMNScene* create() {

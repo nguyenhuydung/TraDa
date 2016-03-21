@@ -45,6 +45,14 @@ bool RankingScene::init() {
 	});
 	this->addChild(button);
 
+	auto touchListener = EventListenerKeyboard::create();
+	touchListener->onKeyReleased = [](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+		if (keyCode == EventKeyboard::KeyCode::KEY_BACK) {
+			Director::getInstance()->end();
+		}
+	};
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+
 	return true;
 }
 
