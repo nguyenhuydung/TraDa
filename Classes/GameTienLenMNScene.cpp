@@ -95,7 +95,7 @@ bool GameTienLenMNScene::init() {
 	//return true;
 	//Vẽ nút điều khiển đánh bài
 	auto btnUserPlay = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
-	btnUserPlay->setTitleText("Danh");
+	btnUserPlay->setTitleText("Đánh");
 	btnUserPlay->setTitleFontSize(20);
 	btnUserPlay->setTitleColor(Color3B(99, 99, 99));
 	btnUserPlay->setScaleX(scaleX);
@@ -115,7 +115,9 @@ bool GameTienLenMNScene::init() {
 	//NUT THOI
 	this->addChild(btnUserPlay);
 	auto btnUserThoi = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
-	btnUserThoi->setTitleText("Thoi");
+	btnUserThoi->setTitleText("Thôi");
+	btnUserThoi->setScaleX(scaleX);
+	btnUserThoi->setScaleY(scaleY);
 	btnUserThoi->setTitleFontSize(20);
 	btnUserThoi->setTitleColor(Color3B(99, 99, 99));
 	btnUserThoi->setPosition(Vec2(1060.0f * scaleX, 50.0f * scaleY));
@@ -133,7 +135,9 @@ bool GameTienLenMNScene::init() {
 	this->addChild(btnUserThoi);
 	//NUT XEP BAI
 	auto btnUserXep = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
-	btnUserXep->setTitleText("Xep");
+	btnUserXep->setTitleText("Xếp bài");
+	btnUserXep->setScaleX(scaleX);
+	btnUserXep->setScaleY(scaleY);
 	btnUserXep->setTitleFontSize(20);
 	btnUserXep->setTitleColor(Color3B(99, 99, 99));
 	btnUserXep->setPosition(Vec2(920.0f * scaleX, 50.0f * scaleY));
@@ -142,8 +146,8 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				for (auto i = 0; i < 13;i++) {
-					for (auto j = i + 1; j < 13;j++) {
+				for (auto i = 0; i < 13; i++) {
+					for (auto j = i + 1; j < 13; j++) {
 						if ((player[0]->Bai[i]->cardIndex > player[0]->Bai[j]->cardIndex) || (player[0]->Bai[i]->cardIndex == player[0]->Bai[j]->cardIndex && player[0]->Bai[i]->cardElement > player[0]->Bai[j]->cardElement)) {
 							auto tmp = player[0]->Bai[i];
 							player[0]->Bai[i] = player[0]->Bai[j];
@@ -151,7 +155,7 @@ bool GameTienLenMNScene::init() {
 						}
 					}
 				}
-				for (auto i = 0; i < 13;i++) {
+				for (auto i = 0; i < 13; i++) {
 					auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleXL * (PP0.x + i * Card::cardWidth), scaleYL * PP0.y)));
 					auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
 					player[0]->Bai[i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
@@ -225,23 +229,23 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex % 4 == 0) {
 		//Chia cho nguoi choi
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP1.x, scaleY * PP1.y));
-		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		auto actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP1.x, scaleY * PP1.y));
+		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[1]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 1) {
 		//Chia cho CPU phai PP1
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP2.x, scaleY * PP2.y));
-		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		auto actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP2.x, scaleY * PP2.y));
+		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[2]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 2) {
 		//Chia cho CPU tren PP2
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		CCLOG("Content width: %2.2f", player[3]->Bai[baiso]->getContentSize().width);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP3.x, scaleY * PP3.y));
-		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		auto actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP3.x, scaleY * PP3.y));
+		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 3) {
@@ -250,10 +254,14 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		player[0]->Bai[baiso]->ChangeState(true);
 		player[0]->Bai[baiso]->setScaleX(scaleXL);
 		player[0]->Bai[baiso]->setScaleY(scaleYL);
-		CCLOG("Content scaled L width: %2.2f (%2.2f , %2.2f)", player[0]->Bai[baiso]->getContentSize().width, scaleXL, scaleYL);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.08, Vec2(scaleXL * (PP0.x + baiso * Card::cardWidth), scaleYL * PP0.y));
-		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+
+		auto actionScale = CCScaleTo::create(0.08, scaleXL, scaleYL);
+		actionScale->setTag(1);
+		auto actionMove = CCMoveTo::create(0.08, Vec2(scaleXL * (PP0.x + baiso * Card::cardWidth), scaleYL * PP0.y));
+		actionMove->setTag(2);
+		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
+		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, NULL));
+		player[0]->Bai[baiso]->runAction(CCSequence::create(actionScale, actionMoveDone, NULL));
 	}
 	chiaBaiIndex++;
 }
@@ -288,12 +296,14 @@ void GameTienLenMNScene::danhBaiAnimation() {
 		}
 	}*/
 	for (auto i = 0; i < baiDanhRaCount[lopBaiDanhRa]; i++) {
-		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 600 + i* Card::cardWidth, scaleY * 390 - donCount * 30)));
+		auto cWidth = baiDanhRaCount[lopBaiDanhRa] * Card::cardWidth / 2;
+		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * 500 - donCount * 30)));
 		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
-		auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
-		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionMove, actionScale, actionMoveDone, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionMove, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionScale, NULL));
 		baiDanhRa[lopBaiDanhRa][i]->selected = false;
 		baiDanhRa[lopBaiDanhRa][i]->setLocalZOrder(lopBaiDanhRa);
 	}
 	lopBaiDanhRa++;
 }
+

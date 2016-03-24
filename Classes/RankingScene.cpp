@@ -31,7 +31,9 @@ bool RankingScene::init() {
 	this->addChild(sprite, 0);
 	//Nut play:
 	auto button = Button::create("score.play.button.nor.png", "score.play.button.prd.png", "score.play.button.dis.png");
-	button->setPosition(Vec2(visibleSize.width - button->getContentSize().width, visibleSize.height - button->getContentSize().height));
+	button->setScaleX(visibleSize.width / sprite->getContentSize().width);
+	button->setScaleY(visibleSize.height / sprite->getContentSize().height);
+	button->setPosition(Vec2(visibleSize.width * 1120 / sprite->getContentSize().width, visibleSize.height * 675 / sprite->getContentSize().height));
 	button->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
 		switch (type) {
 			case ui::Widget::TouchEventType::BEGAN:
