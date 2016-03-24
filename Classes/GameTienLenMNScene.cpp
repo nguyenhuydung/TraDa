@@ -4,7 +4,6 @@
 #include "GPlayer.h"
 #include "RankingScene.h"
 #include "HelloWorldScene.h"
-#include <complex>
 
 USING_NS_CC;
 
@@ -39,10 +38,14 @@ bool GameTienLenMNScene::init() {
 	visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto sprite = Sprite::create("board.png");
-	// position the sprite on the center of the screen
+	//Create scale
 	sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	scaleX = visibleSize.width / sprite->getContentSize().width;
 	scaleY = visibleSize.height / sprite->getContentSize().height;
+
+	scaleXL = scaleX * 94 / 56;
+	scaleYL = scaleY * 120 / 75;
+
 	sprite->setScaleX(scaleX);
 	sprite->setScaleY(scaleY);
 	// add the sprite as a child to this layer
@@ -56,8 +59,10 @@ bool GameTienLenMNScene::init() {
 		addChild(Cards::allCard[i], 1);
 	}
 	//Vẽ nút quit và nut Config
-	auto btnConfig = ui::Button::create("play.cfg.nor.png", "play.cfg.put.png", "play.cfg.dis.png");
-	btnConfig->setPosition(Vec2(visibleSize.width - btnConfig->getContentSize().width - btnConfig->getContentSize().width, visibleSize.height - btnConfig->getContentSize().height));
+	auto btnConfig = ui::Button::create("play.cfg.nor.png", "play.cfg.put.png", "play.cfg.nor.png");
+	btnConfig->setPosition(Vec2(175.0f * scaleX, 50.0f * scaleY));
+	btnConfig->setScaleX(scaleX);
+	btnConfig->setScaleY(scaleY);
 	btnConfig->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		switch (type) {
 			case ui::Widget::TouchEventType::BEGAN:
@@ -72,7 +77,9 @@ bool GameTienLenMNScene::init() {
 	this->addChild(btnConfig);
 
 	auto btnBack = ui::Button::create("play.back.nor.png", "play.back.put.png", "play.back.dis.png");
-	btnBack->setPosition(Vec2(visibleSize.width - btnConfig->getContentSize().width, visibleSize.height - btnConfig->getContentSize().height));
+	btnBack->setPosition(Vec2(64.0f * scaleX, 50.0f * scaleY));
+	btnBack->setScaleX(scaleX);
+	btnBack->setScaleY(scaleY);
 	btnBack->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		switch (type) {
 			case ui::Widget::TouchEventType::BEGAN:
@@ -87,8 +94,13 @@ bool GameTienLenMNScene::init() {
 	this->addChild(btnBack);
 	//return true;
 	//Vẽ nút điều khiển đánh bài
-	auto btnUserPlay = ui::Button::create("play.danh.nor.png", "play.danh.put.png", "play.danh.dis.png");
-	btnUserPlay->setPosition(Vec2(1145 * scaleX, 110 * scaleY));
+	auto btnUserPlay = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
+	btnUserPlay->setTitleText("Danh");
+	btnUserPlay->setTitleFontSize(20);
+	btnUserPlay->setTitleColor(Color3B(99, 99, 99));
+	btnUserPlay->setScaleX(scaleX);
+	btnUserPlay->setScaleY(scaleY);
+	btnUserPlay->setPosition(Vec2(1200.0f * scaleX, 50.0f * scaleY));
 	btnUserPlay->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		switch (type) {
 			case ui::Widget::TouchEventType::BEGAN:
@@ -102,8 +114,11 @@ bool GameTienLenMNScene::init() {
 	});
 	//NUT THOI
 	this->addChild(btnUserPlay);
-	auto btnUserThoi = ui::Button::create("play.thoi.nor.png", "play.thoi.put.png", "play.thoi.dis.png");
-	btnUserThoi->setPosition(Vec2(1210 * scaleX, 40 * scaleY));
+	auto btnUserThoi = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
+	btnUserThoi->setTitleText("Thoi");
+	btnUserThoi->setTitleFontSize(20);
+	btnUserThoi->setTitleColor(Color3B(99, 99, 99));
+	btnUserThoi->setPosition(Vec2(1060.0f * scaleX, 50.0f * scaleY));
 	btnUserThoi->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		switch (type) {
 			case ui::Widget::TouchEventType::BEGAN:
@@ -117,8 +132,11 @@ bool GameTienLenMNScene::init() {
 	});
 	this->addChild(btnUserThoi);
 	//NUT XEP BAI
-	auto btnUserXep = ui::Button::create("play.xep.nor.png", "play.xep.put.png", "play.xep.dis.png");
-	btnUserXep->setPosition(Vec2(1080 * scaleX, 40 * scaleY));
+	auto btnUserXep = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
+	btnUserXep->setTitleText("Xep");
+	btnUserXep->setTitleFontSize(20);
+	btnUserXep->setTitleColor(Color3B(99, 99, 99));
+	btnUserXep->setPosition(Vec2(920.0f * scaleX, 50.0f * scaleY));
 	btnUserXep->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 		switch (type) {
 			case ui::Widget::TouchEventType::BEGAN:
@@ -134,7 +152,7 @@ bool GameTienLenMNScene::init() {
 					}
 				}
 				for (auto i = 0; i < 13;i++) {
-					auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * (PP0.x + i * Card::cardWidth), scaleY * PP0.y)));
+					auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleXL * (PP0.x + i * Card::cardWidth), scaleYL * PP0.y)));
 					auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
 					player[0]->Bai[i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 				}
@@ -153,7 +171,9 @@ void GameTienLenMNScene::chiaBai() {
 	//reset allcard
 	for (auto i = 0; i < 52; i++) {
 		Cards::allCard[i]->daChia = false;
-		Cards::allCard[i]->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+		Cards::allCard[i]->setPosition(Vec2(visibleSize.width / 2, scaleY * 450.0f));
+		Cards::allCard[i]->setScaleX(scaleX);
+		Cards::allCard[i]->setScaleY(scaleY);
 		Cards::allCard[i]->ChangeState(false);
 		Cards::allCard[i]->selected = false;
 	}
@@ -219,6 +239,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex % 4 == 2) {
 		//Chia cho CPU tren PP2
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
+		CCLOG("Content width: %2.2f", player[3]->Bai[baiso]->getContentSize().width);
 		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP3.x, scaleY * PP3.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
@@ -227,7 +248,10 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		//Chia cho CPU trai PP3
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		player[0]->Bai[baiso]->ChangeState(true);
-		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.08, Vec2(scaleX * (PP0.x + baiso * Card::cardWidth), scaleY * PP0.y));
+		player[0]->Bai[baiso]->setScaleX(scaleXL);
+		player[0]->Bai[baiso]->setScaleY(scaleYL);
+		CCLOG("Content scaled L width: %2.2f (%2.2f , %2.2f)", player[0]->Bai[baiso]->getContentSize().width, scaleXL, scaleYL);
+		CCFiniteTimeAction* actionMove = CCMoveTo::create(0.08, Vec2(scaleXL * (PP0.x + baiso * Card::cardWidth), scaleYL * PP0.y));
 		CCFiniteTimeAction* actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
@@ -265,8 +289,9 @@ void GameTienLenMNScene::danhBaiAnimation() {
 	}*/
 	for (auto i = 0; i < baiDanhRaCount[lopBaiDanhRa]; i++) {
 		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 600 + i* Card::cardWidth, scaleY * 390 - donCount * 30)));
+		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
 		auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
-		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionMove, actionScale, actionMoveDone, NULL));
 		baiDanhRa[lopBaiDanhRa][i]->selected = false;
 		baiDanhRa[lopBaiDanhRa][i]->setLocalZOrder(lopBaiDanhRa);
 	}
