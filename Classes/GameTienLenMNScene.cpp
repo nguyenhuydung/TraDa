@@ -255,13 +255,18 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		player[0]->Bai[baiso]->setScaleX(scaleXL);
 		player[0]->Bai[baiso]->setScaleY(scaleYL);
 
-		auto actionScale = CCScaleTo::create(0.08, scaleXL, scaleYL);
+		auto actionScale = ScaleTo::create(0.08, scaleXL, scaleYL);
 		actionScale->setTag(1);
-		auto actionMove = CCMoveTo::create(0.08, Vec2(scaleXL * (PP0.x + baiso * Card::cardWidth), scaleYL * PP0.y));
+		auto actionMove = MoveTo::create(0.08, Vec2(scaleXL * (PP0.x + baiso * Card::cardWidth), scaleYL * PP0.y));
 		actionMove->setTag(2);
+		auto actionRotate = RotateBy::create(0.08, 360);
+		actionRotate->setTag(3);
 		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, NULL));
+		player[0]->Bai[baiso]->runAction(CCSequence::create(actionRotate, NULL));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionScale, actionMoveDone, NULL));
+
+		
 	}
 	chiaBaiIndex++;
 }
@@ -299,8 +304,10 @@ void GameTienLenMNScene::danhBaiAnimation() {
 		auto cWidth = baiDanhRaCount[lopBaiDanhRa] * Card::cardWidth / 2;
 		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * 500 - donCount * 30)));
 		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
-		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionMove, NULL));
-		baiDanhRa[lopBaiDanhRa][i]->runAction(CCSequence::create(actionScale, NULL));
+		auto actionRotate = RotateBy::create(0.5, 360);
+		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionMove, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionScale, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionRotate, NULL));
 		baiDanhRa[lopBaiDanhRa][i]->selected = false;
 		baiDanhRa[lopBaiDanhRa][i]->setLocalZOrder(lopBaiDanhRa);
 	}
