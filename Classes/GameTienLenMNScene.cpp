@@ -4,6 +4,7 @@
 #include "GPlayer.h"
 #include "RankingScene.h"
 #include "HelloWorldScene.h"
+#include <SimpleAudioEngine.h>
 
 USING_NS_CC;
 
@@ -224,6 +225,8 @@ void GameTienLenMNScene::chiaBai() {
 	return;
 }
 
+//auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex >= 52) return;
 	if (chiaBaiIndex % 4 == 0) {
@@ -243,7 +246,6 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex % 4 == 2) {
 		//Chia cho CPU tren PP2
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		CCLOG("Content width: %2.2f", player[3]->Bai[baiso]->getContentSize().width);
 		auto actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP3.x, scaleY * PP3.y));
 		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
@@ -265,6 +267,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, NULL));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionRotate, NULL));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionScale, actionMoveDone, NULL));
+		//audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
 	}
 	chiaBaiIndex++;
 }
@@ -273,6 +276,7 @@ void GameTienLenMNScene::newGameStart(int lastWinPlayer) {
 	chiaBai();
 
 }
+
 
 
 void GameTienLenMNScene::danhBaiAnimation() {
@@ -302,12 +306,23 @@ void GameTienLenMNScene::danhBaiAnimation() {
 		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * 500 - donCount * 30)));
 		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
 		auto actionRotate = RotateBy::create(0.5, 360);
+
 		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionMove, NULL));
 		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionScale, NULL));
 		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionRotate, NULL));
+
 		baiDanhRa[lopBaiDanhRa][i]->ChangeState(CARD_STATE_NORM);
 		baiDanhRa[lopBaiDanhRa][i]->setLocalZOrder(lopBaiDanhRa);
 	}
 	lopBaiDanhRa++;
 }
 
+///Kiem tra card selected co dung khong
+bool GameTienLenMNScene::tlmnValid(int step) {
+
+	return true;
+}
+
+///CPU chon quan de danh
+void GameTienLenMNScene::tlmnCpuSelect(int player, int step) {
+}

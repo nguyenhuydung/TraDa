@@ -31,6 +31,9 @@ class GameTienLenMNScene : public cocos2d::Layer {
 	void chiaBaiAnimation(Node* sender);
 	void newGameStart(int lastWinPlayer);
 	void danhBaiAnimation();
+	//CPU playing:
+	bool tlmnValid(int state);
+	void tlmnCpuSelect(int player, int step);
 
 	//static GameTienLenMNScene* loadScene(std::function<void ()> onCompleted);
 	static GameTienLenMNScene* create() {

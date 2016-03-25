@@ -31,11 +31,11 @@ void Card::addTouchEvents() {
 	listener->onTouchBegan = [&](Touch* touch, Event* event) {
 		auto p = touch->getLocation();
 		auto rect = this->getBoundingBox();
-		if (rect.containsPoint(p) && (cardState != CARD_STATE_DOWN)) {
+		if (rect.containsPoint(p) && (this->cardState != CARD_STATE_DOWN)) {
 			//this->zIndex = this->getGlobalZOrder();
 			//this->setGlobalZOrder(100);
 			//this->ChangeState(!this->cardState);
-			CCLOG("select card: %d - %d", cardIndex, cardElement);
+			CCLOG("Begin touch card: %d - %d", this->cardIndex, this->cardElement);
 			return true; // to indicate that we have consumed it.
 		}
 		return false; // we did not consume this event, pass thru.
@@ -50,43 +50,25 @@ void Card::addTouchEvents() {
 		//this->setPosition(this->getPosition() + touch->getDelta());
 		//this->setGlobalZOrder(this->zIndex);
 		//Snap bai vao vị trí bàn user:
-		CCLOG("select card: %d - %d", cardIndex, cardElement);
-		if (this->cardState == CARD_STATE_SELT) {
-			this->cardState = CARD_STATE_NORM;
-			ChangeState(this->cardState);
-		} else {
-			this->cardState = CARD_STATE_SELT;
-			ChangeState(this->cardState);
-		}
+		CCLOG("End touch card: %d - %d", this->cardIndex, this->cardElement);
+		this->ChangeState(this->cardState == CARD_STATE_SELT ? CARD_STATE_NORM : CARD_STATE_SELT);
 	};
-	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 30);
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
 
 void Card::ChangeState(cardstate state) {
 	cardState = state;
 	if (cardState == CARD_STATE_NORM) {
 		//Set RECT vao ảnh quân bài
-		if (this->getTexture() == nullptr) {
-			this->initWithTexture(cardsImage, Rect(cardIndex* cardWidth, cardElement* cardHeight, cardWidth, cardHeight));
-		} else {
-			this->setTextureRect(Rect(cardIndex* cardWidth, cardElement* cardHeight, cardWidth, cardHeight));
-		}
-	} 
+		this->setTextureRect(Rect(cardIndex * cardWidth, cardElement * cardHeight, cardWidth, cardHeight));
+	}
 	if (cardState == CARD_STATE_DOWN) {
 		//Bài đang xấp
-		if (this->getTexture() != nullptr) {
-			this->setTextureRect(Rect(0, cardHeight * 4, cardWidth, cardHeight));
-		} else {
-			this->initWithTexture(cardsImage, Rect(0, cardHeight * 4, cardWidth, cardHeight));
-		}
+		this->setTextureRect(Rect(0, cardHeight * 4, cardWidth, cardHeight));
 	}
 	if (cardState == CARD_STATE_SELT) {
 		//Set RECT vao ảnh quân bài
-		if (this->getTexture() == nullptr) {
-			this->initWithTexture(cardsImage, Rect(cardIndex* cardWidth, (cardElement + 5) * cardHeight, cardWidth, cardHeight));
-		} else {
-			this->setTextureRect(Rect(cardIndex* cardWidth, (cardElement + 5)* cardHeight, cardWidth, cardHeight));
-		}
+		this->setTextureRect(Rect(cardIndex * cardWidth, (cardElement + 5) * cardHeight, cardWidth, cardHeight));
 	}
 }
 
@@ -94,12 +76,13 @@ void Card::ChangeState(cardstate state) {
 * Tai file allcard vao cache sprite
 */
 void Card::loadData() {
-	Card::cardsImage = Director::getInstance()->getTextureCache()->addImage("cardall.png");
-	Card::cardWidth = Card::cardsImage->getContentSize().width / 13;
-	Card::cardHeight = Card::cardsImage->getContentSize().height / 10;
-	if (Card::cardsImage) {
+	cardsImage = Director::getInstance()->getTextureCache()->addImage("cardall.png");
+	cardWidth = cardsImage->getContentSize().width / 13;
+	cardHeight = cardsImage->getContentSize().height / 10;
+	if (cardsImage) {
 		for (auto i = 0; i < 52; i++) {
-			allCard[i] = Card::create(i % 13, i / 13);
+			allCard[i] = create(i % 13, i / 13);
+			allCard[i]->initWithTexture(cardsImage, Rect(0, cardHeight * 4, cardWidth, cardHeight));
 		}
 	}
 }
