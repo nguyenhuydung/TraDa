@@ -39,7 +39,6 @@ bool HelloWorld::init() {
 void HelloWorld::onEnter() {
 	Layer::onEnter();
 	this->scheduleOnce(schedule_selector(HelloWorld::finishSplash), 2.0f);
-	Cards::loadData();
 }
 
 void HelloWorld::finishSplash(float dt) {

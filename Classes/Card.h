@@ -2,35 +2,36 @@
 #define __CARD_SPRITE_H__
 
 #include "cocos2d.h"
-#include "ui/CocosGUI.h"
 
 USING_NS_CC;
 
-class Card : public cocos2d::Sprite {
+enum cardstate {
+	CARD_STATE_NORM, CARD_STATE_SELT, CARD_STATE_DOWN
+};
+
+class Card : public Sprite {
 	public:
 	static Texture2D* cardsImage;
+	static Texture2D* cardsImageSelected;
 	static float cardWidth;
 	static float cardHeight;
+	static Card* allCard[52];
+	static void loadData();
 
 	Card();
 	~Card();
-	static Card* create(int index, int element, bool state);
+	static Card* create(int index, int element);
 	//Sprite
 	void addTouchEvents();
 	//Bai
 	int cardIndex = 0, cardElement = 0;
+	cardstate cardState = CARD_STATE_NORM;
 	int zIndex = 1;
 	///trang thai xap
-	bool cardState = false;
 	bool daChia = false;
-	bool selected = false;
-	void ChangeState(bool state);
+	
+	void ChangeState(cardstate state);
 };
 
-class Cards {
-	public:
-	static Card* allCard[52];
-	static void loadData();
-};
 #endif
 
