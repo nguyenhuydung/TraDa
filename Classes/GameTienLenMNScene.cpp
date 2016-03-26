@@ -4,7 +4,7 @@
 #include "GPlayer.h"
 #include "RankingScene.h"
 #include "HelloWorldScene.h"
-#include <SimpleAudioEngine.h>
+
 
 USING_NS_CC;
 
@@ -20,7 +20,7 @@ GameTienLenMNScene::~GameTienLenMNScene() {
 
 Scene* GameTienLenMNScene::createScene() {
 	auto scene = Scene::create();
-	auto layer = GameTienLenMNScene::create();
+	auto layer = create();
 	scene->addChild(layer);
 	return scene;
 }
@@ -185,27 +185,27 @@ void GameTienLenMNScene::chiaBai() {
 
 	player[0] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
-		auto inx = cocos2d::RandomHelper::random_int(0, 51);
+		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
-			inx = cocos2d::RandomHelper::random_int(0, 51);
+			inx = RandomHelper::random_int(0, 51);
 		}
 		Card::allCard[inx]->daChia = true;
 		player[0]->Bai[i] = Card::allCard[inx];
 	}
 	player[1] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
-		auto inx = cocos2d::RandomHelper::random_int(0, 51);
+		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
-			inx = cocos2d::RandomHelper::random_int(0, 51);
+			inx = RandomHelper::random_int(0, 51);
 		}
 		Card::allCard[inx]->daChia = true;
 		player[1]->Bai[i] = Card::allCard[inx];
 	}
 	player[2] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
-		auto inx = cocos2d::RandomHelper::random_int(0, 51);
+		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
-			inx = cocos2d::RandomHelper::random_int(0, 51);
+			inx = RandomHelper::random_int(0, 51);
 		}
 		Card::allCard[inx]->daChia = true;
 		player[2]->Bai[i] = Card::allCard[inx];

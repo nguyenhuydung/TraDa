@@ -4,7 +4,7 @@
 #include "GameTienLenMNScene.h"
 
 USING_NS_CC;
-using namespace cocos2d::ui;
+using namespace ui;
 
 RankingScene::RankingScene() {
 }
@@ -36,9 +36,9 @@ bool RankingScene::init() {
 	button->setPosition(Vec2(visibleSize.width * 1120 / sprite->getContentSize().width, visibleSize.height * 675 / sprite->getContentSize().height));
 	button->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
 		switch (type) {
-			case ui::Widget::TouchEventType::BEGAN:
+			case Widget::TouchEventType::BEGAN:
 				break;
-			case ui::Widget::TouchEventType::ENDED:
+			case Widget::TouchEventType::ENDED:
 				Director::getInstance()->replaceScene(TransitionFade::create(1, GameTienLenMNScene::createScene(), Color3B(0, 0, 0)));
 				break;
 			default:
@@ -48,7 +48,7 @@ bool RankingScene::init() {
 	this->addChild(button);
 
 	auto touchListener = EventListenerKeyboard::create();
-	touchListener->onKeyReleased = [](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+	touchListener->onKeyReleased = [](EventKeyboard::KeyCode keyCode, Event *event) {
 		if (keyCode == EventKeyboard::KeyCode::KEY_BACK) {
 			Director::getInstance()->end();
 		}
@@ -63,7 +63,7 @@ Scene* RankingScene::createScene() {
 	// 'scene' is an autorelease object
 	auto scene = Scene::create();
 	// 'layer' is an autorelease object
-	auto layer = RankingScene::create();
+	auto layer = create();
 	// add layer as a child to scene
 	scene->addChild(layer);
 	// return the scene

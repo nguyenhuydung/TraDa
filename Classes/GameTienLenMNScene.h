@@ -4,17 +4,17 @@
 #include "cocos2d.h"
 #include "Card.h"
 
-const cocos2d::Vec2 PP0 = cocos2d::Vec2(45, 110);
-const cocos2d::Vec2 PP1 = cocos2d::Vec2(940, 375);
-const cocos2d::Vec2 PP2 = cocos2d::Vec2(940, 560);
-const cocos2d::Vec2 PP3 = cocos2d::Vec2(335, 560);
+const Vec2 PP0 = Vec2(45, 110);
+const Vec2 PP1 = Vec2(940, 375);
+const Vec2 PP2 = Vec2(940, 560);
+const Vec2 PP3 = Vec2(335, 560);
 static float scaleX = 0.0f;
 static float scaleY = 0.0f;
 
 static float scaleXL = 0.0f;
 static float scaleYL = 0.0f;
 
-class GameTienLenMNScene : public cocos2d::Layer {
+class GameTienLenMNScene : public Layer {
 	public:
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
@@ -24,7 +24,7 @@ class GameTienLenMNScene : public cocos2d::Layer {
 	Card* baiDanhRa[100][13];
 	int baiDanhRaCount[100];
 
-	static cocos2d::Scene* createScene();
+	static Scene* createScene();
 	bool init() override;
 	
 	void chiaBai();

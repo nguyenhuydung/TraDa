@@ -10,7 +10,7 @@ class HelloWorld : public cocos2d::Layer {
 	void onEnter() override;
 	void finishSplash(float dt);
 	// a selector callback
-	void menuCloseCallback(cocos2d::Ref* pSender);
+	void menuCloseCallback(Ref* pSender);
 
 	// implement the "static create()" method manually
 	static HelloWorld* create() {

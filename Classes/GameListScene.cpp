@@ -9,9 +9,9 @@ GameListScene::GameListScene() {
 GameListScene::~GameListScene() {
 }
 
-cocos2d::Scene* GameListScene::createScene() {
-	auto scene = cocos2d::Scene::create();
-	auto layer = GameListScene::create();
+Scene* GameListScene::createScene() {
+	auto scene = Scene::create();
+	auto layer = create();
 	scene->addChild(layer);
 	return scene;
 }
