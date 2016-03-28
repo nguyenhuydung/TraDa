@@ -10,6 +10,7 @@ USING_NS_CC;
 
 auto visibleSize = Director::getInstance()->getVisibleSize();
 GPlayer* player[4];
+int GameTienLenMNScene::stepDanhBai = 0;
 
 GameTienLenMNScene::GameTienLenMNScene() {
 

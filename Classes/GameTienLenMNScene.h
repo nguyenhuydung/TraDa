@@ -23,6 +23,7 @@ class GameTienLenMNScene : public Layer {
 	int lopBaiDanhRa = 0, lopBaiDanhRaCuoi = 0;
 	Card* baiDanhRa[100][13];
 	int baiDanhRaCount[100];
+	static int stepDanhBai; //Cai bien nay chi ra ai dang danh, ai bo luot
 
 	static Scene* createScene();
 	bool init() override;
