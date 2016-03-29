@@ -15,7 +15,7 @@ static float scaleXL = 0.0f;
 static float scaleYL = 0.0f;
 
 class GameTienLenMNScene : public Layer {
-	public:
+public:
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
 	int chiaBaiIndex = 0;
@@ -27,11 +27,15 @@ class GameTienLenMNScene : public Layer {
 
 	static Scene* createScene();
 	bool init() override;
-	
+
+	void onSelectCard();
+	void onSelectCardOk();
+
 	void chiaBai();
 	void chiaBaiAnimation(Node* sender);
 	void newGameStart(int lastWinPlayer);
 	void danhBaiAnimation();
+	void danhBaiDone();
 	//CPU playing:
 	bool tlmnValid(int state);
 	void tlmnCpuSelect(int player, int step);
@@ -40,11 +44,20 @@ class GameTienLenMNScene : public Layer {
 	static GameTienLenMNScene* create() {
 		auto pRet = new(std::nothrow) GameTienLenMNScene();
 		if (pRet && pRet->init()) {
-			pRet->autorelease(); return pRet;
+			pRet->autorelease();
+			return pRet;
 		}
 		delete pRet;
 		return nullptr;
 	};
+
+private:
+	bool isValidSelected(Card *selectedCrad[13], int selectedCradLen);
+	Label *messageBox;
+	void showMessageBox(std::string msg);
+	void hideMessageBox();
+	//bool 
 };
 
 #endif
+

@@ -6,7 +6,7 @@
 USING_NS_CC;
 
 enum cardstate {
-	CARD_STATE_NORM, CARD_STATE_SELT, CARD_STATE_DOWN
+	CARD_STATE_NORM, CARD_STATE_SELT, CARD_STATE_DOWN, CARD_STATE_DROP
 };
 
 class Card : public Sprite {
@@ -16,13 +16,13 @@ class Card : public Sprite {
 	static float cardWidth;
 	static float cardHeight;
 	static Card* allCard[52];
-	static void loadData();
+	static void loadData(std::function<void()> on_select, std::function<void()> on_select_ok);
 
 	Card();
 	~Card();
-	static Card* create(int index, int element);
+	static Card* create(int index, int element, std::function<void()> on_select, std::function<void()> on_select_ok);
 	//Sprite
-	void addTouchEvents();
+	void addTouchEvents(std::function<void()> on_select, std::function<void()> on_select_ok);
 	//Bai
 	int cardIndex = 0, cardElement = 0;
 	cardstate cardState = CARD_STATE_NORM;
