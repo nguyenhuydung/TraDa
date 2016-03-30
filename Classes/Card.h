@@ -21,6 +21,7 @@ class Card : public Sprite {
 	static Card* allCard[52];
 	//Tải thông tin dữ liệu ảnh cho các quan bài và khởi tạo Sprite
 	static void loadData();
+	static bool loadedData;
 
 	Card();
 	~Card();

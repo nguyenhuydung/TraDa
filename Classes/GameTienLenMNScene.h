@@ -15,8 +15,20 @@ static float scaleY = 0.0f;
 static float scaleXL = 0.0f;
 static float scaleYL = 0.0f;
 
+struct LuotDanh {
+	int nguoiDangDanh = -1;
+	int nguoiDaBoVong[4] = {0,0,0,0};
+
+	LuotDanh() {
+		nguoiDangDanh = -1;
+		nguoiDaBoVong[0] = 0;
+		nguoiDaBoVong[0] = 0;
+		nguoiDaBoVong[0] = 0;
+	}
+};
+
 class GameTienLenMNScene : public Layer {
-public:
+	public:
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
 	int chiaBaiIndex = 0;
@@ -24,7 +36,7 @@ public:
 	int lopBaiDanhRa = 0, lopBaiDanhRaCuoi = 0;
 	Card* baiDanhRa[100][13];
 	int baiDanhRaCount[100];
-	static int stepDanhBai; //Cai bien nay chi ra ai dang danh, ai bo luot
+	static LuotDanh *stepDanhBai; //Cai bien nay chi ra ai dang danh, ai bo luot
 
 	static Scene* createScene();
 	bool init() override;
@@ -50,11 +62,11 @@ public:
 		return nullptr;
 	};
 
-private:
-	bool isValidSelected(Card *selectedCrad[13], int selectedCradLen);
-	Label *messageBox;
+	private:
+	bool isValidSelected(Card* selectedCrad[13], int selectedCradLen);
+	Label* messageBox;
 	//bool 
-	CocosDenshion::SimpleAudioEngine *audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
 };
 
 #endif

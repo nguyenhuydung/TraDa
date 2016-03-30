@@ -12,7 +12,7 @@ USING_NS_CC;
 auto visibleSize = Director::getInstance()->getVisibleSize();
 GPlayer* player[4];
 
-int GameTienLenMNScene::stepDanhBai = 0;
+LuotDanh *GameTienLenMNScene::stepDanhBai = new LuotDanh;
 
 GameTienLenMNScene::GameTienLenMNScene(): messageBox(nullptr) {
 
@@ -152,7 +152,7 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::ENDED:
 				for (auto i = 0; i < 13; i++) {
 					for (auto j = i + 1; j < 13; j++) {
-						if ((player[0]->Bai[i]->cardIndex > player[0]->Bai[j]->cardIndex) || (player[0]->Bai[i]->cardIndex == player[0]->Bai[j]->cardIndex && player[0]->Bai[i]->cardElement > player[0]->Bai[j]->cardElement)) {
+						if ((player[0]->Bai[i]->cardIndex > player[0]->Bai[j]->cardIndex) || (player[0]->Bai[i]->cardIndex == player[0]->Bai[j]->cardIndex && player[0]->Bai[i]->cardElement > player[0]->Bai[j]->cardElement) || player[0]->Bai[j]->daDanh) {
 							auto tmp = player[0]->Bai[i];
 							player[0]->Bai[i] = player[0]->Bai[j];
 							player[0]->Bai[j] = tmp;
@@ -176,7 +176,8 @@ bool GameTienLenMNScene::init() {
 	messageBox = Label::create();
 	messageBox->setTextColor(Color4B(0, 0, 0, 255));
 	messageBox->setSystemFontSize(24);
-	messageBox->setPosition(Vec2(455.0f * scaleX, 60.0f * scaleY));
+	messageBox->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+	messageBox->setPosition(Vec2(240.0f * scaleX, 50.0f * scaleY));
 	messageBox->setString("Đang chia bai...");
 	this->addChild(messageBox);
 
@@ -351,7 +352,7 @@ bool GameTienLenMNScene::tlmnValid(int step) {
 			selectedCradLen++;
 		}
 	}
-	if (isValidSelected(selectedCrad, selectedCradLen)) return true;
+	if (selectedCradLen != 0 && isValidSelected(selectedCrad, selectedCradLen)) return true;
 	return false;
 }
 

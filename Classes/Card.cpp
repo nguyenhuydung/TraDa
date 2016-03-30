@@ -13,7 +13,7 @@ Card::~Card() {
 Texture2D* Card::cardsImage = nullptr;
 float Card::cardWidth = 0;
 float Card::cardHeight = 0;
-
+bool Card::loadedData = false;
 
 
 Card* Card::create(int index, int element) {
@@ -73,6 +73,7 @@ void Card::ChangeState(cardstate state) {
 * Tai file allcard vao cache sprite
 */
 void Card::loadData() {
+	if (loadedData) return;
 	cardsImage = Director::getInstance()->getTextureCache()->addImage("cardall.png");
 	cardWidth = cardsImage->getContentSize().width / 13;
 	cardHeight = cardsImage->getContentSize().height / 10;
@@ -82,5 +83,6 @@ void Card::loadData() {
 			allCard[i]->initWithTexture(cardsImage, Rect(0, cardHeight * 4, cardWidth, cardHeight));
 		}
 	}
+	loadedData = true;
 }
 
