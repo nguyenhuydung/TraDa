@@ -5,14 +5,16 @@
 #include "RankingScene.h"
 #include "HelloWorldScene.h"
 #include "FrozaxShake/FShake.h"
+#include <SimpleAudioEngine.h>
 
 USING_NS_CC;
 
 auto visibleSize = Director::getInstance()->getVisibleSize();
 GPlayer* player[4];
+
 int GameTienLenMNScene::stepDanhBai = 0;
 
-GameTienLenMNScene::GameTienLenMNScene() {
+GameTienLenMNScene::GameTienLenMNScene(): messageBox(nullptr) {
 
 }
 
@@ -33,14 +35,6 @@ Scene* GameTienLenMNScene::createScene() {
 //	return nullptr;
 //}
 
-void GameTienLenMNScene::onSelectCard() {
-	//btnUserPlay->se
-}
-
-void GameTienLenMNScene::onSelectCardOk() {
-
-}
-
 bool GameTienLenMNScene::init() {
 	if (!Layer::init()) {
 		return false;
@@ -48,7 +42,7 @@ bool GameTienLenMNScene::init() {
 	visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	auto sprite = Sprite::create("board.png");
-	
+
 	//Create scale
 	sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	scaleX = visibleSize.width / sprite->getContentSize().width;
@@ -115,7 +109,7 @@ bool GameTienLenMNScene::init() {
 				} else {
 					auto shake = FShake::actionWithDuration(0.03f, 10.0f);
 					this->runAction(shake);
-					showMessageBox("Khong danh duoc");
+					messageBox->setString("Bài chọn không hợp lệ");
 				}
 				break;
 			default:
@@ -166,7 +160,7 @@ bool GameTienLenMNScene::init() {
 					}
 				}
 				for (auto i = 0; i < 13; i++) {
-					if (player[0]->Bai[i]->cardState == CARD_STATE_NORM) {
+					if (!player[0]->Bai[i]->daDanh) {
 						auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleXL * (PP0.x + i * Card::cardWidth), scaleYL * PP0.y)));
 						auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
 						player[0]->Bai[i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
@@ -185,18 +179,9 @@ bool GameTienLenMNScene::init() {
 	messageBox->setPosition(Vec2(455.0f * scaleX, 60.0f * scaleY));
 	messageBox->setString("Đang chia bai...");
 	this->addChild(messageBox);
-	auto onSelectCard = [] {
-		//btnUserThoi->setEnabled(false);
-		///btnUserPlay->setEnabled(false);
-		CCLOG("select card");
-	};
-	auto onSelectCardOk = [] {
-		//btnUserThoi->setEnabled(true);
-		//btnUserPlay->setEnabled(true);
-		CCLOG("select card done");
-	};
-	// -- NUT XEP BAI
-	Card::loadData(onSelectCard, onSelectCardOk);
+
+	Card::loadData();
+
 	//khoi tao 52 quan bai
 	for (auto i = 0; i < 52; i++) {
 		Card::allCard[i]->setPosition(Vec2(visibleSize.width / 2, scaleY * 450.0f));
@@ -295,16 +280,13 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		player[0]->Bai[baiso]->setScaleY(scaleYL);
 
 		auto actionScale = ScaleTo::create(0.08, scaleXL, scaleYL);
-		actionScale->setTag(1);
 		auto actionMove = MoveTo::create(0.08, Vec2(scaleXL * (PP0.x + baiso * Card::cardWidth), scaleYL * PP0.y));
-		actionMove->setTag(2);
 		auto actionRotate = RotateBy::create(0.08, 360);
-		actionRotate->setTag(3);
 		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, NULL));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionRotate, NULL));
 		player[0]->Bai[baiso]->runAction(CCSequence::create(actionScale, actionMoveDone, NULL));
-		//audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
+		audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
 	}
 	chiaBaiIndex++;
 }
@@ -313,7 +295,6 @@ void GameTienLenMNScene::newGameStart(int lastWinPlayer) {
 	chiaBai();
 
 }
-
 
 
 void GameTienLenMNScene::danhBaiAnimation() {
@@ -348,19 +329,21 @@ void GameTienLenMNScene::danhBaiAnimation() {
 		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionScale, NULL));
 		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionRotate, NULL));
 
-		baiDanhRa[lopBaiDanhRa][i]->ChangeState(CARD_STATE_DROP);
+		baiDanhRa[lopBaiDanhRa][i]->ChangeState(CARD_STATE_NORM);
+		baiDanhRa[lopBaiDanhRa][i]->daDanh = true;
 		baiDanhRa[lopBaiDanhRa][i]->setLocalZOrder(lopBaiDanhRa);
 	}
 	lopBaiDanhRa++;
 }
 
 void GameTienLenMNScene::danhBaiDone() {
-
+	//auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+	audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
 }
 
 ///Kiem tra card selected co dung khong
 bool GameTienLenMNScene::tlmnValid(int step) {
-	Card *selectedCrad[13];
+	Card* selectedCrad[13];
 	auto selectedCradLen = 0;
 	for (auto i = 0; i < 52; i++) {
 		if (Card::allCard[i]->cardState == CARD_STATE_SELT) {
@@ -368,19 +351,21 @@ bool GameTienLenMNScene::tlmnValid(int step) {
 			selectedCradLen++;
 		}
 	}
-	if (isValidSelected(selectedCrad, selectedCradLen))
-	return true;
+	if (isValidSelected(selectedCrad, selectedCradLen)) return true;
 	return false;
 }
 
 ///CPU chon quan de danh
-void GameTienLenMNScene::tlmnCpuSelect(int player, int step) {
+void GameTienLenMNScene::tlmnCpuSelect(int player, int step, int level) {
+	//Chon quan đánh
 
+
+	//Update lại Step
 }
 
 //Private for Tien Len Mien Nam:
 
-bool GameTienLenMNScene::isValidSelected(Card *selectedCrad[13], int selectedCradLen) {
+bool GameTienLenMNScene::isValidSelected(Card* selectedCrad[13], int selectedCradLen) {
 	if (selectedCradLen == 1) {
 		//Rác:
 		return true;
@@ -397,18 +382,18 @@ bool GameTienLenMNScene::isValidSelected(Card *selectedCrad[13], int selectedCra
 		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex && selectedCrad[1]->cardIndex == selectedCrad[2]->cardIndex) {
 			return true;
 		}
-		return false;
+		//return false;
 	}
 	if (selectedCradLen == 4) {
 		//Tứ quý
 		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex && selectedCrad[1]->cardIndex == selectedCrad[2]->cardIndex && selectedCrad[2]->cardIndex == selectedCrad[3]->cardIndex) {
 			return true;
 		}
-		return false;
+		//return false;
 	}
 	//Kiểm tra sảnh:
-	
-	Card *tmpar[13];
+
+	Card* tmpar[13];
 	for (auto i = 0; i < selectedCradLen; i++) {
 		tmpar[i] = selectedCrad[i];
 	}
@@ -416,9 +401,9 @@ bool GameTienLenMNScene::isValidSelected(Card *selectedCrad[13], int selectedCra
 	for (auto i = 0; i < selectedCradLen; i++) {
 		for (auto j = i + 1; j < selectedCradLen; j++) {
 			if ((tmpar[i]->cardIndex > tmpar[j]->cardIndex) || (tmpar[i]->cardIndex == tmpar[j]->cardIndex && tmpar[i]->cardElement > tmpar[j]->cardElement)) {
-				auto tmp = tmpar[i];
+				auto tmpx = tmpar[i];
 				tmpar[i] = tmpar[j];
-				tmpar[j] = tmp;
+				tmpar[j] = tmpx;
 			}
 		}
 	}
@@ -433,20 +418,15 @@ bool GameTienLenMNScene::isValidSelected(Card *selectedCrad[13], int selectedCra
 	} while (isValid && i < selectedCradLen);
 	if (isValid) return true;
 	///Đôi thông
-	//i = 1;
-	//do {
-	//	if (tmpar[0]->cardIndex != tmpar[i]->cardIndex - i) {
-	//		isValid = false;
-	//	}
-	//	i++;
-	//} while (isValid && i < selectedCradLen);
+	if (selectedCradLen == 6 || selectedCradLen == 8 || selectedCradLen == 10 || selectedCradLen == 12) {
+		i = 0;
+		do {
+			if ((tmpar[i]->cardIndex != tmpar[i + 1]->cardIndex) && (tmpar[i]->cardIndex != tmpar[i + 2]->cardIndex - 1) && (tmpar[i + 1]->cardIndex != tmpar[i + 3]->cardIndex - 1)) {
+				isValid = false;
+			}
+			i = i + 2;
+		} while (isValid && i < selectedCradLen - 4);
+	}
 	return false;
 }
 
-void GameTienLenMNScene::showMessageBox(std::string msg) {
-	messageBox->setString(msg);
-}
-
-void GameTienLenMNScene::hideMessageBox() {
-	
-}

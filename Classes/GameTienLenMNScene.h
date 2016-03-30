@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Card.h"
+#include <SimpleAudioEngine.h>
 
 const Vec2 PP0 = Vec2(45, 110);
 const Vec2 PP1 = Vec2(940, 375);
@@ -28,17 +29,15 @@ public:
 	static Scene* createScene();
 	bool init() override;
 
-	void onSelectCard();
-	void onSelectCardOk();
-
 	void chiaBai();
 	void chiaBaiAnimation(Node* sender);
 	void newGameStart(int lastWinPlayer);
 	void danhBaiAnimation();
 	void danhBaiDone();
+
 	//CPU playing:
 	bool tlmnValid(int state);
-	void tlmnCpuSelect(int player, int step);
+	void tlmnCpuSelect(int player, int step, int level);
 
 	//static GameTienLenMNScene* loadScene(std::function<void ()> onCompleted);
 	static GameTienLenMNScene* create() {
@@ -54,9 +53,8 @@ public:
 private:
 	bool isValidSelected(Card *selectedCrad[13], int selectedCradLen);
 	Label *messageBox;
-	void showMessageBox(std::string msg);
-	void hideMessageBox();
 	//bool 
+	CocosDenshion::SimpleAudioEngine *audio = CocosDenshion::SimpleAudioEngine::getInstance();
 };
 
 #endif

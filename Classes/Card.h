@@ -5,8 +5,11 @@
 
 USING_NS_CC;
 
-enum cardstate {
-	CARD_STATE_NORM, CARD_STATE_SELT, CARD_STATE_DOWN, CARD_STATE_DROP
+///Hiển thị của Card:
+enum cardstate { 
+	CARD_STATE_NORM, //Hiện bình thường
+	CARD_STATE_SELT, //Hiện đang được select
+	CARD_STATE_DOWN, //Bài đang úp
 };
 
 class Card : public Sprite {
@@ -16,20 +19,24 @@ class Card : public Sprite {
 	static float cardWidth;
 	static float cardHeight;
 	static Card* allCard[52];
-	static void loadData(std::function<void()> on_select, std::function<void()> on_select_ok);
+	//Tải thông tin dữ liệu ảnh cho các quan bài và khởi tạo Sprite
+	static void loadData();
 
 	Card();
 	~Card();
-	static Card* create(int index, int element, std::function<void()> on_select, std::function<void()> on_select_ok);
+	static Card* create(int index, int element);
 	//Sprite
-	void addTouchEvents(std::function<void()> on_select, std::function<void()> on_select_ok);
-	//Bai
+	void addTouchEvents();
+	//Quan bài
 	int cardIndex = 0, cardElement = 0;
-	cardstate cardState = CARD_STATE_NORM;
+	//Hiển thị
+	cardstate cardState = CARD_STATE_NORM; 
 	int zIndex = 1;
-	///trang thai xap
+	//Dùng cho chia bài
 	bool daChia = false;
-	
+	//Dùng cho đánh
+	bool daDanh = false;
+	//Dùng để đổi trạng thái hiển thị
 	void ChangeState(cardstate state);
 };
 
