@@ -1,6 +1,5 @@
 ﻿#include "GameTienLenMNScene.h"
 #include "Card.h"
-#include "ui/CocosGUI.h"
 #include "GPlayer.h"
 #include "RankingScene.h"
 #include "HelloWorldScene.h"
@@ -10,12 +9,11 @@
 USING_NS_CC;
 
 auto visibleSize = Director::getInstance()->getVisibleSize();
-GPlayer* player[4];
+GPlayer* CPplayer[4];
 
-LuotDanh *GameTienLenMNScene::stepDanhBai = new LuotDanh;
+//LuotDanh *GameTienLenMNScene::stepDanhBai = new LuotDanh;
 
-GameTienLenMNScene::GameTienLenMNScene(): messageBox(nullptr) {
-
+GameTienLenMNScene::GameTienLenMNScene(): stepDanhBai(new LuotDanh), messageBox(nullptr) {
 }
 
 GameTienLenMNScene::~GameTienLenMNScene() {
@@ -57,7 +55,7 @@ bool GameTienLenMNScene::init() {
 	this->addChild(sprite, 0);
 
 	//Vẽ nút quit và nut Config
-	auto btnConfig = ui::Button::create("play.cfg.nor.png", "play.cfg.put.png", "play.cfg.nor.png");
+	btnConfig = ui::Button::create("play.cfg.nor.png", "play.cfg.put.png", "play.cfg.nor.png");
 	btnConfig->setPosition(Vec2(175.0f * scaleX, 50.0f * scaleY));
 	btnConfig->setScaleX(scaleX);
 	btnConfig->setScaleY(scaleY);
@@ -74,7 +72,7 @@ bool GameTienLenMNScene::init() {
 	});
 	this->addChild(btnConfig);
 
-	auto btnBack = ui::Button::create("play.back.nor.png", "play.back.put.png", "play.back.dis.png");
+	btnBack = ui::Button::create("play.back.nor.png", "play.back.put.png", "play.back.dis.png");
 	btnBack->setPosition(Vec2(64.0f * scaleX, 50.0f * scaleY));
 	btnBack->setScaleX(scaleX);
 	btnBack->setScaleY(scaleY);
@@ -92,7 +90,7 @@ bool GameTienLenMNScene::init() {
 	this->addChild(btnBack);
 	//return true;
 	//Vẽ nút điều khiển đánh bài
-	auto btnUserPlay = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
+	btnUserPlay = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
 	btnUserPlay->setTitleText("Đánh");
 	btnUserPlay->setTitleFontSize(24);
 	btnUserPlay->setTitleColor(Color3B(33, 33, 33));
@@ -105,6 +103,7 @@ bool GameTienLenMNScene::init() {
 				break;
 			case ui::Widget::TouchEventType::ENDED:
 				if (tlmnValid(0)) {
+					EnableControls(false);
 					danhBaiAnimation();
 				} else {
 					auto shake = FShake::actionWithDuration(0.03f, 10.0f);
@@ -118,7 +117,7 @@ bool GameTienLenMNScene::init() {
 	});
 	//NUT THOI
 	this->addChild(btnUserPlay);
-	auto btnUserThoi = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
+	btnUserThoi = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
 	btnUserThoi->setTitleText("Thôi");
 	btnUserThoi->setScaleX(scaleX);
 	btnUserThoi->setScaleY(scaleY);
@@ -131,6 +130,7 @@ bool GameTienLenMNScene::init() {
 				break;
 			case ui::Widget::TouchEventType::ENDED:
 				//Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
+				newGameStart();
 				break;
 			default:
 				break;
@@ -138,7 +138,7 @@ bool GameTienLenMNScene::init() {
 	});
 	this->addChild(btnUserThoi);
 	//NUT XEP BAI
-	auto btnUserXep = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
+	btnUserXep = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
 	btnUserXep->setTitleText("Xếp bài");
 	btnUserXep->setScaleX(scaleX);
 	btnUserXep->setScaleY(scaleY);
@@ -152,18 +152,18 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::ENDED:
 				for (auto i = 0; i < 13; i++) {
 					for (auto j = i + 1; j < 13; j++) {
-						if ((player[0]->Bai[i]->cardIndex > player[0]->Bai[j]->cardIndex) || (player[0]->Bai[i]->cardIndex == player[0]->Bai[j]->cardIndex && player[0]->Bai[i]->cardElement > player[0]->Bai[j]->cardElement) || player[0]->Bai[j]->daDanh) {
-							auto tmp = player[0]->Bai[i];
-							player[0]->Bai[i] = player[0]->Bai[j];
-							player[0]->Bai[j] = tmp;
+						if ((CPplayer[0]->Bai[i]->cardIndex > CPplayer[0]->Bai[j]->cardIndex) || (CPplayer[0]->Bai[i]->cardIndex == CPplayer[0]->Bai[j]->cardIndex && CPplayer[0]->Bai[i]->cardElement > CPplayer[0]->Bai[j]->cardElement) || CPplayer[0]->Bai[j]->daDanh) {
+							auto tmp = CPplayer[0]->Bai[i];
+							CPplayer[0]->Bai[i] = CPplayer[0]->Bai[j];
+							CPplayer[0]->Bai[j] = tmp;
 						}
 					}
 				}
 				for (auto i = 0; i < 13; i++) {
-					if (!player[0]->Bai[i]->daDanh) {
+					if (!CPplayer[0]->Bai[i]->daDanh) {
 						auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleXL * (PP0.x + i * Card::cardWidth), scaleYL * PP0.y)));
-						auto actionMoveDone = CallFunc::create(player[0]->Bai[i], SEL_CallFunc());
-						player[0]->Bai[i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+						auto actionMoveDone = CallFunc::create(CPplayer[0]->Bai[i], SEL_CallFunc());
+						CPplayer[0]->Bai[i]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 					}
 				}
 				break;
@@ -191,13 +191,28 @@ bool GameTienLenMNScene::init() {
 		Card::allCard[i]->setScaleY(scaleY);
 		addChild(Card::allCard[i], 1);
 	}
+	//Layer for disable control
+	//waitingLayer = LayerGradient::create();
+	//waitingLayer->setContentSize(visibleSize);
+	//waitingLayer->setPosition(Vec2::ZERO);
+	//waitingLayer->setStartColor(Color3B(150, 150, 150));
+	//waitingLayer->setEndColor(Color3B(255, 255, 255));
+	//waitingLayer->setStartOpacity(50);
+	//waitingLayer->setEndOpacity(50);
+	//BlendFunc blend;
+	//blend.src = GL_SRC_ALPHA;
+	//blend.dst = GL_ONE_MINUS_SRC_ALPHA;
+	//waitingLayer->setBlendFunc(blend);
+	//waitingLayer->setTouchEnabled(false);
+	//waitingLayer->setSwallowsTouches(false);
+	//addChild(waitingLayer, 101);
 
-	newGameStart(-1);
+	newGameStart();
 	return true;
 }
 
 void GameTienLenMNScene::chiaBai() {
-	//reset allcard
+	//Reset
 	for (auto i = 0; i < 52; i++) {
 		Card::allCard[i]->daChia = false;
 		Card::allCard[i]->setPosition(Vec2(visibleSize.width / 2, scaleY * 450.0f));
@@ -205,39 +220,41 @@ void GameTienLenMNScene::chiaBai() {
 		Card::allCard[i]->setScaleY(scaleY);
 		Card::allCard[i]->ChangeState(CARD_STATE_DOWN);
 	}
-
-	player[0] = new GPlayer();
+	lopBaiDanhRa = 0, lopBaiDanhRaCuoi = 0;
+	baiDanhRaCount[0] = 0;
+	//Chia ngau nhien
+	CPplayer[0] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
 			inx = RandomHelper::random_int(0, 51);
 		}
 		Card::allCard[inx]->daChia = true;
-		player[0]->Bai[i] = Card::allCard[inx];
+		CPplayer[0]->Bai[i] = Card::allCard[inx];
 	}
-	player[1] = new GPlayer();
+	CPplayer[1] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
 			inx = RandomHelper::random_int(0, 51);
 		}
 		Card::allCard[inx]->daChia = true;
-		player[1]->Bai[i] = Card::allCard[inx];
+		CPplayer[1]->Bai[i] = Card::allCard[inx];
 	}
-	player[2] = new GPlayer();
+	CPplayer[2] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
 			inx = RandomHelper::random_int(0, 51);
 		}
 		Card::allCard[inx]->daChia = true;
-		player[2]->Bai[i] = Card::allCard[inx];
+		CPplayer[2]->Bai[i] = Card::allCard[inx];
 	}
-	player[3] = new GPlayer();
+	CPplayer[3] = new GPlayer();
 	auto inx = 0;
 	for (auto i = 0; i < 52; i++) {
 		if (!Card::allCard[i]->daChia) {
-			player[3]->Bai[inx] = Card::allCard[i];
+			CPplayer[3]->Bai[inx] = Card::allCard[i];
 			Card::allCard[i]->daChia = true;
 			inx ++;
 		}
@@ -245,58 +262,94 @@ void GameTienLenMNScene::chiaBai() {
 	//create animation:
 	chiaBaiIndex = 0;
 	chiaBaiAnimation(nullptr);
-	return;
 }
 
 //auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
-	if (chiaBaiIndex >= 52) return;
+	if (chiaBaiIndex >= 52) {
+		//Chia xong
+		messageBox->setString("Chia bài xong");
+		stepDanhBai->nguoiDangDanh = -1;
+		stepDanhBai->nguoiDaBoVong[0] = 0;
+		stepDanhBai->nguoiDaBoVong[1] = 0;
+		stepDanhBai->nguoiDaBoVong[2] = 0;
+		stepDanhBai->nguoiDaBoVong[3] = 0;
+		danhBai();
+		return;
+	}
 	if (chiaBaiIndex % 4 == 0) {
 		//Chia cho nguoi choi
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		auto actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP1.x, scaleY * PP1.y));
 		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[1]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		CPplayer[1]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 1) {
 		//Chia cho CPU phai PP1
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		auto actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP2.x, scaleY * PP2.y));
 		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[2]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		CPplayer[2]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 2) {
 		//Chia cho CPU tren PP2
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
 		auto actionMove = CCMoveTo::create(0.05, Vec2(scaleX * PP3.x, scaleY * PP3.y));
 		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
+		CPplayer[3]->Bai[baiso]->runAction(CCSequence::create(actionMove, actionMoveDone, NULL));
 	}
 	if (chiaBaiIndex % 4 == 3) {
 		//Chia cho CPU trai PP3
 		auto baiso = static_cast<int>(chiaBaiIndex / 4);
-		player[0]->Bai[baiso]->ChangeState(CARD_STATE_NORM);
-		player[0]->Bai[baiso]->setScaleX(scaleXL);
-		player[0]->Bai[baiso]->setScaleY(scaleYL);
+		CPplayer[0]->Bai[baiso]->ChangeState(CARD_STATE_NORM);
+		CPplayer[0]->Bai[baiso]->setScaleX(scaleXL);
+		CPplayer[0]->Bai[baiso]->setScaleY(scaleYL);
 
 		auto actionScale = ScaleTo::create(0.08, scaleXL, scaleYL);
 		auto actionMove = MoveTo::create(0.08, Vec2(scaleXL * (PP0.x + baiso * Card::cardWidth), scaleYL * PP0.y));
 		auto actionRotate = RotateBy::create(0.08, 360);
 		auto actionMoveDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBaiAnimation));
-		player[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, NULL));
-		player[0]->Bai[baiso]->runAction(CCSequence::create(actionRotate, NULL));
-		player[0]->Bai[baiso]->runAction(CCSequence::create(actionScale, actionMoveDone, NULL));
+		CPplayer[0]->Bai[baiso]->runAction(CCSequence::create(actionMove, NULL));
+		CPplayer[0]->Bai[baiso]->runAction(CCSequence::create(actionRotate, NULL));
+		CPplayer[0]->Bai[baiso]->runAction(CCSequence::create(actionScale, actionMoveDone, NULL));
 		audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
 	}
 	chiaBaiIndex++;
 }
 
-void GameTienLenMNScene::newGameStart(int lastWinPlayer) {
-	chiaBai();
 
+
+void GameTienLenMNScene::newGameStart() {
+	///Disable controlers
+	EnableControls(false);
+	///Play
+	chiaBai();
 }
 
+void GameTienLenMNScene::danhBai() {
+	if (stepDanhBai->nguoiDangDanh == -1) {
+		//Tim nguoi danh dau tien (co 3 bich)
+		stepDanhBai->nguoiDangDanh = 0;
+	} 
+	if (stepDanhBai->nguoiDangDanh == 0) {
+		//Nguoi choi ddanhs
+		EnableControls(true);
+	}else {	
+		//CPU danh
+		tlmnCpuSelect(stepDanhBai->nguoiDangDanh, 0, 0);
+		danhBaiAnimation();
+	}
+}
+
+void GameTienLenMNScene::danhBaiDone(Node* sender) {
+	//Animation danh bai done:
+	audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
+	///Update step o day:
+	stepDanhBai->nguoiDangDanh++;
+	if (stepDanhBai->nguoiDangDanh == 4) stepDanhBai->nguoiDangDanh = 0;
+	danhBai();
+}
 
 void GameTienLenMNScene::danhBaiAnimation() {
 	//tìm số lượng bài sẽ đánh
@@ -325,10 +378,11 @@ void GameTienLenMNScene::danhBaiAnimation() {
 		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * 500 - donCount * 30)));
 		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
 		auto actionRotate = RotateBy::create(0.5, 360);
+		auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBaiDone));
 
 		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionMove, NULL));
 		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionScale, NULL));
-		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionRotate, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionRotate, actionDone, NULL));
 
 		baiDanhRa[lopBaiDanhRa][i]->ChangeState(CARD_STATE_NORM);
 		baiDanhRa[lopBaiDanhRa][i]->daDanh = true;
@@ -337,10 +391,7 @@ void GameTienLenMNScene::danhBaiAnimation() {
 	lopBaiDanhRa++;
 }
 
-void GameTienLenMNScene::danhBaiDone() {
-	//auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
-}
+
 
 ///Kiem tra card selected co dung khong
 bool GameTienLenMNScene::tlmnValid(int step) {
@@ -352,53 +403,67 @@ bool GameTienLenMNScene::tlmnValid(int step) {
 			selectedCradLen++;
 		}
 	}
-	if (selectedCradLen != 0 && isValidSelected(selectedCrad, selectedCradLen)) return true;
+	if (selectedCradLen != 0 && isSelectedType(selectedCrad, selectedCradLen) != BO_FALSE) return true;
 	return false;
 }
 
 ///CPU chon quan de danh
 void GameTienLenMNScene::tlmnCpuSelect(int player, int step, int level) {
-	//Chon quan đánh
+	//CPU Chon quan de đánh
 
+	/// Thử cho CPU dánh lung tung:
+	auto soBai = RandomHelper::random_int(1, 5);
+	auto i = 0;
+	auto count = 0;
+	while (i < 13 && count < soBai) {
+		if (!CPplayer[player]->Bai[i]->daDanh) {
+			CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
+			count++;
+		}
+		i++;
+	}
+}
 
-	//Update lại Step
+void GameTienLenMNScene::EnableControls(bool state) {
+	btnConfig->setEnabled(state);
+	btnBack->setEnabled(state);
+	btnUserPlay->setEnabled(state);
+	btnUserThoi->setEnabled(state);
+	btnUserXep->setEnabled(state);
 }
 
 //Private for Tien Len Mien Nam:
 
-bool GameTienLenMNScene::isValidSelected(Card* selectedCrad[13], int selectedCradLen) {
+XapBo GameTienLenMNScene::isSelectedType(Card* selectedCrad[13], int selectedCradLen) {
 	if (selectedCradLen == 1) {
-		//Rác:
-		return true;
+		///Rác:
+		return BO_RAC;
 	}
 	if (selectedCradLen == 2) {
-		//Đôi
+		///Đôi
 		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex) {
-			return true;
+			return BO_DOI;
 		}
-		return false;
+		return BO_FALSE;
 	}
 	if (selectedCradLen == 3) {
-		//Sám
+		///Sám
 		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex && selectedCrad[1]->cardIndex == selectedCrad[2]->cardIndex) {
-			return true;
+			return BO_BA;
 		}
-		//return false;
 	}
 	if (selectedCradLen == 4) {
-		//Tứ quý
+		///Tứ quý
 		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex && selectedCrad[1]->cardIndex == selectedCrad[2]->cardIndex && selectedCrad[2]->cardIndex == selectedCrad[3]->cardIndex) {
-			return true;
+			return BO_TUQUY;
 		}
-		//return false;
 	}
 	//Kiểm tra sảnh:
-
 	Card* tmpar[13];
 	for (auto i = 0; i < selectedCradLen; i++) {
 		tmpar[i] = selectedCrad[i];
 	}
-	//sort teamp
+	///sort teamp
 	for (auto i = 0; i < selectedCradLen; i++) {
 		for (auto j = i + 1; j < selectedCradLen; j++) {
 			if ((tmpar[i]->cardIndex > tmpar[j]->cardIndex) || (tmpar[i]->cardIndex == tmpar[j]->cardIndex && tmpar[i]->cardElement > tmpar[j]->cardElement)) {
@@ -417,7 +482,7 @@ bool GameTienLenMNScene::isValidSelected(Card* selectedCrad[13], int selectedCra
 		}
 		i++;
 	} while (isValid && i < selectedCradLen);
-	if (isValid) return true;
+	if (isValid) return BO_DAY;
 	///Đôi thông
 	if (selectedCradLen == 6 || selectedCradLen == 8 || selectedCradLen == 10 || selectedCradLen == 12) {
 		i = 0;
@@ -428,6 +493,7 @@ bool GameTienLenMNScene::isValidSelected(Card* selectedCrad[13], int selectedCra
 			i = i + 2;
 		} while (isValid && i < selectedCradLen - 4);
 	}
-	return false;
+	if (isValid) return BO_DOITHONG;
+	return BO_FALSE;
 }
 
