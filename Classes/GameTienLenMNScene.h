@@ -59,7 +59,7 @@ public:
 	int baiDanhRaCount[100];
 
 	void danhBai();
-	void danhBaiAnimation();
+	void danhBaiAnimation(int player, XapBo xapbodanhra, Card *bodanhra[13], int sobaidanhra);
 	void danhBaiDone(Node* sender);
 	///create:
 	static GameTienLenMNScene* create() {
@@ -77,7 +77,7 @@ private:
 	//CPU playing:
 	LuotDanh* stepDanhBai; //Cai bien nay chi ra ai dang danh, ai bo luot
 	bool tlmnValid(int state);
-	void tlmnCpuSelect(int player, int step, int level);
+	void tlmnCpuSelect(int player, XapBo *xapbodanhra, Card *bodanhra[13], int *sobaidanhra, int level);
 	///UI
 	ui::Button *btnConfig, *btnBack, *btnUserPlay, *btnUserThoi, *btnUserXep;
 	Label* messageBox;

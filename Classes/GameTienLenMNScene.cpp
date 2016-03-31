@@ -55,7 +55,7 @@ bool GameTienLenMNScene::init() {
 	this->addChild(sprite, 0);
 
 	//Vẽ nút quit và nut Config
-	btnConfig = ui::Button::create("play.cfg.nor.png", "play.cfg.put.png", "play.cfg.nor.png");
+	btnConfig = ui::Button::create("play.cfg.nor.png", "play.cfg.put.png", "play.cfg.dis.png");
 	btnConfig->setPosition(Vec2(175.0f * scaleX, 50.0f * scaleY));
 	btnConfig->setScaleX(scaleX);
 	btnConfig->setScaleY(scaleY);
@@ -102,9 +102,18 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				if (tlmnValid(0)) {
+				Card* selectedCrad[13];
+				auto selectedCradLen = 0;
+				for (auto i = 0; i < 52; i++) {
+					if (Card::allCard[i]->cardState == CARD_STATE_SELT) {
+						selectedCrad[selectedCradLen] = Card::allCard[i];
+						selectedCradLen++;
+					}
+				}
+				auto xapBo = isSelectedType(selectedCrad, selectedCradLen);
+				if (selectedCradLen != 0 && xapBo != BO_FALSE) {
 					EnableControls(false);
-					danhBaiAnimation();
+					danhBaiAnimation(0, xapBo, selectedCrad, selectedCradLen);
 				} else {
 					auto shake = FShake::actionWithDuration(0.03f, 10.0f);
 					this->runAction(shake);
@@ -339,13 +348,18 @@ void GameTienLenMNScene::danhBai() {
 	} else {
 		//CPU danh
 		tlmnCpuSelect(stepDanhBai->nguoiDangDanh, 0, 0);
-		danhBaiAnimation();
+		danhBaiAnimation(stepDanhBai->nguoiDangDanh, );
 	}
 }
 
 void GameTienLenMNScene::danhBaiDone(Node* sender) {
 	//Animation danh bai done:
-	CCLOG("Animation done!");
+
+
+	//Update state:
+	for (auto i = 0; i < baiDanhRaCount[lopBaiDanhRa]; i++) {
+		
+	}
 	stepDanhBai->nguoiDangDanh += 1;
 	//audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
 	///Update step o day:
@@ -355,19 +369,12 @@ void GameTienLenMNScene::danhBaiDone(Node* sender) {
 	danhBai();
 }
 
-void GameTienLenMNScene::danhBaiAnimation() {
+void GameTienLenMNScene::danhBaiAnimation(int player, XapBo xapbodanhra, Card *bodanhra[13], int sobaidanhra) {
 	//tìm số lượng bài sẽ đánh
-	auto soBaiDanhRa = 0;
-	for (auto i = 0; i < 52; i++) {
-		if (Card::allCard[i]->cardState == CARD_STATE_SELT) {
-			baiDanhRa[lopBaiDanhRa][soBaiDanhRa] = Card::allCard[i];
-			soBaiDanhRa++;
-		}
-	}
-	if (soBaiDanhRa == 0) {
+	if (sobaidanhra == 0) {
 		return;
 	}
-	baiDanhRaCount[lopBaiDanhRa] = soBaiDanhRa;
+	baiDanhRaCount[lopBaiDanhRa] = sobaidanhra;
 	//dồn bài cũ
 	auto donCount = lopBaiDanhRa - lopBaiDanhRaCuoi;
 	/*
@@ -379,18 +386,17 @@ void GameTienLenMNScene::danhBaiAnimation() {
 	}*/
 	for (auto i = 0; i < baiDanhRaCount[lopBaiDanhRa]; i++) {
 		auto cWidth = baiDanhRaCount[lopBaiDanhRa] * Card::cardWidth / 2;
-		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * 500 - donCount * 30)));
-		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
-		auto actionRotate = RotateBy::create(0.5, 360);
-
-		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionMove, NULL));
-		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionScale, NULL));
-		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionRotate, NULL));
 
 		baiDanhRa[lopBaiDanhRa][i]->ChangeState(CARD_STATE_NORM);
 		baiDanhRa[lopBaiDanhRa][i]->daDanh = true;
 		baiDanhRa[lopBaiDanhRa][i]->setLocalZOrder(lopBaiDanhRa);
-		
+
+		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * 500 - donCount * 30)));
+		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
+		auto actionRotate = RotateBy::create(0.5, 360);
+		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionMove, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionScale, NULL));
+		baiDanhRa[lopBaiDanhRa][i]->runAction(Sequence::create(actionRotate, NULL));
 	}
 	auto actionDelay = DelayTime::create(1.0f);
 	auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBaiDone));
@@ -401,39 +407,32 @@ void GameTienLenMNScene::danhBaiAnimation() {
 
 ///Kiem tra card selected co dung khong
 bool GameTienLenMNScene::tlmnValid(int step) {
-	Card* selectedCrad[13];
-	auto selectedCradLen = 0;
-	for (auto i = 0; i < 52; i++) {
-		if (Card::allCard[i]->cardState == CARD_STATE_SELT) {
-			selectedCrad[selectedCradLen] = Card::allCard[i];
-			selectedCradLen++;
-		}
-	}
-	if (selectedCradLen != 0 && isSelectedType(selectedCrad, selectedCradLen) != BO_FALSE) return true;
+	return true;
 	return false;
 }
 
 ///CPU chon quan de danh
-void GameTienLenMNScene::tlmnCpuSelect(int p, int step, int level) {
+void GameTienLenMNScene::tlmnCpuSelect(int player, XapBo *xapbodanhra, Card *bodanhra[13], int *sobaidanhra, int level) {
 	///CPU Chon quan de đánh
 	/// Thử cho CPU dánh lung tung:
-	
 	auto soBai = RandomHelper::random_int(1, 2);
 	auto i = 0;
 	auto count = 0;
 	while (i < 13 && count < soBai) {
-		if (!CPplayer[p]->Bai[i]->daDanh) {
-			CPplayer[p]->Bai[i]->cardState = CARD_STATE_SELT;
+		if (!CPplayer[player]->Bai[i]->daDanh) {
+			CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
 			count++;
 		}
 		i++;
 	}
-	
+	///end of danh lung tung
+
 }
 
 void GameTienLenMNScene::EnableControls(bool state) {
 	btnConfig->setEnabled(state);
 	btnBack->setEnabled(state);
+
 	btnUserPlay->setEnabled(state);
 	btnUserThoi->setEnabled(state);
 	btnUserXep->setEnabled(state);
@@ -465,7 +464,7 @@ XapBo GameTienLenMNScene::isSelectedType(Card* selectedCrad[13], int selectedCra
 			return BO_TUQUY;
 		}
 	}
-	//Kiểm tra sảnh:
+	///Kiểm tra sảnh:
 	Card* tmpar[13];
 	for (auto i = 0; i < selectedCradLen; i++) {
 		tmpar[i] = selectedCrad[i];
