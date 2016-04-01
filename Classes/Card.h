@@ -10,6 +10,7 @@ enum cardstate {
 	CARD_STATE_NORM, //Hiện bình thường
 	CARD_STATE_SELT, //Hiện đang được select
 	CARD_STATE_DOWN, //Bài đang úp
+	CARD_STATE_HIDE  //Đã bỏ khỏi bàn
 };
 
 class Card : public Sprite {

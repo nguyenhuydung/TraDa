@@ -60,12 +60,18 @@ void Card::ChangeState(cardstate state) {
 	cardState = state;
 	if (cardState == CARD_STATE_NORM) {
 		this->setTextureRect(Rect(cardIndex * cardWidth, cardElement * cardHeight, cardWidth, cardHeight));
+		this->setVisible(true);
 	}
 	if (cardState == CARD_STATE_DOWN) {
 		this->setTextureRect(Rect(0, cardHeight * 4, cardWidth, cardHeight));
+		this->setVisible(true);
 	}
 	if (cardState == CARD_STATE_SELT) {
 		this->setTextureRect(Rect(cardIndex * cardWidth, (cardElement + 5) * cardHeight, cardWidth, cardHeight));
+		this->setVisible(true);
+	}
+	if (cardState == CARD_STATE_HIDE) {
+		this->setVisible(false);
 	}
 }
 

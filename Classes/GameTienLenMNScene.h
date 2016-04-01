@@ -1,4 +1,4 @@
-#ifndef __TIENLENMN_SCENE_H__
+﻿#ifndef __TIENLENMN_SCENE_H__
 #define __TIENLENMN_SCENE_H__
 
 #include "cocos2d.h"
@@ -16,7 +16,7 @@ static float scaleY = 0.0f;
 static float scaleXL = 0.0f;
 static float scaleYL = 0.0f;
 
-enum XapBo {
+enum KieuXapBo {
 	BO_RAC,
 	BO_DOI,
 	BO_BA,
@@ -27,20 +27,15 @@ enum XapBo {
 };
 
 struct LuotDanh {
-	int nguoiDangDanh = -1;
+	int nguoiDangDanh = 0;
 	int nguoiDaBoVong[4] = {0,0,0,0};
 	int nguoiDanhSang = 0;
-	XapBo baiDanhSang = BO_RAC;
-
-	LuotDanh() {
-		nguoiDangDanh = -1;
-		nguoiDanhSang = -1;
-		nguoiDaBoVong[0] = 0;
-		nguoiDaBoVong[0] = 0;
-		nguoiDaBoVong[0] = 0;
-		baiDanhSang = BO_RAC;
-	}
+	KieuXapBo baiDanhKieu = BO_RAC;
+	Card* baiDanhSang[13];
+	int baiDanhCount = 0;
+	bool vongChoiKetThuc = false;
 };
+
 
 class GameTienLenMNScene : public Layer {
 public:
@@ -54,12 +49,11 @@ public:
 	void chiaBaiAnimation(Node* sender);
 	void newGameStart();
 	///danh bai
-	int lopBaiDanhRa = 0, lopBaiDanhRaCuoi = 0;
-	Card* baiDanhRa[100][13];
-	int baiDanhRaCount[100];
+	int logDanhBaiIndex = -1; //Trận đầu tiên
+	LuotDanh* logDanhBai[104];
 
-	void danhBai();
-	void danhBaiAnimation(int player, XapBo xapbodanhra, Card *bodanhra[13], int sobaidanhra);
+	void danhBai(int player);
+	void danhBaiAnimation(int player);
 	void danhBaiDone(Node* sender);
 	///create:
 	static GameTienLenMNScene* create() {
@@ -73,14 +67,13 @@ public:
 	};
 
 private:
-	XapBo isSelectedType(Card* selectedCrad[13], int selectedCradLen);
+	KieuXapBo isSelectedType(Card* selectedCrad[13], int selectedCradLen);
 	//CPU playing:
-	LuotDanh* stepDanhBai; //Cai bien nay chi ra ai dang danh, ai bo luot
 	bool tlmnValid(int state);
-	void tlmnCpuSelect(int player, XapBo *xapbodanhra, Card *bodanhra[13], int *sobaidanhra, int level);
+	void tlmnCpuSelect(int player, int level);
 	///UI
-	ui::Button *btnConfig, *btnBack, *btnUserPlay, *btnUserThoi, *btnUserXep;
-	Label* messageBox;
+	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr;
+	Label* messageBox = nullptr;
 	void EnableControls(bool state);
 	
 	//bool 
