@@ -29,8 +29,8 @@ enum KieuXapBo {
 ///Đánh bài là việc fill đầy cái Log này
 struct LuotDanh {
 	int nguoiDangDanh = 0;
-	int nguoiDaBoVong[4] = {0,0,0,0};
-	
+	bool nguoiDaBoVong[4] = {false,false,false,false};
+
 	KieuXapBo baiDanhKieu = BO_RAC;
 	Card* baiDanhSang[13];
 	int baiDanhCount = 0;
@@ -40,7 +40,7 @@ struct LuotDanh {
 
 
 class GameTienLenMNScene : public Layer {
-public:
+	public:
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
 	static Scene* createScene();
@@ -67,16 +67,17 @@ public:
 		return nullptr;
 	};
 
-private:
-	KieuXapBo isSelectedType(Card* selectedCrad[13], int selectedCradLen);
+	private:
+	KieuXapBo tlmnKieuBaiChon(Card* selectedCrad[13], int selectedCradLen);
+
 	//CPU playing:
-	bool tlmnValid(int state);
-	void tlmnCpuSelect(int player, int level);
+	bool tlmnKiemTraBaiDanhRa(int logIndex);
+	void tlmnCpuChonBaiDanhRa(int player, int level);
 	///UI
 	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;
 	Label* messageBox = nullptr;
 	void EnableControls(bool state);
-	
+
 	//bool 
 	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
 };
