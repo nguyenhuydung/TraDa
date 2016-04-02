@@ -104,6 +104,7 @@ bool GameTienLenMNScene::init() {
 				break;
 			case ui::Widget::TouchEventType::ENDED:
 			{
+				///TẠO LOG ĐÁNH BÀI
 				auto luotNguoiDanh = new LuotDanh;
 				luotNguoiDanh->nguoiDangDanh = 0;
 				luotNguoiDanh->baiDanhCount = 0;
@@ -124,7 +125,8 @@ bool GameTienLenMNScene::init() {
 				if (luotNguoiDanh->baiDanhKieu != BO_FALSE) {
 					logDanhBai[logDanhBaiIndex] = luotNguoiDanh;
 					EnableControls(false);
-					danhBaiAnimation(0);
+					///Goi đánh animation
+					danhBaiAnimation();
 				} else {
 					auto shake = FShake::actionWithDuration(0.03f, 10.0f);
 					this->runAction(shake);
@@ -152,7 +154,8 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				newGameStart();
+				logDanhBaiIndex = -1;
+				chiaBai();
 				break;
 			default:
 				break;
@@ -230,7 +233,8 @@ bool GameTienLenMNScene::init() {
 	//waitingLayer->setSwallowsTouches(false);
 	//addChild(waitingLayer, 101);
 
-	newGameStart();
+	logDanhBaiIndex = -1;
+	chiaBai();
 	return true;
 }
 
@@ -290,9 +294,19 @@ void GameTienLenMNScene::chiaBai() {
 
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex >= 52) {
-		//Chia xong
+		//Chia bài xong:
 		messageBox->setString("Chia bài xong.");
-		danhBai(-1);
+
+		if (logDanhBaiIndex == -1) {
+			///tim player có 3 pic cho trận đầu tiên.
+			auto player = 0; //tự cho nó = 0 đã
+			///Tạo cái log đầu tiên
+			logDanhBaiIndex = 0;
+			logDanhBai[logDanhBaiIndex] = new LuotDanh;
+			logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
+			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
+		}
+		danhBai(nullptr);
 		return;
 	}
 	if (chiaBaiIndex % 4 == 0) {
@@ -335,52 +349,20 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	chiaBaiIndex++;
 }
 
-
-void GameTienLenMNScene::newGameStart() {
-	///Disable controlers
-	EnableControls(false);
-	///Rết log
-	logDanhBaiIndex = 0;
-	///Play
-	chiaBai();
-}
-
-void GameTienLenMNScene::danhBai(int player) {
-	//Cái này được gọi sau khi chia bài
-	//Tự tìm người đánh:
-	if (player < 0) {
-		//Tìm người có 3pic
-		player = 0; // tam cho User danh
-	}
-	if (player >= 4) player = 0;
-
-	logDanhBaiIndex++;
-	logDanhBai[logDanhBaiIndex] = new LuotDanh;
-	logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
+void GameTienLenMNScene::danhBai(Node* sender) {
+	auto player = danhBaiTaoLog();
 	if (player == 0) {
 		//Nguoi choi ddanhs
-		EnableControls(true);
+		EnableControls(true); // cho người chơi đánh
+		///sau khi ấn đánh, kiemr tra so với log trước
 	} else {
 		//CPU danh
-		tlmnCpuSelect(player, 0);
-		danhBaiAnimation(player);
+		tlmnCpuSelect(player, 0); /// buil log mới từ log trước
+		danhBaiAnimation();
 	}
 }
 
-void GameTienLenMNScene::danhBaiDone(Node* sender) {
-	//Animation danh bai done:
-	
-
-	//Update state:
-	/*for (auto i = 0; i < baiDanhRaCount[lopBaiDanhRa]; i++) {
-		
-	}*/
-	danhBai(logDanhBai[logDanhBaiIndex]->nguoiDangDanh + 1);
-}
-
-
-
-void GameTienLenMNScene::danhBaiAnimation(int player) {
+void GameTienLenMNScene::danhBaiAnimation() {
 	//tìm số lượng bài sẽ đánh
 	if (logDanhBai[logDanhBaiIndex]->baiDanhCount == 0) {
 		return;
@@ -410,10 +392,25 @@ void GameTienLenMNScene::danhBaiAnimation(int player) {
 		audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
 	}
 	auto actionDelay = DelayTime::create(1.0f);
-	auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBaiDone));
+	auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBai));
 	this->runAction(Sequence::create(actionDelay, actionDone, NULL));
 }
 
+int GameTienLenMNScene::danhBaiTaoLog() {
+	//Kiểm tra cái log trước: xem ai đánh, đánh clg?
+	auto player = logDanhBai[logDanhBaiIndex]->vongKetThuc ? logDanhBai[logDanhBaiIndex]->nguoiDangDanh : logDanhBai[logDanhBaiIndex]->nguoiDangDanh + 1;
+	/// kiem tra bo vong
+	if (player >= 4) player = 0;
+	
+	//Tạo cái log cho lượt đánh mới:
+	logDanhBaiIndex++;
+	logDanhBai[logDanhBaiIndex] = new LuotDanh;
+	logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
+	logDanhBai[logDanhBaiIndex]->vongKetThuc = false;
+
+	return player;
+	///tiếp theo, player chọn quân đánh sẽ fill nốt các trường còn lại :))
+}
 
 ///Kiem tra card selected co dung khong
 bool GameTienLenMNScene::tlmnValid(int step) {
@@ -421,7 +418,7 @@ bool GameTienLenMNScene::tlmnValid(int step) {
 	return false;
 }
 
-///CPU chon quan de danh
+///CPU chon quan de danh 
 void GameTienLenMNScene::tlmnCpuSelect(int player, int level) {
 	///CPU Chon quan de đánh
 	/// Thử cho CPU dánh lung tung:

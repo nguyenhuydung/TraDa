@@ -56,7 +56,7 @@ void Card::addTouchEvents() {
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
 }
 
-void Card::ChangeState(cardstate state) {
+void Card::ChangeState(cardstate state) { 
 	cardState = state;
 	if (cardState == CARD_STATE_NORM) {
 		this->setTextureRect(Rect(cardIndex * cardWidth, cardElement * cardHeight, cardWidth, cardHeight));

@@ -26,14 +26,16 @@ enum KieuXapBo {
 	BO_FALSE
 };
 
+///Đánh bài là việc fill đầy cái Log này
 struct LuotDanh {
 	int nguoiDangDanh = 0;
 	int nguoiDaBoVong[4] = {0,0,0,0};
-	int nguoiDanhSang = 0;
+	
 	KieuXapBo baiDanhKieu = BO_RAC;
 	Card* baiDanhSang[13];
 	int baiDanhCount = 0;
-	bool vongChoiKetThuc = false;
+
+	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
 };
 
 
@@ -47,14 +49,13 @@ public:
 	int chiaBaiIndex = 0;
 	void chiaBai();
 	void chiaBaiAnimation(Node* sender);
-	void newGameStart();
 	///danh bai
 	int logDanhBaiIndex = -1; //Trận đầu tiên
 	LuotDanh* logDanhBai[104];
 
-	void danhBai(int player);
-	void danhBaiAnimation(int player);
-	void danhBaiDone(Node* sender);
+	void danhBai(Node* sender);
+	void danhBaiAnimation();
+	int danhBaiTaoLog(); //retun player đánh tiếp theo
 	///create:
 	static GameTienLenMNScene* create() {
 		auto pRet = new(std::nothrow) GameTienLenMNScene();
