@@ -198,6 +198,28 @@ bool GameTienLenMNScene::init() {
 		}
 	});
 	this->addChild(btnUserXep);
+	///Nút bỏ chọn
+	btnUserBoChon = ui::Button::create("button.nor.png", "button.put.png", "button.dis.png");
+	btnUserBoChon->setTitleText("Bỏ chọn");
+	btnUserBoChon->setScaleX(scaleX);
+	btnUserBoChon->setScaleY(scaleY);
+	btnUserBoChon->setTitleFontSize(24);
+	btnUserBoChon->setTitleColor(Color3B(33, 33, 33));
+	btnUserBoChon->setPosition(Vec2(780.0f * scaleX, 50.0f * scaleY));
+	btnUserBoChon->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+		switch (type) {
+			case ui::Widget::TouchEventType::BEGAN:
+				break;
+			case ui::Widget::TouchEventType::ENDED:
+				for (auto i = 0; i < 13; i++) {
+					CPplayer[0]->Bai[i]->ChangeState(CARD_STATE_NORM);
+				}
+				break;
+			default:
+				break;
+		}
+	});
+	this->addChild(btnUserBoChon);
 	//THONG BAO
 	messageBox = Label::create();
 	messageBox->setTextColor(Color4B(0, 0, 0, 255));
@@ -444,6 +466,7 @@ void GameTienLenMNScene::EnableControls(bool state) {
 	btnUserPlay->setEnabled(state);
 	btnUserThoi->setEnabled(state);
 	btnUserXep->setEnabled(state);
+	btnUserBoChon->setEnabled(state);
 }
 
 //Private for Tien Len Mien Nam:

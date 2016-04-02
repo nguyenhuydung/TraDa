@@ -73,7 +73,7 @@ private:
 	bool tlmnValid(int state);
 	void tlmnCpuSelect(int player, int level);
 	///UI
-	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr;
+	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;
 	Label* messageBox = nullptr;
 	void EnableControls(bool state);
 	
