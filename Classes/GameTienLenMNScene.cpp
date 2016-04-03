@@ -148,11 +148,14 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
+			{
 				auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
 				luotNguoiDanh->baiDanhCount = 0;
 				luotNguoiDanh->nguoiDaBoVong[0] = true;
 				danhBai(nullptr);
-				break;
+			}break;
+			case ui::Widget::TouchEventType::MOVED: break;
+			case ui::Widget::TouchEventType::CANCELED: break;
 		}
 	});
 	this->addChild(btnUserThoi);
@@ -233,22 +236,6 @@ bool GameTienLenMNScene::init() {
 		Card::allCard[i]->setScaleY(scaleY);
 		addChild(Card::allCard[i], 1);
 	}
-	//Layer for disable control
-	//waitingLayer = LayerGradient::create();
-	//waitingLayer->setContentSize(visibleSize);
-	//waitingLayer->setPosition(Vec2::ZERO);
-	//waitingLayer->setStartColor(Color3B(150, 150, 150));
-	//waitingLayer->setEndColor(Color3B(255, 255, 255));
-	//waitingLayer->setStartOpacity(50);
-	//waitingLayer->setEndOpacity(50);
-	//BlendFunc blend;
-	//blend.src = GL_SRC_ALPHA;
-	//blend.dst = GL_ONE_MINUS_SRC_ALPHA;
-	//waitingLayer->setBlendFunc(blend);
-	//waitingLayer->setTouchEnabled(false);
-	//waitingLayer->setSwallowsTouches(false);
-	//addChild(waitingLayer, 101);
-
 	logDanhBaiIndex = -1;
 	chiaBai();
 	return true;
@@ -392,8 +379,12 @@ void GameTienLenMNScene::danhBai(Node* sender) {
 		///sau khi ấn đánh, kiemr tra so với log trước
 	} else {
 		///CPU danh
-		tlmnCpuChonBaiDanhRa(player, 0); /// buil log mới từ log trước
-		danhBaiAnimation();
+		if (tlmnCpuChonBaiDanhRa(player, 0)) { /// buil log mới từ log trước
+			danhBaiAnimation();
+		} else {
+			//Bo luot 
+			danhBai(nullptr);
+		}
 	}
 }
 
@@ -430,19 +421,28 @@ bool GameTienLenMNScene::tlmnKiemTraBaiDanhRa(int logIndex) {
 }
 
 ///CPU chon quan de danh 
-void GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
+bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//CPU Chon quan de đánh:
 	/// Thử cho CPU dánh lung tung:
-	auto soBai = RandomHelper::random_int(1, 3);
-	auto i = 0;
-	logDanhBai[logDanhBaiIndex]->baiDanhCount = 0;
-	while (i < 13 && logDanhBai[logDanhBaiIndex]->baiDanhCount < soBai) {
-		if (!CPplayer[player]->Bai[i]->daDanh) {
-			CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
-			logDanhBai[logDanhBaiIndex]->baiDanhSang[logDanhBai[logDanhBaiIndex]->baiDanhCount] = CPplayer[player]->Bai[i];
-			logDanhBai[logDanhBaiIndex]->baiDanhCount++;
+	auto soBai = RandomHelper::random_int(0, 3);
+	if (soBai != 0) {
+		auto i = 0;
+		logDanhBai[logDanhBaiIndex]->baiDanhCount = 0;
+		while (i < 13 && logDanhBai[logDanhBaiIndex]->baiDanhCount < soBai) {
+			if (!CPplayer[player]->Bai[i]->daDanh) {
+				CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
+				logDanhBai[logDanhBaiIndex]->baiDanhSang[logDanhBai[logDanhBaiIndex]->baiDanhCount] = CPplayer[player]->Bai[i];
+				logDanhBai[logDanhBaiIndex]->baiDanhCount++;
+			}
+			i++;
 		}
-		i++;
+		return true;
+	} else {
+		//bo luot
+		auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
+		luotNguoiDanh->baiDanhCount = 0;
+		luotNguoiDanh->nguoiDaBoVong[player] = true;
+		return false;
 	}
 	///end of danh lung tung
 

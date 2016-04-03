@@ -72,7 +72,7 @@ class GameTienLenMNScene : public Layer {
 
 	//CPU playing:
 	bool tlmnKiemTraBaiDanhRa(int logIndex);
-	void tlmnCpuChonBaiDanhRa(int player, int level);
+	bool tlmnCpuChonBaiDanhRa(int player, int level);
 	///UI
 	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;
 	Label* messageBox = nullptr;
