@@ -152,6 +152,7 @@ bool GameTienLenMNScene::init() {
 				auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
 				luotNguoiDanh->baiDanhCount = 0;
 				luotNguoiDanh->nguoiDaBoVong[0] = true;
+				EnableControls(false);
 				danhBai(nullptr);
 			}break;
 			case ui::Widget::TouchEventType::MOVED: break;
