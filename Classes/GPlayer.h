@@ -14,6 +14,8 @@ class GPlayer {
 	~GPlayer();
 
 	Card* Bai[13];
+	int BaiCount = 13;
+
 	int Diem = 0; //Tổng điểm đang có
 	int Thang = 0; //Số trận thắng
 	int Thua = 0; // Số trận thua

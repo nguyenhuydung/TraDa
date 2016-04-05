@@ -6,6 +6,7 @@
 #include "FrozaxShake/FShake.h"
 #include <SimpleAudioEngine.h>
 #include <complex>
+#include <iostream>
 
 USING_NS_CC;
 
@@ -153,7 +154,7 @@ bool GameTienLenMNScene::init() {
 				luotNguoiDanh->baiDanhCount = 0;
 				luotNguoiDanh->nguoiDaBoVong[0] = true;
 				EnableControls(false);
-				danhBai(nullptr);
+				danhBaiAnimation();
 			}break;
 			case ui::Widget::TouchEventType::MOVED: break;
 			case ui::Widget::TouchEventType::CANCELED: break;
@@ -262,6 +263,8 @@ void GameTienLenMNScene::chiaBai() {
 		Card::allCard[inx]->daChia = true;
 		CPplayer[0]->Bai[i] = Card::allCard[inx];
 	}
+	CPplayer[0]->BaiCount = 13;
+
 	CPplayer[1] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
@@ -271,6 +274,8 @@ void GameTienLenMNScene::chiaBai() {
 		Card::allCard[inx]->daChia = true;
 		CPplayer[1]->Bai[i] = Card::allCard[inx];
 	}
+	CPplayer[1]->BaiCount = 13;
+
 	CPplayer[2] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
@@ -280,6 +285,8 @@ void GameTienLenMNScene::chiaBai() {
 		Card::allCard[inx]->daChia = true;
 		CPplayer[2]->Bai[i] = Card::allCard[inx];
 	}
+	CPplayer[2]->BaiCount = 13;
+
 	CPplayer[3] = new GPlayer();
 	auto inx = 0;
 	for (auto i = 0; i < 52; i++) {
@@ -289,6 +296,8 @@ void GameTienLenMNScene::chiaBai() {
 			inx ++;
 		}
 	}
+	CPplayer[3]->BaiCount = 13;
+
 	//create animation:
 	chiaBaiIndex = 0;
 	chiaBaiAnimation(nullptr);
@@ -298,6 +307,7 @@ void GameTienLenMNScene::chiaBai() {
 
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex >= 52) {
+		updateCardCount();
 		//Chia bài xong:
 		messageBox->setString("Chia bài xong.");
 
@@ -380,39 +390,88 @@ void GameTienLenMNScene::danhBai(Node* sender) {
 		///sau khi ấn đánh, kiemr tra so với log trước
 	} else {
 		///CPU danh
-		if (tlmnCpuChonBaiDanhRa(player, 0)) { /// buil log mới từ log trước
-			danhBaiAnimation();
-		} else {
-			//Bo luot 
-			danhBai(nullptr);
-		}
+		tlmnCpuChonBaiDanhRa(player, 0);
+		danhBaiAnimation();
 	}
 }
 
 void GameTienLenMNScene::danhBaiAnimation() {
-	//tìm số lượng bài sẽ đánh
+	//Bỏ lượt: animation bỏ
 	if (logDanhBai[logDanhBaiIndex]->baiDanhCount == 0) {
-		return;
-	}
-	//di chuyển quân bài:
-	for (auto i = 0; i < logDanhBai[logDanhBaiIndex]->baiDanhCount; i++) {
-		auto cWidth = logDanhBai[logDanhBaiIndex]->baiDanhCount * Card::cardWidth / 2;
 
-		logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->ChangeState(CARD_STATE_NORM);
-		logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->daDanh = true;
-		logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->setLocalZOrder(logDanhBaiIndex);
+		
+	} else {
+		//không bỏ, animation di chuyển quân bài:
+		for (auto i = 0; i < logDanhBai[logDanhBaiIndex]->baiDanhCount; i++) {
+			auto cWidth = logDanhBai[logDanhBaiIndex]->baiDanhCount * Card::cardWidth / 2;
 
-		auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * 500 - logDanhBaiIndex * 30)));
-		auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
-		auto actionRotate = RotateBy::create(0.5, 360);
-		logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->runAction(Sequence::create(actionMove, NULL));
-		logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->runAction(Sequence::create(actionScale, NULL));
-		logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->runAction(Sequence::create(actionRotate, NULL));
-		audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
+			logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->ChangeState(CARD_STATE_NORM);
+			logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->daDanh = true;
+			logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->setLocalZOrder(logDanhBaiIndex);
+
+			auto positiony = ((logDanhBaiIndex - 1) % 4) * 30;
+			auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleX * 660 + i * Card::cardWidth - cWidth, scaleY * (500 - positiony))));
+			auto actionScale = ScaleTo::create(0.5, scaleX, scaleY);
+			auto actionRotate = RotateBy::create(0.5, 360);
+			logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->runAction(Sequence::create(actionMove, NULL));
+			logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->runAction(Sequence::create(actionScale, NULL));
+			logDanhBai[logDanhBaiIndex]->baiDanhSang[i]->runAction(Sequence::create(actionRotate, NULL));
+			audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
+		}
 	}
+	updateCardCount();
 	auto actionDelay = DelayTime::create(1.0f);
 	auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBai));
 	this->runAction(Sequence::create(actionDelay, actionDone, NULL));
+}
+
+void GameTienLenMNScene::updateCardCount() {
+	if (lblP1CardCount == nullptr) {
+		lblP1CardCount = Label::create();
+		lblP1CardCount->setTextColor(Color4B::GREEN);
+		lblP1CardCount->setSystemFontSize(24);
+		lblP1CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+		lblP1CardCount->setPosition(Vec2(scaleX * PP1.x, scaleY * PP1.y));
+		std::ostringstream s1;
+		s1 << "x" << CPplayer[1]->BaiCount;
+		lblP1CardCount->setString(s1.str());
+		lblP1CardCount->enableOutline(Color4B::WHITE, 1);
+		this->addChild(lblP1CardCount, 101);
+
+		lblP2CardCount = Label::create();
+		lblP2CardCount->setTextColor(Color4B::GREEN);
+		lblP2CardCount->setSystemFontSize(24);
+		lblP2CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+		lblP2CardCount->setPosition(Vec2(scaleX * PP2.x, scaleY * PP2.y));
+		std::ostringstream s2;
+		s2 << "x" << CPplayer[2]->BaiCount;
+		lblP2CardCount->setString(s2.str());
+		lblP2CardCount->enableOutline(Color4B::WHITE, 1);
+		this->addChild(lblP2CardCount, 101);
+
+		lblP3CardCount = Label::create();
+		lblP3CardCount->setTextColor(Color4B::GREEN);
+		lblP3CardCount->setSystemFontSize(24);
+		lblP3CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+		lblP3CardCount->setPosition(Vec2(scaleX * PP3.x, scaleY * PP3.y));
+		std::ostringstream s3;
+		s3 << "x" << CPplayer[3]->BaiCount;
+		lblP3CardCount->setString(s3.str());
+		lblP3CardCount->enableOutline(Color4B::WHITE, 1);
+		this->addChild(lblP3CardCount, 101);
+	} else {
+		std::ostringstream s1;
+		s1 << "x" << CPplayer[1]->BaiCount;
+		lblP1CardCount->setString(s1.str());
+
+		std::ostringstream s2;
+		s2 << "x" << CPplayer[2]->BaiCount;
+		lblP2CardCount->setString(s2.str());
+
+		std::ostringstream s3;
+		s3 << "x" << CPplayer[3]->BaiCount;
+		lblP3CardCount->setString(s3.str());
+	}
 }
 
 ///Kiem tra Luot đánh ra có phù hợp với lượt trước đó không (dành kiểm tra người chơi thôi, máy đánh đã kiểm tra lúc chọn rồi)
@@ -437,14 +496,14 @@ bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 			}
 			i++;
 		}
+		CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanhCount;
 		return true;
-	} else {
-		//bo luot
-		auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
-		luotNguoiDanh->baiDanhCount = 0;
-		luotNguoiDanh->nguoiDaBoVong[player] = true;
-		return false;
 	}
+	//bo luot
+	auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
+	luotNguoiDanh->baiDanhCount = 0;
+	luotNguoiDanh->nguoiDaBoVong[player] = true;
+	return false;
 	///end of danh lung tung
 
 }

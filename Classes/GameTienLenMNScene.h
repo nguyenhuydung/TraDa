@@ -55,6 +55,7 @@ class GameTienLenMNScene : public Layer {
 
 	void danhBai(Node* sender);
 	void danhBaiAnimation();
+	void updateCardCount();
 	int danhBaiTaoLog(); //retun player đánh tiếp theo
 	///create:
 	static GameTienLenMNScene* create() {
@@ -75,9 +76,8 @@ class GameTienLenMNScene : public Layer {
 	bool tlmnCpuChonBaiDanhRa(int player, int level);
 	///UI
 	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;
-	Label* messageBox = nullptr;
+	Label* messageBox = nullptr, *lblP1CardCount = nullptr, *lblP2CardCount = nullptr, *lblP3CardCount = nullptr;
 	void EnableControls(bool state);
-
 	//bool 
 	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
 };
