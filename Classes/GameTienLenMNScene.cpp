@@ -365,6 +365,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 
 int GameTienLenMNScene::danhBaiTaoLog() {
 	//Kiểm tra cái log trước: xem ai đánh, đánh clg?
+
 	auto player = logDanhBai[logDanhBaiIndex]->vongKetThuc ? logDanhBai[logDanhBaiIndex]->nguoiDangDanh : logDanhBai[logDanhBaiIndex]->nguoiDangDanh + 1;
 	/// kiem tra bo vong
 	if (player >= 4) player = 0;
@@ -435,7 +436,7 @@ void GameTienLenMNScene::updateCardCount() {
 		std::ostringstream s1;
 		s1 << "x" << CPplayer[1]->BaiCount;
 		lblP1CardCount->setString(s1.str());
-		lblP1CardCount->enableOutline(Color4B::WHITE, 1);
+		lblP1CardCount->enableOutline(Color4B::WHITE, 2);
 		this->addChild(lblP1CardCount, 101);
 
 		lblP2CardCount = Label::create();
@@ -446,7 +447,7 @@ void GameTienLenMNScene::updateCardCount() {
 		std::ostringstream s2;
 		s2 << "x" << CPplayer[2]->BaiCount;
 		lblP2CardCount->setString(s2.str());
-		lblP2CardCount->enableOutline(Color4B::WHITE, 1);
+		lblP2CardCount->enableOutline(Color4B::WHITE, 2);
 		this->addChild(lblP2CardCount, 101);
 
 		lblP3CardCount = Label::create();
@@ -457,7 +458,7 @@ void GameTienLenMNScene::updateCardCount() {
 		std::ostringstream s3;
 		s3 << "x" << CPplayer[3]->BaiCount;
 		lblP3CardCount->setString(s3.str());
-		lblP3CardCount->enableOutline(Color4B::WHITE, 1);
+		lblP3CardCount->enableOutline(Color4B::WHITE, 2);
 		this->addChild(lblP3CardCount, 101);
 	} else {
 		std::ostringstream s1;
@@ -497,6 +498,7 @@ bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 			i++;
 		}
 		CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanhCount;
+
 		return true;
 	}
 	//bo luot
