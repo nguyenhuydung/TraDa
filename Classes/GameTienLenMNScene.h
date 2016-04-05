@@ -30,6 +30,7 @@ enum KieuXapBo {
 struct LuotDanh {
 	int nguoiDangDanh = 0;
 	bool nguoiDaBoVong[4] = {false,false,false,false};
+	int nguoiDaBoVongCount = 0;
 
 	KieuXapBo baiDanhKieu = BO_RAC;
 	Card* baiDanhSang[13];

@@ -153,6 +153,10 @@ bool GameTienLenMNScene::init() {
 				auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
 				luotNguoiDanh->baiDanhCount = 0;
 				luotNguoiDanh->nguoiDaBoVong[0] = true;
+				luotNguoiDanh->nguoiDaBoVongCount++;
+				if (luotNguoiDanh->nguoiDaBoVongCount == 3) {
+					luotNguoiDanh->vongKetThuc = true;
+				}
 				EnableControls(false);
 				danhBaiAnimation();
 			}break;
@@ -364,16 +368,24 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 }
 
 int GameTienLenMNScene::danhBaiTaoLog() {
-	//Kiểm tra cái log trước: xem ai đánh, đánh clg?
-
-	auto player = logDanhBai[logDanhBaiIndex]->vongKetThuc ? logDanhBai[logDanhBaiIndex]->nguoiDangDanh : logDanhBai[logDanhBaiIndex]->nguoiDangDanh + 1;
-	/// kiem tra bo vong
-	if (player >= 4) player = 0;
-
+	//Kiểm tra cái log trước: 1. Còn ai đánh không?
+	auto player = 0;
+	if (logDanhBai[logDanhBaiIndex]->vongKetThuc) {
+		player = logDanhBai[logDanhBaiIndex]->nguoiDangDanh;
+	} else {
+		//tim nguoi danh tiep theo (chua bo vong)
+		player = logDanhBai[logDanhBaiIndex]->nguoiDangDanh + 1;
+		if (player >= 4) player = 0;
+		while (logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[player]) {
+			player = player + 1;
+			if (player >= 4) player = 0;
+		}
+	}
 	//Tạo cái log cho lượt đánh mới:
 	logDanhBaiIndex++;
 	logDanhBai[logDanhBaiIndex] = new LuotDanh;
 	logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
+	logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVongCount;
 	logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[0] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[0];
 	logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[1] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[1];
 	logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[2] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[2];
@@ -483,10 +495,10 @@ bool GameTienLenMNScene::tlmnKiemTraBaiDanhRa(int logIndex) {
 
 ///CPU chon quan de danh 
 bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
-	//CPU Chon quan de đánh:
+	//CPU Chon quan de đánh and Fill log:
 	/// Thử cho CPU dánh lung tung:
-	auto soBai = RandomHelper::random_int(0, 3);
-	if (soBai != 0) {
+	auto soBai = RandomHelper::random_int(-3, 3);
+	if (soBai > 0) {
 		auto i = 0;
 		logDanhBai[logDanhBaiIndex]->baiDanhCount = 0;
 		while (i < 13 && logDanhBai[logDanhBaiIndex]->baiDanhCount < soBai) {
@@ -505,6 +517,10 @@ bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
 	luotNguoiDanh->baiDanhCount = 0;
 	luotNguoiDanh->nguoiDaBoVong[player] = true;
+	luotNguoiDanh->nguoiDaBoVongCount++;
+	if (luotNguoiDanh->nguoiDaBoVongCount == 3) {
+		luotNguoiDanh->vongKetThuc = true;
+	}
 	return false;
 	///end of danh lung tung
 
