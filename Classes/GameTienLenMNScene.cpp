@@ -149,6 +149,10 @@ bool GameTienLenMNScene::init() {
 				break;
 			case ui::Widget::TouchEventType::ENDED:
 			{
+				if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
+					messageBox->setString("Bạn đang được quyền đánh, không bỏ lượt được.");
+					return;
+				}
 				auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
 				luotNguoiDanh->baiDanhCount = 0;
 				luotNguoiDanh->nguoiDaBoVong[0] = true;
