@@ -5,7 +5,6 @@
 #include "HelloWorldScene.h"
 #include "FrozaxShake/FShake.h"
 #include <SimpleAudioEngine.h>
-#include <complex>
 #include <iostream>
 
 USING_NS_CC;
@@ -154,6 +153,8 @@ bool GameTienLenMNScene::init() {
 				luotNguoiDanh->baiDanhCount = 0;
 				luotNguoiDanh->nguoiDaBoVong[0] = true;
 				luotNguoiDanh->nguoiDaBoVongCount++;
+				luotNguoiDanh->nguoiDangDanh = logDanhBai[logDanhBaiIndex - 1]->nguoiDangDanh; //chuyeen quyen cho nguoi truow do
+
 				if (luotNguoiDanh->nguoiDaBoVongCount == 3) {
 					luotNguoiDanh->vongKetThuc = true;
 				}
@@ -242,7 +243,11 @@ bool GameTienLenMNScene::init() {
 		Card::allCard[i]->setScaleY(scaleY);
 		addChild(Card::allCard[i], 1);
 	}
+	for (auto i = 0; i < 104; i++) {
+		logDanhBai[i] = nullptr;
+	}
 	logDanhBaiIndex = -1;
+	drawInitPlayerStatus();
 	chiaBai();
 	return true;
 }
@@ -311,7 +316,6 @@ void GameTienLenMNScene::chiaBai() {
 
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex >= 52) {
-		updateCardCount();
 		//Chia bài xong:
 		messageBox->setString("Chia bài xong.");
 
@@ -324,6 +328,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 			logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
 		}
+		drawUpdatePlayerStatus();
 		danhBai(nullptr);
 		return;
 	}
@@ -369,9 +374,21 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 
 int GameTienLenMNScene::danhBaiTaoLog() {
 	//Kiểm tra cái log trước: 1. Còn ai đánh không?
-	auto player = 0;
+	int player;
 	if (logDanhBai[logDanhBaiIndex]->vongKetThuc) {
 		player = logDanhBai[logDanhBaiIndex]->nguoiDangDanh;
+		logDanhBaiIndex++;
+		if (logDanhBai[logDanhBaiIndex] == nullptr) {
+			logDanhBai[logDanhBaiIndex] = new LuotDanh;
+		}
+		logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = 0;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[0] = false;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[1] = false;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[2] = false;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[3] = false;
+		logDanhBai[logDanhBaiIndex]->vongKetThuc = false;
+
 	} else {
 		//tim nguoi danh tiep theo (chua bo vong)
 		player = logDanhBai[logDanhBaiIndex]->nguoiDangDanh + 1;
@@ -380,17 +397,19 @@ int GameTienLenMNScene::danhBaiTaoLog() {
 			player = player + 1;
 			if (player >= 4) player = 0;
 		}
+		logDanhBaiIndex++;
+		if (logDanhBai[logDanhBaiIndex] == nullptr) {
+			logDanhBai[logDanhBaiIndex] = new LuotDanh;
+		}
+		logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVongCount;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[0] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[0] ? true : false;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[1] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[1] ? true : false;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[2] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[2] ? true : false;
+		logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[3] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[3] ? true : false;
+		logDanhBai[logDanhBaiIndex]->vongKetThuc = false;
 	}
 	//Tạo cái log cho lượt đánh mới:
-	logDanhBaiIndex++;
-	logDanhBai[logDanhBaiIndex] = new LuotDanh;
-	logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
-	logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVongCount;
-	logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[0] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[0];
-	logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[1] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[1];
-	logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[2] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[2];
-	logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[3] = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVong[3];
-	logDanhBai[logDanhBaiIndex]->vongKetThuc = false;
 	return player;
 	///tiếp theo, player chọn quân đánh sẽ fill nốt các trường còn lại :))
 }
@@ -432,61 +451,79 @@ void GameTienLenMNScene::danhBaiAnimation() {
 			audio->playEffect("Sound/add.mp3", false, 1.0f, 1.0f, 1.0f);
 		}
 	}
-	updateCardCount();
+	drawUpdatePlayerStatus();
 	auto actionDelay = DelayTime::create(1.0f);
 	auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBai));
 	this->runAction(Sequence::create(actionDelay, actionDone, NULL));
 }
 
-void GameTienLenMNScene::updateCardCount() {
-	if (lblP1CardCount == nullptr) {
-		lblP1CardCount = Label::create();
-		lblP1CardCount->setTextColor(Color4B::GREEN);
-		lblP1CardCount->setSystemFontSize(24);
-		lblP1CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-		lblP1CardCount->setPosition(Vec2(scaleX * PP1.x, scaleY * PP1.y));
-		std::ostringstream s1;
-		s1 << "x" << CPplayer[1]->BaiCount;
-		lblP1CardCount->setString(s1.str());
-		lblP1CardCount->enableOutline(Color4B::WHITE, 2);
-		this->addChild(lblP1CardCount, 101);
+void GameTienLenMNScene::drawInitPlayerStatus() {
+	//Vẽ các thông tin Player:
+	///Số quân bài còn lại:
+	lblP1CardCount = Label::create();
+	lblP1CardCount->setTextColor(Color4B::GREEN);
+	lblP1CardCount->setSystemFontSize(24);
+	lblP1CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	lblP1CardCount->setPosition(Vec2(scaleX * PP1.x, scaleY * (PP1.y + 10)));
+	lblP1CardCount->enableOutline(Color4B::WHITE, 2);
+	this->addChild(lblP1CardCount, 101);
 
-		lblP2CardCount = Label::create();
-		lblP2CardCount->setTextColor(Color4B::GREEN);
-		lblP2CardCount->setSystemFontSize(24);
-		lblP2CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-		lblP2CardCount->setPosition(Vec2(scaleX * PP2.x, scaleY * PP2.y));
-		std::ostringstream s2;
-		s2 << "x" << CPplayer[2]->BaiCount;
-		lblP2CardCount->setString(s2.str());
-		lblP2CardCount->enableOutline(Color4B::WHITE, 2);
-		this->addChild(lblP2CardCount, 101);
+	lblP2CardCount = Label::create();
+	lblP2CardCount->setTextColor(Color4B::GREEN);
+	lblP2CardCount->setSystemFontSize(24);
+	lblP2CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	lblP2CardCount->setPosition(Vec2(scaleX * PP2.x, scaleY * (PP2.y + 10)));
+	lblP2CardCount->enableOutline(Color4B::WHITE, 2);
+	this->addChild(lblP2CardCount, 101);
 
-		lblP3CardCount = Label::create();
-		lblP3CardCount->setTextColor(Color4B::GREEN);
-		lblP3CardCount->setSystemFontSize(24);
-		lblP3CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-		lblP3CardCount->setPosition(Vec2(scaleX * PP3.x, scaleY * PP3.y));
-		std::ostringstream s3;
-		s3 << "x" << CPplayer[3]->BaiCount;
-		lblP3CardCount->setString(s3.str());
-		lblP3CardCount->enableOutline(Color4B::WHITE, 2);
-		this->addChild(lblP3CardCount, 101);
-	} else {
-		std::ostringstream s1;
-		s1 << "x" << CPplayer[1]->BaiCount;
-		lblP1CardCount->setString(s1.str());
+	lblP3CardCount = Label::create();
+	lblP3CardCount->setTextColor(Color4B::GREEN);
+	lblP3CardCount->setSystemFontSize(24);
+	lblP3CardCount->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+	lblP3CardCount->setPosition(Vec2(scaleX * PP3.x, scaleY * (PP3.y + 10)));
+	lblP3CardCount->enableOutline(Color4B::WHITE, 2);
+	this->addChild(lblP3CardCount, 101);
+	
+	///Bỏ vòng:
+	iconSkipPlayer[0] = Sprite::create("skip.png");
+	iconSkipPlayer[0]->setPosition(Vec2(scaleX * 688, scaleY * 75));
+	iconSkipPlayer[0]->setVisible(false);
+	this->addChild(iconSkipPlayer[0], 101);
 
-		std::ostringstream s2;
-		s2 << "x" << CPplayer[2]->BaiCount;
-		lblP2CardCount->setString(s2.str());
+	iconSkipPlayer[1] = Sprite::create("skip.png");
+	iconSkipPlayer[1]->setPosition(Vec2(scaleX * PP1.x, scaleY * (PP1.y - 10)));
+	iconSkipPlayer[1]->setVisible(false);
+	this->addChild(iconSkipPlayer[1], 101);
 
-		std::ostringstream s3;
-		s3 << "x" << CPplayer[3]->BaiCount;
-		lblP3CardCount->setString(s3.str());
-	}
+	iconSkipPlayer[2] = Sprite::create("skip.png");
+	iconSkipPlayer[2]->setPosition(Vec2(scaleX * PP2.x, scaleY * (PP2.y - 10)));
+	iconSkipPlayer[2]->setVisible(false);
+	this->addChild(iconSkipPlayer[2], 101);
+
+	iconSkipPlayer[3] = Sprite::create("skip.png");
+	iconSkipPlayer[3]->setPosition(Vec2(scaleX * PP3.x, scaleY * (PP3.y - 10)));
+	iconSkipPlayer[3]->setVisible(false);
+	this->addChild(iconSkipPlayer[3], 101);
 }
 
+void GameTienLenMNScene::drawUpdatePlayerStatus() {
+	//Số lượng quân bài
+	std::ostringstream s1;
+	s1 << "x" << CPplayer[1]->BaiCount;
+	lblP1CardCount->setString(s1.str());
+
+	std::ostringstream s2;
+	s2 << "x" << CPplayer[2]->BaiCount;
+	lblP2CardCount->setString(s2.str());
+
+	std::ostringstream s3;
+	s3 << "x" << CPplayer[3]->BaiCount;
+	lblP3CardCount->setString(s3.str());
+	//Trạng thái bỏ vòng
+	for (auto i = 0; i < 4; i++) {
+		iconSkipPlayer[i]->setVisible(logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[i]);
+	}
+}
 ///Kiem tra Luot đánh ra có phù hợp với lượt trước đó không (dành kiểm tra người chơi thôi, máy đánh đã kiểm tra lúc chọn rồi)
 bool GameTienLenMNScene::tlmnKiemTraBaiDanhRa(int logIndex) {
 	return true;
@@ -496,6 +533,8 @@ bool GameTienLenMNScene::tlmnKiemTraBaiDanhRa(int logIndex) {
 ///CPU chon quan de danh 
 bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//CPU Chon quan de đánh and Fill log:
+	///Kiểm tra bài đánh sang và tìm bài để đỡ:
+
 	/// Thử cho CPU dánh lung tung:
 	auto soBai = RandomHelper::random_int(-3, 3);
 	if (soBai > 0) {
@@ -516,9 +555,11 @@ bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//bo luot
 	auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
 	luotNguoiDanh->baiDanhCount = 0;
+	luotNguoiDanh->nguoiDangDanh = logDanhBai[logDanhBaiIndex - 1]->nguoiDangDanh; //chuyeen quyen cho nguoi truow do
 	luotNguoiDanh->nguoiDaBoVong[player] = true;
 	luotNguoiDanh->nguoiDaBoVongCount++;
-	if (luotNguoiDanh->nguoiDaBoVongCount == 3) {
+	
+	if (luotNguoiDanh->nguoiDaBoVongCount >= 3) {
 		luotNguoiDanh->vongKetThuc = true;
 	}
 	return false;
