@@ -48,13 +48,14 @@ class GameTienLenMNScene : public Layer {
 	bool init() override;
 	///Bai bac
 	int chiaBaiIndex = 0;
-	void chiaBai();
+	void chiaBai(Node* sender);
 	void chiaBaiAnimation(Node* sender);
 	///danh bai
 	int logDanhBaiIndex = -1; //Trận đầu tiên
 	LuotDanh* logDanhBai[104];
 
-	void danhBai(Node* sender);
+	void danhBai();
+	void danhBaiAnimationDone(Node* sender);
 	void danhBaiAnimation();
 
 	void drawInitPlayerStatus();
@@ -83,7 +84,7 @@ class GameTienLenMNScene : public Layer {
 	///Message and S
 	Label* messageBox = nullptr, *lblP1CardCount = nullptr, *lblP2CardCount = nullptr, *lblP3CardCount = nullptr;
 	///Bỏ lượt overlay icon:
-	Sprite *iconSkipPlayer[4];
+	Sprite *iconSkipPlayer[4], *iconWinner = nullptr;
 
 	void EnableControls(bool state);
 	//bool 

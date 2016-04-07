@@ -117,6 +117,8 @@ bool GameTienLenMNScene::init() {
 					if (luotNguoiDanh->baiDanhKieu != BO_FALSE) {
 						if (tlmnKiemTraBaiDanhRa(logDanhBaiIndex)) {
 							///Đánh bài thành công
+							CPplayer[0]->BaiCount -= luotNguoiDanh->baiDanhCount;
+							//CPplayer[0]->
 							EnableControls(false);
 							///Goi đánh animation
 							danhBaiAnimation();
@@ -237,6 +239,12 @@ bool GameTienLenMNScene::init() {
 	messageBox->setString("Đang chia bai...");
 	this->addChild(messageBox);
 
+	iconWinner = Sprite::create("winner.stamp.png");
+	iconWinner->setScaleX(scaleX);
+	iconWinner->setScaleY(scaleY);
+	iconWinner->setVisible(false);
+	this->addChild(iconWinner, 102);
+
 	Card::loadData();
 
 	//khoi tao 52 quan bai
@@ -252,11 +260,11 @@ bool GameTienLenMNScene::init() {
 	}
 	logDanhBaiIndex = -1;
 	drawInitPlayerStatus();
-	chiaBai();
+	chiaBai(nullptr);
 	return true;
 }
 
-void GameTienLenMNScene::chiaBai() {
+void GameTienLenMNScene::chiaBai(Node* sender) {
 	//Reset
 	for (auto i = 0; i < 52; i++) {
 		Card::allCard[i]->daChia = false;
@@ -266,6 +274,7 @@ void GameTienLenMNScene::chiaBai() {
 		Card::allCard[i]->setScaleY(scaleY);
 		Card::allCard[i]->ChangeState(CARD_STATE_DOWN);
 	}
+	iconWinner->setVisible(false);
 	//Chia ngau nhien
 	CPplayer[0] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
@@ -333,7 +342,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
 		}
 		drawUpdatePlayerStatus();
-		danhBai(nullptr);
+		danhBai();
 		return;
 	}
 	if (chiaBaiIndex % 4 == 0) {
@@ -418,7 +427,7 @@ int GameTienLenMNScene::danhBaiTaoLog() {
 	///tiếp theo, player chọn quân đánh sẽ fill nốt các trường còn lại :))
 }
 
-void GameTienLenMNScene::danhBai(Node* sender) {
+void GameTienLenMNScene::danhBai() {
 	auto player = danhBaiTaoLog();
 	if (player == 0) {
 		//Nguoi choi ddanhs
@@ -429,6 +438,24 @@ void GameTienLenMNScene::danhBai(Node* sender) {
 		tlmnCpuChonBaiDanhRa(player, 0);
 		danhBaiAnimation();
 	}
+}
+void GameTienLenMNScene::danhBaiAnimationDone(Node* sender) {
+	//Kieem tra wwiner
+	for (auto p = 0; p < 4; p++) {
+		if (CPplayer[p]->BaiCount == 0) {
+			iconWinner->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+			iconWinner->setVisible(true);
+			auto shake = FShake::actionWithDuration(0.03f, 10.0f);
+			this->runAction(shake);
+			//Report điểm ở đây:
+			auto actionDelay = DelayTime::create(5.0f);
+			auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::chiaBai));
+			this->runAction(Sequence::create(actionDelay, actionDone, NULL));
+			return;
+		}
+	}
+	//Chua co danh tiep:
+	danhBai();
 }
 
 void GameTienLenMNScene::danhBaiAnimation() {
@@ -457,7 +484,7 @@ void GameTienLenMNScene::danhBaiAnimation() {
 	}
 	drawUpdatePlayerStatus();
 	auto actionDelay = DelayTime::create(1.0f);
-	auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBai));
+	auto actionDone = CallFuncN::create(this, callfuncN_selector(GameTienLenMNScene::danhBaiAnimationDone));
 	this->runAction(Sequence::create(actionDelay, actionDone, NULL));
 }
 
