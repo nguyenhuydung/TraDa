@@ -539,9 +539,9 @@ void GameTienLenMNScene::drawInitPlayerStatus() {
 
 void GameTienLenMNScene::drawUpdatePlayerStatus() {
 	//Số lượng quân bài
-	std::ostringstream s1;
-	s1 << "x" << CPplayer[1]->BaiCount;
-	lblP1CardCount->setString(s1.str());
+	std::string s1;
+	s1 = "x" + CPplayer[1]->BaiCount;
+	lblP1CardCount->setString(s1.c_str());
 
 	std::ostringstream s2;
 	s2 << "x" << CPplayer[2]->BaiCount;
@@ -566,8 +566,17 @@ bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//CPU Chon quan de đánh and Fill log:
 	///Kiểm tra bài đánh sang và tìm bài để đỡ:
 
-	/// Thử cho CPU dánh lung tung:
-	auto soBai = RandomHelper::random_int(-3, 3);
+	/// Thử cho CPU dánh lung tung - Vòng trước kết thúc:
+	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
+		//chonj bai de danh:
+
+
+	} else {
+		//Chonj bai de do~:
+
+	}
+	auto soBai = logDanhBai[logDanhBaiIndex - 1]->vongKetThuc ? RandomHelper::random_int(1, 3) : RandomHelper::random_int(-3, 3);
+
 	if (soBai > 0) {
 		auto i = 0;
 		logDanhBai[logDanhBaiIndex]->baiDanhCount = 0;
@@ -609,7 +618,6 @@ void GameTienLenMNScene::EnableControls(bool state) {
 }
 
 //Private for Tien Len Mien Nam:
-
 KieuXapBo GameTienLenMNScene::tlmnKieuBaiChon(Card* selectedCrad[13], int selectedCradLen) {
 	if (selectedCradLen == 1) {
 		///Rác:
@@ -673,3 +681,7 @@ KieuXapBo GameTienLenMNScene::tlmnKieuBaiChon(Card* selectedCrad[13], int select
 	return BO_FALSE;
 }
 
+Card* GameTienLenMNScene::tlmnFindBai(KieuXapBo bo, int player) {
+	Card *arr[10];
+	return arr[10];
+}
