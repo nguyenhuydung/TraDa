@@ -26,18 +26,20 @@ enum KieuXapBo {
 	BO_FALSE
 };
 
+struct BaiDanhRa {
+	int soLuong;
+	Card *danhSach[13];
+	KieuXapBo kieuBai;
+};
 ///Đánh bài là việc fill đầy cái Log này
 struct LuotDanh {
 	int nguoiDangDanh = 0;
 	bool nguoiDaBoVong[4] = {false,false,false,false};
 	int nguoiDaBoVongCount = 0;
-
-	KieuXapBo baiDanhKieu = BO_RAC;
-	Card* baiDanhSang[13];
-	int baiDanhCount = 0;
-
+	BaiDanhRa *baiDanh;
 	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
 };
+
 
 
 class GameTienLenMNScene : public Layer {
@@ -75,10 +77,13 @@ class GameTienLenMNScene : public Layer {
 
 	private:
 	KieuXapBo tlmnKieuBaiChon(Card* selectedCrad[13], int selectedCradLen);
+	BaiDanhRa* tlmnCpuTimBaiDanh(KieuXapBo bo, int player);
 
 	//CPU playing:
-	bool tlmnKiemTraBaiDanhRa(int logIndex);
+	BaiDanhRa tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);
+	bool tlmnKiemTraBaiDanhRa(BaiDanhRa *baidanhra);
 	bool tlmnCpuChonBaiDanhRa(int player, int level);
+	void tlmnBoLuot(int player);
 	///UI
 	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;
 	///Message and S
