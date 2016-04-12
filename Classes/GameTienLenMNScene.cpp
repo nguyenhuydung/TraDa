@@ -266,6 +266,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 		Card::allCard[i]->ChangeState(CARD_STATE_DOWN);
 	}
 	iconWinner->setVisible(false);
+	EnableControls(false);
 	//Chia ngau nhien
 	CPplayer[0] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
@@ -325,7 +326,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 
 		if (logDanhBaiIndex == -1) {
 			///tim player có 3 pic cho trận đầu tiên.
-			auto player = 0; //tự cho nó = 0 đã
+			auto player = 0; ///tự cho nó = 0 đã
 			///Tạo cái log đầu tiên
 			logDanhBaiIndex = 0;
 			logDanhBai[logDanhBaiIndex] = new LuotDanh;
@@ -530,9 +531,9 @@ void GameTienLenMNScene::drawInitPlayerStatus() {
 
 void GameTienLenMNScene::drawUpdatePlayerStatus() {
 	//Số lượng quân bài
-	std::string s1;
-	s1 = "x" + CPplayer[1]->BaiCount;
-	lblP1CardCount->setString(s1.c_str());
+	std::ostringstream s1;
+	s1 << "x" << CPplayer[1]->BaiCount;
+	lblP1CardCount->setString(s1.str());
 
 	std::ostringstream s2;
 	s2 << "x" << CPplayer[2]->BaiCount;
