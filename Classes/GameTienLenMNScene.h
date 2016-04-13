@@ -47,6 +47,17 @@ class GameTienLenMNScene : public Layer {
 	GameTienLenMNScene();
 	~GameTienLenMNScene();
 	static Scene* createScene();
+	///create:
+	static GameTienLenMNScene* create() {
+		auto pRet = new(std::nothrow) GameTienLenMNScene();
+		if (pRet && pRet->init()) {
+			pRet->autorelease();
+			return pRet;
+		}
+		delete pRet;
+		return nullptr;
+	};
+	//------------------------------------------------------------------
 	bool init() override;
 	///Bai bac
 	int chiaBaiIndex = 0;
@@ -64,24 +75,21 @@ class GameTienLenMNScene : public Layer {
 	void drawUpdatePlayerStatus();
 
 	int danhBaiTaoLog(); //retun player đánh tiếp theo
-	///create:
-	static GameTienLenMNScene* create() {
-		auto pRet = new(std::nothrow) GameTienLenMNScene();
-		if (pRet && pRet->init()) {
-			pRet->autorelease();
-			return pRet;
-		}
-		delete pRet;
-		return nullptr;
-	};
 
-	private:
-	KieuXapBo tlmnKieuBaiChon(Card* selectedCrad[13], int selectedCradLen);
-	BaiDanhRa* tlmnCpuTimBaiDanh(KieuXapBo bo, int player);
+	private://------------------------------------------------------------------
+	///Kiểm tra kiểu của các quân bài được chọn
+	KieuXapBo tlmnTimKieuSapBo(Card* selectedCrad[13], int selectedCradLen);
 
 	//CPU playing:
-	BaiDanhRa tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);
+	/// tìm quân đánh tối ưu
+	BaiDanhRa *tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);
+	///tìm bai để đánh vòng mới
+	BaiDanhRa* tlmnCpuTimBaiDanh(int player);
+	///tìm bài đỡ baidanh
+	BaiDanhRa* tlmnCpuTimBaiDo(BaiDanhRa *baidanh);
+	///kiem tra xem bai danh có đúng không
 	bool tlmnKiemTraBaiDanhRa(BaiDanhRa *baidanhra);
+	///Gọi để CPU thực hiện việc select bài
 	bool tlmnCpuChonBaiDanhRa(int player, int level);
 	void tlmnBoLuot(int player);
 	///UI

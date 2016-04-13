@@ -113,7 +113,7 @@ bool GameTienLenMNScene::init() {
 					}
 				}
 				if (baiDanhRa->soLuong != 0) {
-					baiDanhRa->kieuBai = tlmnKieuBaiChon(baiDanhRa->danhSach, baiDanhRa->soLuong);
+					baiDanhRa->kieuBai = tlmnTimKieuSapBo(baiDanhRa->danhSach, baiDanhRa->soLuong);
 					if (baiDanhRa->kieuBai != BO_FALSE) {
 						if (tlmnKiemTraBaiDanhRa(baiDanhRa)) {
 							///Đánh bài thành công
@@ -549,9 +549,9 @@ void GameTienLenMNScene::drawUpdatePlayerStatus() {
 }
 
 //De quy toi uu bai danh ra:
-BaiDanhRa GameTienLenMNScene::tlmnTryTimBaiDanhRa(Card* selectedCrad[13]) {
+BaiDanhRa *GameTienLenMNScene::tlmnTryTimBaiDanhRa(Card* selectedCrad[13]) {
 
-	return {
+	return new BaiDanhRa{
 		1,
 		{},
 		BO_DAY
@@ -563,16 +563,17 @@ bool GameTienLenMNScene::tlmnKiemTraBaiDanhRa(BaiDanhRa *baidanhra) {
 	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
 		//chonj bai de danh:
 		//auto baidanh = tlmnTryTimBaiDanhRa()
-
+		auto baiDanhRa = tlmnCpuTimBaiDanh(0);
 	} else {
 		//Chonj bai de do~:
-
+		auto baiDanhRa = tlmnCpuTimBaiDo(nullptr);
 	}
 	return true;
 	//return false;
 }
 
-BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(KieuXapBo bo, int player) {
+//Danh abi
+BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(int player) {
 	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
 		//chonj bai de danh:
 		for (auto i = 0; i < 13; i++) {
@@ -592,14 +593,17 @@ BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(KieuXapBo bo, int player) {
 	return x;
 }
 
+//Do bai
+BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDo(BaiDanhRa *baidanh) {
+	return nullptr;
+}
 
 ///CPU chon quan de danh 
 bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//CPU Chon quan de đánh and Fill log:
 	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
 		///Tìm bài để đánh:
-		Card arr[13];
-
+		tlmnCpuTimBaiDanh(player);
 
 	} else {
 		///Kiểm tra bài đánh sang và tìm bài để đỡ:
@@ -660,7 +664,7 @@ void GameTienLenMNScene::EnableControls(bool state) {
 }
 
 //Private for Tien Len Mien Nam:
-KieuXapBo GameTienLenMNScene::tlmnKieuBaiChon(Card* selectedCrad[13], int selectedCradLen) {
+KieuXapBo GameTienLenMNScene::tlmnTimKieuSapBo(Card* selectedCrad[13], int selectedCradLen) {
 	if (selectedCradLen == 1) {
 		///Rác:
 		return BO_RAC;
