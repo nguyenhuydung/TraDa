@@ -86,9 +86,9 @@ class GameTienLenMNScene : public Layer {
 	///tìm bai để đánh vòng mới
 	BaiDanhRa* tlmnCpuTimBaiDanh(int player);
 	///tìm bài đỡ baidanh
-	BaiDanhRa* tlmnCpuTimBaiDo(BaiDanhRa *baidanh);
+	BaiDanhRa* tlmnCpuTimBaiDo(BaiDanhRa *baidanh, int player);
 	///kiem tra xem bai danh có đúng không
-	bool tlmnKiemTraBaiDanhRa(BaiDanhRa *baidanhra);
+	bool tlmnKiemTraBaiDanhRa(BaiDanhRa *baidanhra, int player);
 	///Gọi để CPU thực hiện việc select bài
 	bool tlmnCpuChonBaiDanhRa(int player, int level);
 	void tlmnBoLuot(int player);
