@@ -74,11 +74,11 @@ class GameTienLenMNScene : public Layer {
 	void drawInitPlayerStatus();
 	void drawUpdatePlayerStatus();
 
-	int danhBaiTaoLog(); //retun player đánh tiếp theo
-
+	int danhBaiKhoiTaoLog(); //retun player đánh tiếp theo		
+	bool danhBaiKiemTraHopLe(BaiDanhRa *baidanhra); ///kiem tra xem bai danh có đúng không
 	private://------------------------------------------------------------------
 	///Kiểm tra kiểu của các quân bài được chọn
-	KieuXapBo tlmnTimKieuSapBo(Card* selectedCrad[13], int selectedCradLen);
+	KieuXapBo tlmnKiemTraKieuSapBo(Card* selectedCrad[13], int selectedCradLen);
 
 	//CPU playing:
 	/// tìm quân đánh tối ưu
@@ -87,12 +87,10 @@ class GameTienLenMNScene : public Layer {
 	BaiDanhRa* tlmnCpuTimBaiDanh(int player);
 	///tìm bài đỡ baidanh
 	BaiDanhRa* tlmnCpuTimBaiDo(BaiDanhRa *baidanh, int player);
-	///kiem tra xem bai danh có đúng không
-	bool tlmnKiemTraBaiDanhRa(BaiDanhRa *baidanhra, int player);
 	///Gọi để CPU thực hiện việc select bài
-	bool tlmnCpuChonBaiDanhRa(int player, int level);
+	void tlmnCpuChonBaiDanhRa(int player, int level);
 	void tlmnBoLuot(int player);
-	///UI
+	///UI:
 	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;
 	///Message and S
 	Label* messageBox = nullptr, *lblP1CardCount = nullptr, *lblP2CardCount = nullptr, *lblP3CardCount = nullptr;
@@ -100,7 +98,7 @@ class GameTienLenMNScene : public Layer {
 	Sprite *iconSkipPlayer[4], *iconWinner = nullptr;
 
 	void EnableControls(bool state);
-	//bool 
+	///bool 
 	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
 };
 

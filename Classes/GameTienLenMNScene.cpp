@@ -104,6 +104,7 @@ bool GameTienLenMNScene::init() {
 				break;
 			case ui::Widget::TouchEventType::ENDED: {///FILL LOG ĐÁNH BÀI: quet bai được chọn
 				auto baiDanhRa = new BaiDanhRa();
+				///quét các quân bài đang được chọn
 				baiDanhRa->soLuong = 0;
 				for (auto i = 0; i < 13; i++) {
 					if (CPplayer[0]->Bai[i]->cardState == CARD_STATE_SELT) {
@@ -111,10 +112,11 @@ bool GameTienLenMNScene::init() {
 						baiDanhRa->soLuong ++;
 					}
 				}
+				///xây struct baidanhra:
 				if (baiDanhRa->soLuong != 0) {
-					baiDanhRa->kieuBai = tlmnTimKieuSapBo(baiDanhRa->danhSach, baiDanhRa->soLuong);
+					baiDanhRa->kieuBai = tlmnKiemTraKieuSapBo(baiDanhRa->danhSach, baiDanhRa->soLuong);
 					if (baiDanhRa->kieuBai != BO_FALSE) {
-						if (tlmnKiemTraBaiDanhRa(baiDanhRa, 0)) {
+						if (danhBaiKiemTraHopLe(baiDanhRa)) {
 							///Đánh bài thành công
 							CPplayer[0]->BaiCount -= baiDanhRa->soLuong;
 							logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
@@ -176,6 +178,7 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
+				
 				for (auto i = 0; i < 13; i++) {
 					for (auto j = i + 1; j < 13; j++) {
 						if ((CPplayer[0]->Bai[i]->cardIndex > CPplayer[0]->Bai[j]->cardIndex) || (CPplayer[0]->Bai[i]->cardIndex == CPplayer[0]->Bai[j]->cardIndex && CPplayer[0]->Bai[i]->cardElement > CPplayer[0]->Bai[j]->cardElement) || CPplayer[0]->Bai[j]->daDanh) {
@@ -377,7 +380,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	chiaBaiIndex++;
 }
 
-int GameTienLenMNScene::danhBaiTaoLog() {
+int GameTienLenMNScene::danhBaiKhoiTaoLog() {
 	//Kiểm tra cái log trước: 1. Còn ai đánh không?
 	int player;
 	if (logDanhBai[logDanhBaiIndex]->vongKetThuc) {
@@ -420,7 +423,7 @@ int GameTienLenMNScene::danhBaiTaoLog() {
 }
 
 void GameTienLenMNScene::danhBai() {
-	auto player = danhBaiTaoLog();
+	auto player = danhBaiKhoiTaoLog();
 	if (player == 0) {
 		//Nguoi choi ddanhs
 		EnableControls(true); // cho người chơi đánh
@@ -549,6 +552,13 @@ void GameTienLenMNScene::drawUpdatePlayerStatus() {
 	}
 }
 
+///Kiem tra Luot đánh ra có phù hợp với lượt trước đó không (dành kiểm tra người chơi thôi, máy đánh đã kiểm tra lúc chọn rồi)
+bool GameTienLenMNScene::danhBaiKiemTraHopLe(BaiDanhRa* baidanhra) {
+
+	return true;
+}
+
+
 //De quy toi uu bai danh ra:
 BaiDanhRa* GameTienLenMNScene::tlmnTryTimBaiDanhRa(Card* selectedCrad[13]) {
 	//chonj bai de danh:
@@ -569,23 +579,16 @@ BaiDanhRa* GameTienLenMNScene::tlmnTryTimBaiDanhRa(Card* selectedCrad[13]) {
 	//z->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
 	return baiDanh;
 }
-
-///Kiem tra Luot đánh ra có phù hợp với lượt trước đó không (dành kiểm tra người chơi thôi, máy đánh đã kiểm tra lúc chọn rồi)
-bool GameTienLenMNScene::tlmnKiemTraBaiDanhRa(BaiDanhRa* baidanhra, int player) {
-
-	return true;
+//Danh bai
+BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(int player) {
+	auto baiDanhRa = tlmnTryTimBaiDanhRa(CPplayer[player]->Bai);
+	
+	return baiDanhRa;
 }
 
-//Danh abi
-BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(int player) {
-	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
-		auto baiDanhRa = tlmnTryTimBaiDanhRa({});
-		logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
-		CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
-		return baiDanhRa;
-	}
-	//Chonj bai de do~:
-	auto baiDanhRa = tlmnCpuTimBaiDo(nullptr, 0);
+//Do bai
+BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDo(BaiDanhRa* baidanh, int player) {
+	auto baiDanhRa = new BaiDanhRa();  // tlmnCpuTimBaiDo(nullptr, 0);
 	if (baiDanhRa->soLuong != 0) {
 		logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
 		CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
@@ -595,17 +598,20 @@ BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(int player) {
 	return baiDanhRa;
 }
 
-//Do bai
-BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDo(BaiDanhRa* baidanh, int player) {
-
-	return nullptr;
-}
-
 ///CPU chon quan de danh 
-bool GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
+void GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//CPU Chon quan de đánh and Fill log:
-	auto baidanh = tlmnCpuTimBaiDanh(player);
-	return baidanh->soLuong != 0;
+	BaiDanhRa *baiDanh;
+	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
+		baiDanh = tlmnCpuTimBaiDanh(player);
+	} else {
+		baiDanh = tlmnCpuTimBaiDo(logDanhBai[logDanhBaiIndex - 1]->baiDanh, player);
+	}
+	if (baiDanh->soLuong == 0) {
+		tlmnBoLuot(player);
+	}
+	logDanhBai[logDanhBaiIndex]->baiDanh = baiDanh;
+	CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
 }
 
 void GameTienLenMNScene::tlmnBoLuot(int player) {
@@ -636,7 +642,7 @@ void GameTienLenMNScene::EnableControls(bool state) {
 }
 
 //Private for Tien Len Mien Nam:
-KieuXapBo GameTienLenMNScene::tlmnTimKieuSapBo(Card* selectedCrad[13], int selectedCradLen) {
+KieuXapBo GameTienLenMNScene::tlmnKiemTraKieuSapBo(Card* selectedCrad[13], int selectedCradLen) {
 	if (selectedCradLen == 1) {
 		///Rác:
 		return BO_RAC;
