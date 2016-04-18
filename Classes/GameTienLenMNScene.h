@@ -40,7 +40,7 @@ struct LuotDanh {
 	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
 };
 
-
+KieuXapBo danhDauXapBo[4][13];
 
 class GameTienLenMNScene : public Layer {
 	public:
@@ -79,7 +79,7 @@ class GameTienLenMNScene : public Layer {
 	private://------------------------------------------------------------------
 	///Kiểm tra kiểu của các quân bài được chọn
 	KieuXapBo tlmnKiemTraKieuSapBo(Card* selectedCrad[13], int selectedCradLen);
-
+	void tlmnCpuMaskSapBo(int player);
 	//CPU playing:
 	/// tìm quân đánh tối ưu
 	BaiDanhRa *tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);

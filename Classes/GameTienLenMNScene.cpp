@@ -178,7 +178,7 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				
+
 				for (auto i = 0; i < 13; i++) {
 					for (auto j = i + 1; j < 13; j++) {
 						if ((CPplayer[0]->Bai[i]->cardIndex > CPplayer[0]->Bai[j]->cardIndex) || (CPplayer[0]->Bai[i]->cardIndex == CPplayer[0]->Bai[j]->cardIndex && CPplayer[0]->Bai[i]->cardElement > CPplayer[0]->Bai[j]->cardElement) || CPplayer[0]->Bai[j]->daDanh) {
@@ -552,6 +552,9 @@ void GameTienLenMNScene::drawUpdatePlayerStatus() {
 	}
 }
 
+void GameTienLenMNScene::tlmnCpuMaskSapBo(int player) {
+}
+
 ///Kiem tra Luot đánh ra có phù hợp với lượt trước đó không (dành kiểm tra người chơi thôi, máy đánh đã kiểm tra lúc chọn rồi)
 bool GameTienLenMNScene::danhBaiKiemTraHopLe(BaiDanhRa* baidanhra) {
 
@@ -562,10 +565,10 @@ bool GameTienLenMNScene::danhBaiKiemTraHopLe(BaiDanhRa* baidanhra) {
 //De quy toi uu bai danh ra:
 BaiDanhRa* GameTienLenMNScene::tlmnTryTimBaiDanhRa(Card* selectedCrad[13]) {
 	//chonj bai de danh:
-	auto soBai = RandomHelper::random_int(1, 3);
+	auto baiDanh = new BaiDanhRa();
+	auto soBai = RandomHelper::random_int(-3, 3);
 
 	auto i = 0;
-	auto baiDanh = new BaiDanhRa();
 	baiDanh->soLuong = 0;
 	while (i < 13 && baiDanh->soLuong < soBai) {
 		if (!selectedCrad[i]->daDanh) {
@@ -575,43 +578,48 @@ BaiDanhRa* GameTienLenMNScene::tlmnTryTimBaiDanhRa(Card* selectedCrad[13]) {
 		}
 		i++;
 	}
-	//logDanhBai[logDanhBaiIndex]->baiDanh = baiDanh;
-	//z->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
+
 	return baiDanh;
 }
-//Danh bai
+
+//Hàm này chọn bài để đánh vòng mới
 BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(int player) {
-	auto baiDanhRa = tlmnTryTimBaiDanhRa(CPplayer[player]->Bai);
-	
-	return baiDanhRa;
+	auto baiDanh = new BaiDanhRa();
+	auto soBai = RandomHelper::random_int(1, 3);
+	auto i = 0;
+	baiDanh->soLuong = 0;
+	while (i < 13 && baiDanh->soLuong < soBai) {
+		if (!CPplayer[player]->Bai[i]->daDanh) {
+			CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
+			baiDanh->danhSach[baiDanh->soLuong] = CPplayer[player]->Bai[i];
+			baiDanh->soLuong++;
+		}
+		i++;
+	}
+	logDanhBai[logDanhBaiIndex]->baiDanh = baiDanh;
+	CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
+	return baiDanh;
 }
 
-//Do bai
+//hàm này select các quân bài để đỡ bài đánh sang
 BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDo(BaiDanhRa* baidanh, int player) {
-	auto baiDanhRa = new BaiDanhRa();  // tlmnCpuTimBaiDo(nullptr, 0);
-	if (baiDanhRa->soLuong != 0) {
-		logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
-		CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
-	} else {
-		tlmnBoLuot(player);
+	if (baidanh->kieuBai == BO_RAC) {
+		
 	}
-	return baiDanhRa;
+
+	auto baiDanh = new BaiDanhRa();
+	return baiDanh;
 }
 
 ///CPU chon quan de danh 
 void GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//CPU Chon quan de đánh and Fill log:
-	BaiDanhRa *baiDanh;
+	BaiDanhRa* baiDanh;
 	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
 		baiDanh = tlmnCpuTimBaiDanh(player);
 	} else {
 		baiDanh = tlmnCpuTimBaiDo(logDanhBai[logDanhBaiIndex - 1]->baiDanh, player);
 	}
-	if (baiDanh->soLuong == 0) {
-		tlmnBoLuot(player);
-	}
-	logDanhBai[logDanhBaiIndex]->baiDanh = baiDanh;
-	CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
 }
 
 void GameTienLenMNScene::tlmnBoLuot(int player) {
