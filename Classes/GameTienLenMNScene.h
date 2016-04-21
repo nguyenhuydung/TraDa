@@ -40,8 +40,6 @@ struct LuotDanh {
 	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
 };
 
-KieuXapBo danhDauXapBo[4][13];
-
 class GameTienLenMNScene : public Layer {
 	public:
 	GameTienLenMNScene();
@@ -57,6 +55,10 @@ class GameTienLenMNScene : public Layer {
 		delete pRet;
 		return nullptr;
 	};
+
+	KieuXapBo danhDauXapBo[4][13];
+	int danhDauXapBoCount[4]; //dem so bo
+
 	//------------------------------------------------------------------
 	bool init() override;
 	///Bai bac
@@ -73,13 +75,15 @@ class GameTienLenMNScene : public Layer {
 
 	void drawInitPlayerStatus();
 	void drawUpdatePlayerStatus();
-
 	int danhBaiKhoiTaoLog(); //retun player đánh tiếp theo		
 	bool danhBaiKiemTraHopLe(BaiDanhRa *baidanhra); ///kiem tra xem bai danh có đúng không
 	private://------------------------------------------------------------------
 	///Kiểm tra kiểu của các quân bài được chọn
 	KieuXapBo tlmnKiemTraKieuSapBo(Card* selectedCrad[13], int selectedCradLen);
-	void tlmnCpuMaskSapBo(int player);
+	///Đánh dấu bài vào bộ
+
+	void tlmnCpuMaskRepair(int player);
+	void tlmnCpuMaskSapBo(int player, int step);
 	//CPU playing:
 	/// tìm quân đánh tối ưu
 	BaiDanhRa *tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);

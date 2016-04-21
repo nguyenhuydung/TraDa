@@ -552,7 +552,18 @@ void GameTienLenMNScene::drawUpdatePlayerStatus() {
 	}
 }
 
-void GameTienLenMNScene::tlmnCpuMaskSapBo(int player) {
+
+
+void GameTienLenMNScene::tlmnCpuMaskRepair(int player) {
+	for (auto i = 0; i < 4; i++) {
+		for (auto j = 0;j < 13;j++) {
+			danhDauXapBo[i][j] = BO_RAC;
+		}
+	}
+}
+
+void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
+
 }
 
 ///Kiem tra Luot đánh ra có phù hợp với lượt trước đó không (dành kiểm tra người chơi thôi, máy đánh đã kiểm tra lúc chọn rồi)
