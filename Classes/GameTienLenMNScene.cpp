@@ -561,9 +561,15 @@ void GameTienLenMNScene::tlmnCpuMaskRepair(int player) {
 		}
 	}
 }
-
+///Đánh dấu bộ tối ưu
 void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
+	for (auto i = 0; i < 13; i++) {
+		if (danhDauXapBo[player][i] == BO_RAC) {
+			//Tìm sắp bộ cho quân i:
 
+		}
+
+	}
 }
 
 ///Kiem tra Luot đánh ra có phù hợp với lượt trước đó không (dành kiểm tra người chơi thôi, máy đánh đã kiểm tra lúc chọn rồi)
@@ -625,12 +631,7 @@ BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDo(BaiDanhRa* baidanh, int player) {
 ///CPU chon quan de danh 
 void GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
 	//CPU Chon quan de đánh and Fill log:
-	BaiDanhRa* baiDanh;
-	if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
-		baiDanh = tlmnCpuTimBaiDanh(player);
-	} else {
-		baiDanh = tlmnCpuTimBaiDo(logDanhBai[logDanhBaiIndex - 1]->baiDanh, player);
-	}
+	(logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) ? tlmnCpuTimBaiDanh(player) : tlmnCpuTimBaiDo(logDanhBai[logDanhBaiIndex - 1]->baiDanh, player);
 }
 
 void GameTienLenMNScene::tlmnBoLuot(int player) {

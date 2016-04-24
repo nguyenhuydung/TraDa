@@ -57,7 +57,7 @@ class GameTienLenMNScene : public Layer {
 	};
 
 	KieuXapBo danhDauXapBo[4][13];
-	int danhDauXapBoCount[4]; //dem so bo
+	int danhDauXapBoCount[4]; //dem so qua le
 
 	//------------------------------------------------------------------
 	bool init() override;
