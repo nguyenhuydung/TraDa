@@ -57,6 +57,7 @@ class GameTienLenMNScene : public Layer {
 	};
 
 	KieuXapBo danhDauXapBo[4][13];
+	KieuXapBo danhDauXapBoBest[4][13];
 	int danhDauXapBoCount[4]; //dem so qua le
 
 	//------------------------------------------------------------------
@@ -83,6 +84,7 @@ class GameTienLenMNScene : public Layer {
 	///Đánh dấu bài vào bộ
 
 	void tlmnCpuMaskRepair(int player);
+	bool tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx);
 	void tlmnCpuMaskSapBo(int player, int step);
 	//CPU playing:
 	/// tìm quân đánh tối ưu

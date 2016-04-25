@@ -558,14 +558,77 @@ void GameTienLenMNScene::tlmnCpuMaskRepair(int player) {
 	for (auto i = 0; i < 4; i++) {
 		for (auto j = 0;j < 13;j++) {
 			danhDauXapBo[i][j] = BO_RAC;
+			danhDauXapBoBest[i][j] = BO_RAC;
 		}
 	}
+}
+
+bool GameTienLenMNScene::tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx) {
+	///Danh dau tu quy:
+	if (type == BO_TUQUY) {
+		auto count = 0;
+		int tuquy[4] = { idx, -1 ,-1 ,-1 };
+		for (auto j = 0;j < 13;j++) {
+			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC) {
+				count += 1;
+				tuquy[count] = j;
+			}
+		}
+		if (count == 3) {
+			for (auto i = 0; i<4; i++) {
+				danhDauXapBo[player][tuquy[i]] = BO_TUQUY;
+			}
+			return true;
+		}
+		return false;
+	}
+	///Danh dau Bo ba:
+	if (type == BO_BA) {
+		auto count = 0;
+		int boba[3] = { idx, -1 ,-1 };
+		for (auto j = 0;j < 13;j++) {
+			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC) {
+				count += 1;
+				boba[count] = j;
+			}
+		}
+		if (count == 2) {
+			for (auto i = 0; i<4; i++) {
+				danhDauXapBo[player][boba[i]] = BO_BA;
+			}
+			return true;
+		}
+		return false;
+	}
+	///Danh dau Bo doi:
+	if (type == BO_DOI) {
+		auto count = 0;
+		int boba[2] = { idx, -1 };
+		for (auto j = 0;j < 13;j++) {
+			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC) {
+				count += 1;
+				boba[count] = j;
+			}
+		}
+		if (count == 1) {
+			for (auto i = 0; i<4; i++) {
+				danhDauXapBo[player][boba[i]] = BO_DOI;
+			}
+			return true;
+		}
+		return false;
+	}
+	return false;
 }
 ///Đánh dấu bộ tối ưu
 void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
 	for (auto i = 0; i < 13; i++) {
 		if (danhDauXapBo[player][i] == BO_RAC) {
-			//Tìm sắp bộ cho quân i:
+			///Tìm sắp bộ cho quân i:
+			if (tlmnCpuMaskKieuBo(BO_TUQUY, player, i)) {
+				tlmnCpuMaskSapBo(player, step++);
+			}
+
 
 		}
 
