@@ -560,7 +560,11 @@ void GameTienLenMNScene::tlmnCpuMaskRepair(int player) {
 			danhDauXapBo[i][j] = BO_RAC;
 			danhDauXapBoBest[i][j] = BO_RAC;
 		}
+		danhDauXapBoCount[i] = 0;
+		danhDauXapBoMin[i] = 13;
 	}
+
+	
 }
 
 bool GameTienLenMNScene::tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx) {
@@ -620,6 +624,7 @@ bool GameTienLenMNScene::tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx) 
 	}
 	return false;
 }
+
 ///Đánh dấu bộ tối ưu
 void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
 	for (auto i = 0; i < 13; i++) {
@@ -627,11 +632,23 @@ void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
 			///Tìm sắp bộ cho quân i:
 			if (tlmnCpuMaskKieuBo(BO_TUQUY, player, i)) {
 				tlmnCpuMaskSapBo(player, step++);
+			} 
+
+			if (tlmnCpuMaskKieuBo(BO_BA, player, i)) {
+				tlmnCpuMaskSapBo(player, step++);
 			}
 
-
+			if (tlmnCpuMaskKieuBo(BO_DOI, player, i)) {
+				tlmnCpuMaskSapBo(player, step++);
+			}
+			///tối ưu đếm quân lẻ
+			for (auto c = 0; c < 13; c++) {
+				if (danhDauXapBo[player][c] == BO_RAC) {
+					danhDauXapBoCount[player] += 1;
+				}
+			}
+			if (danhDauXapBoMin[player] < )
 		}
-
 	}
 }
 
