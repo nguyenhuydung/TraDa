@@ -647,7 +647,9 @@ void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
 					danhDauXapBoCount[player] += 1;
 				}
 			}
-			if (danhDauXapBoMin[player] < )
+			if (danhDauXapBoMin[player] > danhDauXapBoCount[player]) {
+				//luu trang thai danh dau nay
+			}
 		}
 	}
 }
