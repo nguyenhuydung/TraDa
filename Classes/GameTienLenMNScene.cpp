@@ -591,7 +591,7 @@ bool GameTienLenMNScene::tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx) 
 		auto count = 0;
 		int boba[3] = { idx, -1 ,-1 };
 		for (auto j = 0;j < 13;j++) {
-			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC) {
+			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC && count < 2) {
 				count += 1;
 				boba[count] = j;
 			}
@@ -609,7 +609,7 @@ bool GameTienLenMNScene::tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx) 
 		auto count = 0;
 		int boba[2] = { idx, -1 };
 		for (auto j = 0;j < 13;j++) {
-			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC) {
+			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC && count == 0) {
 				count += 1;
 				boba[count] = j;
 			}
