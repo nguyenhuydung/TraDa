@@ -56,7 +56,7 @@ class GameTienLenMNScene : public Layer {
 		return nullptr;
 	};
 
-	KieuXapBo danhDauXapBo[4][13];
+	KieuXapBo danhDauXapBo[4][13]; 
 	KieuXapBo danhDauXapBoBest[4][13];
 	int danhDauXapBoCount[4]; //dem so qua le
 	int danhDauXapBoMin[4]; //dem so qua le it nhat
@@ -85,8 +85,8 @@ class GameTienLenMNScene : public Layer {
 	///Đánh dấu bài vào bộ
 
 	void tlmnCpuMaskRepair(int player);
-	bool tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx);
-	void tlmnCpuMaskSapBo(int player, int step);
+	bool tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx, int *outDanhDauLength, int outDanhDau[13]);
+	void tlmnCpuMaskSapBo(int player, int step, int danhdau[13]);
 	//CPU playing:
 	/// tìm quân đánh tối ưu
 	BaiDanhRa *tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);

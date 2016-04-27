@@ -337,6 +337,10 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
 		}
 		drawUpdatePlayerStatus();
+		for (auto i=1; i<4; i++) {
+			tlmnCpuMaskRepair(i);
+			tlmnCpuMaskSapBo(i, 0);
+		}
 		danhBai();
 		return;
 	}
@@ -567,79 +571,89 @@ void GameTienLenMNScene::tlmnCpuMaskRepair(int player) {
 	
 }
 
-bool GameTienLenMNScene::tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx) {
+bool GameTienLenMNScene::tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx, int *outDanhDauLength, int outDanhDau[13]) {
 	///Danh dau tu quy:
 	if (type == BO_TUQUY) {
-		auto count = 0;
+		*outDanhDauLength = 0;
 		int tuquy[4] = { idx, -1 ,-1 ,-1 };
 		for (auto j = 0;j < 13;j++) {
 			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC) {
-				count += 1;
-				tuquy[count] = j;
+				*outDanhDauLength += 1;
+				tuquy[*outDanhDauLength] = j;
 			}
 		}
-		if (count == 3) {
+		if (*outDanhDauLength == 3) {
+			*outDanhDauLength = *outDanhDauLength + 1;
 			for (auto i = 0; i<4; i++) {
 				danhDauXapBo[player][tuquy[i]] = BO_TUQUY;
+				outDanhDau[i] = tuquy[i];
 			}
 			return true;
 		}
+		*outDanhDauLength = 0;
 		return false;
 	}
 	///Danh dau Bo ba:
 	if (type == BO_BA) {
-		auto count = 0;
+		*outDanhDauLength = 0;
 		int boba[3] = { idx, -1 ,-1 };
 		for (auto j = 0;j < 13;j++) {
-			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC && count < 2) {
-				count += 1;
-				boba[count] = j;
+			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC && *outDanhDauLength < 2) {
+				*outDanhDauLength += 1;
+				boba[*outDanhDauLength] = j;
 			}
 		}
-		if (count == 2) {
+		if (*outDanhDauLength == 2) {
 			for (auto i = 0; i<4; i++) {
 				danhDauXapBo[player][boba[i]] = BO_BA;
+				outDanhDau[i] = boba[i];
 			}
 			return true;
 		}
+		*outDanhDauLength = 0;
 		return false;
 	}
 	///Danh dau Bo doi:
 	if (type == BO_DOI) {
-		auto count = 0;
-		int boba[2] = { idx, -1 };
+		*outDanhDauLength = 0;
+		int bodoi[2] = { idx, -1 };
 		for (auto j = 0;j < 13;j++) {
-			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC && count == 0) {
-				count += 1;
-				boba[count] = j;
+			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && danhDauXapBo[player][j] == BO_RAC && *outDanhDauLength == 0) {
+				*outDanhDauLength += 1;
+				bodoi[*outDanhDauLength] = j;
 			}
 		}
-		if (count == 1) {
+		if (*outDanhDauLength == 1) {
 			for (auto i = 0; i<4; i++) {
-				danhDauXapBo[player][boba[i]] = BO_DOI;
+				danhDauXapBo[player][bodoi[i]] = BO_DOI;
+				outDanhDau[i] = bodoi[i];
 			}
 			return true;
 		}
+		*outDanhDauLength = 0;
 		return false;
 	}
 	return false;
 }
 
 ///Đánh dấu bộ tối ưu
-void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
+void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step, int danhdau[13]) {
+	int danhdaulocalcount = 0;
+	int danhdaulocal[13] = { -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }; ///luu tam vi tri tim duoc bo
 	for (auto i = 0; i < 13; i++) {
 		if (danhDauXapBo[player][i] == BO_RAC) {
 			///Tìm sắp bộ cho quân i:
-			if (tlmnCpuMaskKieuBo(BO_TUQUY, player, i)) {
-				tlmnCpuMaskSapBo(player, step++);
-			} 
+			if (tlmnCpuMaskKieuBo(BO_TUQUY, player, i, &danhdaulocalcount, danhdaulocal)) {
+				tlmnCpuMaskSapBo(player, danhdaulocalcount, danhdaulocal);
 
-			if (tlmnCpuMaskKieuBo(BO_BA, player, i)) {
-				tlmnCpuMaskSapBo(player, step++);
 			}
 
-			if (tlmnCpuMaskKieuBo(BO_DOI, player, i)) {
-				tlmnCpuMaskSapBo(player, step++);
+			if (tlmnCpuMaskKieuBo(BO_BA, player, i, &danhdaulocalcount, danhdaulocal)) {
+				tlmnCpuMaskSapBo(player, danhdaulocalcount, danhdaulocal);
+			}
+
+			if (tlmnCpuMaskKieuBo(BO_DOI, player, i, &danhdaulocalcount, danhdaulocal)) {
+				tlmnCpuMaskSapBo(player, danhdaulocalcount, danhdaulocal);
 			}
 			///tối ưu đếm quân lẻ
 			for (auto c = 0; c < 13; c++) {
@@ -649,6 +663,9 @@ void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step) {
 			}
 			if (danhDauXapBoMin[player] > danhDauXapBoCount[player]) {
 				//luu trang thai danh dau nay
+				for (auto j = 0; j < 13; j++) {
+					danhDauXapBoBest[player][j] = danhDauXapBo[player][j];
+				}
 			}
 		}
 	}
