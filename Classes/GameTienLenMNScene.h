@@ -16,15 +16,7 @@ static float scaleY = 0.0f;
 static float scaleXL = 0.0f;
 static float scaleYL = 0.0f;
 
-enum KieuXapBo {
-	BO_RAC,
-	BO_DOI,
-	BO_BA,
-	BO_TUQUY,
-	BO_DAY,
-	BO_DOITHONG,
-	BO_FALSE
-};
+
 
 struct BaiDanhRa {
 	int soLuong;
@@ -38,6 +30,22 @@ struct LuotDanh {
 	int nguoiDaBoVongCount = 0;
 	BaiDanhRa *baiDanh;
 	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
+};
+
+class DanhDauXapBo {
+public:
+	KieuXapBo DanhDau[13];
+	int Player;
+	int SoQuanLe;
+	static DanhDauXapBo* Create(int p) {
+		auto x = new DanhDauXapBo();
+		for (auto i = 0; i < 13; i++) {
+			x->DanhDau[i] = BO_RAC; // { BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC };
+		}
+		x->Player = p;
+		x->SoQuanLe = 13;
+		return x;
+	}
 };
 
 class GameTienLenMNScene : public Layer {
@@ -55,11 +63,6 @@ class GameTienLenMNScene : public Layer {
 		delete pRet;
 		return nullptr;
 	};
-
-	KieuXapBo danhDauXapBo[4][13]; 
-	KieuXapBo danhDauXapBoBest[4][13];
-	int danhDauXapBoCount[4]; //dem so qua le
-	int danhDauXapBoMin[4]; //dem so qua le it nhat
 
 	//------------------------------------------------------------------
 	bool init() override;
@@ -84,9 +87,9 @@ class GameTienLenMNScene : public Layer {
 	KieuXapBo tlmnKiemTraKieuSapBo(Card* selectedCrad[13], int selectedCradLen);
 	///Đánh dấu bài vào bộ
 
-	void tlmnCpuMaskRepair(int player);
-	bool tlmnCpuMaskKieuBo(KieuXapBo type, int player, int idx, int *outDanhDauLength, int outDanhDau[13]);
-	void tlmnCpuMaskSapBo(int player, int step, int danhdau[13]);
+	void tlmnCpuMaskRepair();
+	bool tlmnCpuMaskKieuBo(KieuXapBo type, int idx, DanhDauXapBo *maskbai);
+	void tlmnCpuMaskSapBo(int step, DanhDauXapBo *maskbai);
 	//CPU playing:
 	/// tìm quân đánh tối ưu
 	BaiDanhRa *tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);

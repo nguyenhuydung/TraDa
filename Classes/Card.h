@@ -13,6 +13,16 @@ enum cardstate {
 	CARD_STATE_HIDE  //Đã bỏ khỏi bàn
 };
 
+enum KieuXapBo {
+	BO_RAC,
+	BO_DOI,
+	BO_BA,
+	BO_TUQUY,
+	BO_DAY,
+	BO_DOITHONG,
+	BO_FALSE
+};
+
 class Card : public Sprite {
 	public:
 	static Texture2D* cardsImage;

@@ -14,7 +14,9 @@ class GPlayer {
 	~GPlayer();
 
 	Card* Bai[13];
+	KieuXapBo DanhDauBo[13];
 	int BaiCount = 13;
+	int BaiLeCount = 13;
 
 	int Diem = 0; //Tổng điểm đang có
 	int Thang = 0; //Số trận thắng
@@ -25,6 +27,8 @@ class GPlayer {
 
 	int State = 0;
 	void cpuDanh();
+	void RepairMask();
+	//void Sort();
 };
 
 
