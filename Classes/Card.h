@@ -23,6 +23,8 @@ enum KieuXapBo {
 	BO_DOITHONG,
 };
 
+
+
 class Card : public Sprite {
 	public:
 	static Texture2D* cardsImage;
@@ -49,6 +51,13 @@ class Card : public Sprite {
 	bool daDanh = false;
 	//Dùng để đổi trạng thái hiển thị
 	void ChangeState(cardstate state);
+};
+
+class BaiDanhRa {
+public:
+	int soLuong;
+	Card *danhSach[13];
+	KieuXapBo kieuBai;
 };
 
 #endif

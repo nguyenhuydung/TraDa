@@ -18,13 +18,9 @@ static float scaleYL = 0.0f;
 
 
 
-struct BaiDanhRa {
-	int soLuong;
-	Card *danhSach[13];
-	KieuXapBo kieuBai;
-};
+
 ///Đánh bài là việc fill đầy cái Log này
-struct LuotDanh {
+struct LuotDanhBai {
 	int nguoiDangDanh = 0;
 	bool nguoiDaBoVong[4] = {false,false,false,false};
 	int nguoiDaBoVongCount = 0;
@@ -68,7 +64,7 @@ class GameTienLenMNScene : public Layer {
 	void chiaBaiAnimation(Node* sender);
 	///danh bai
 	int logDanhBaiIndex = -1; //Trận đầu tiên
-	LuotDanh* logDanhBai[104];
+	LuotDanhBai* logDanhBai[104]; ///Log lại các lượt đánh ra
 
 	void danhBai();
 	void danhBaiAnimationDone(Node* sender);

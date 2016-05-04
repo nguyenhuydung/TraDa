@@ -329,7 +329,7 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 			auto player = 0; ///tự cho nó = 0 đã
 			///Tạo cái log đầu tiên
 			logDanhBaiIndex = 0;
-			logDanhBai[logDanhBaiIndex] = new LuotDanh;
+			logDanhBai[logDanhBaiIndex] = new LuotDanhBai;
 			logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
 		}
@@ -397,7 +397,7 @@ int GameTienLenMNScene::danhBaiKhoiTaoLog() {
 		player = logDanhBai[logDanhBaiIndex]->nguoiDangDanh;
 		logDanhBaiIndex++;
 		if (logDanhBai[logDanhBaiIndex] == nullptr) {
-			logDanhBai[logDanhBaiIndex] = new LuotDanh;
+			logDanhBai[logDanhBaiIndex] = new LuotDanhBai();
 		}
 		logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 		logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = 0;
@@ -417,7 +417,7 @@ int GameTienLenMNScene::danhBaiKhoiTaoLog() {
 		}
 		logDanhBaiIndex++;
 		if (logDanhBai[logDanhBaiIndex] == nullptr) {
-			logDanhBai[logDanhBaiIndex] = new LuotDanh;
+			logDanhBai[logDanhBaiIndex] = new LuotDanhBai();
 		}
 		logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 		logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVongCount;
@@ -822,12 +822,25 @@ BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(int player) {
 
 //hàm này select các quân bài để đỡ bài đánh sang
 BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDo(BaiDanhRa* baidanh, int player) {
-	if (baidanh->kieuBai == BO_RAC) {
-
+	auto baiDo = new BaiDanhRa();
+	auto soBai = RandomHelper::random_int(-3, 3);
+	if (soBai > 0) {
+		auto i = 0;
+		baiDo->soLuong = 0;
+		while (i < 13 && baiDo->soLuong < soBai) {
+			if (!CPplayer[player]->Bai[i]->daDanh) {
+				CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
+				baiDo->danhSach[baiDo->soLuong] = CPplayer[player]->Bai[i];
+				baiDo->soLuong++;
+			}
+			i++;
+		}
+		logDanhBai[logDanhBaiIndex]->baiDanh = baiDo;
+		CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
+	} else {
+		tlmnBoLuot(player);
 	}
-
-	auto baiDanh = new BaiDanhRa();
-	return baiDanh;
+	return baiDo;
 }
 
 ///CPU chon quan de danh 
