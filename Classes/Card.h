@@ -53,12 +53,7 @@ class Card : public Sprite {
 	void ChangeState(cardstate state);
 };
 
-class BaiDanhRa {
-public:
-	int soLuong;
-	Card *danhSach[13];
-	KieuXapBo kieuBai;
-};
+
 
 #endif
 
