@@ -35,15 +35,11 @@ struct LuotDanh {
 class DanhDauXapBo {
 public:
 	KieuXapBo DanhDau[13];
-	int Player;
-	int SoQuanLe;
 	static DanhDauXapBo* Create(int p) {
 		auto x = new DanhDauXapBo();
 		for (auto i = 0; i < 13; i++) {
 			x->DanhDau[i] = BO_RAC; // { BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC };
 		}
-		x->Player = p;
-		x->SoQuanLe = 13;
 		return x;
 	}
 };
@@ -88,8 +84,9 @@ class GameTienLenMNScene : public Layer {
 	///Đánh dấu bài vào bộ
 
 	void tlmnCpuMaskRepair();
-	bool tlmnCpuMaskKieuBo(KieuXapBo type, int idx, DanhDauXapBo *maskbai);
-	void tlmnCpuMaskSapBo(int step, DanhDauXapBo *maskbai);
+	bool tlmnCpuMaskKieuBo(int player, int idx, DanhDauXapBo* maskbai);
+	bool tlmnCpuMaskKieuBo(int player, KieuXapBo type, int idx, DanhDauXapBo *maskbai);
+	void tlmnCpuMaskSapBo(int player, int step, DanhDauXapBo *maskbai);
 	//CPU playing:
 	/// tìm quân đánh tối ưu
 	BaiDanhRa *tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);

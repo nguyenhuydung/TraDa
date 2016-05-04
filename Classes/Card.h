@@ -14,13 +14,13 @@ enum cardstate {
 };
 
 enum KieuXapBo {
+	BO_FALSE,
 	BO_RAC,
 	BO_DOI,
 	BO_BA,
-	BO_TUQUY,
 	BO_DAY,
+	BO_TUQUY,
 	BO_DOITHONG,
-	BO_FALSE
 };
 
 class Card : public Sprite {

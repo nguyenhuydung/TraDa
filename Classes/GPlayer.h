@@ -28,7 +28,7 @@ class GPlayer {
 	int State = 0;
 	void cpuDanh();
 	void RepairMask();
-	//void Sort();
+	void Sort();
 };
 
 
