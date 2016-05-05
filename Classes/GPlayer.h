@@ -48,7 +48,7 @@ class GPlayer {
 	int State = 0;
 	//BaiDanhRa* cpuChonQuanDanh();
 	BaiDanhRa* cpuChonQuanDanh(LogLuotDanhBai *baidanhsang);
-	KieuXapBo GPlayer::ValidateBaiDanhRa(BaiDanhRa *baidanh);
+	KieuXapBo ValidateBaiDanhRa(BaiDanhRa *baidanh);
 	void Sort();
 	void maskRepair();
 	void maskSapBo(int step, DanhDau maskbai);
