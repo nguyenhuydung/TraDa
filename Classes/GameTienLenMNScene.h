@@ -5,6 +5,7 @@
 #include "Card.h"
 #include <SimpleAudioEngine.h>
 #include "ui/CocosGUI.h"
+#include "GPlayer.h"
 
 const Vec2 PP0 = Vec2(45, 110);
 const Vec2 PP1 = Vec2(940, 375);
@@ -19,14 +20,7 @@ static float scaleYL = 0.0f;
 
 
 
-///Đánh bài là việc fill đầy cái Log này
-struct LuotDanhBai {
-	int nguoiDangDanh = 0;
-	bool nguoiDaBoVong[4] = {false,false,false,false};
-	int nguoiDaBoVongCount = 0;
-	BaiDanhRa *baiDanh;
-	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
-};
+
 
 class DanhDauXapBo {
 public:
@@ -64,7 +58,7 @@ class GameTienLenMNScene : public Layer {
 	void chiaBaiAnimation(Node* sender);
 	///danh bai
 	int logDanhBaiIndex = -1; //Trận đầu tiên
-	LuotDanhBai* logDanhBai[104]; ///Log lại các lượt đánh ra
+	LogLuotDanhBai* logDanhBai[104]; ///Log lại các lượt đánh ra
 
 	void danhBai();
 	void danhBaiAnimationDone(Node* sender);
@@ -74,34 +68,17 @@ class GameTienLenMNScene : public Layer {
 	void drawUpdatePlayerStatus();
 	int danhBaiKhoiTaoLog(); //retun player đánh tiếp theo		
 	bool danhBaiKiemTraHopLe(BaiDanhRa *baidanhra); ///kiem tra xem bai danh có đúng không
-	private://------------------------------------------------------------------
-	///Kiểm tra kiểu của các quân bài được chọn
-	KieuXapBo tlmnKiemTraKieuSapBo(Card* selectedCrad[13], int selectedCradLen);
-	///Đánh dấu bài vào bộ
+	void danhBaiBoLuot(int player);
 
-	void tlmnCpuMaskRepair();
-	bool tlmnCpuMaskKieuBo(int player, int idx, DanhDauXapBo* maskbai);
-	bool tlmnCpuMaskKieuBo(int player, KieuXapBo type, int idx, DanhDauXapBo *maskbai);
-	void tlmnCpuMaskSapBo(int player, int step, DanhDauXapBo *maskbai);
-	//CPU playing:
-	/// tìm quân đánh tối ưu
-	BaiDanhRa *tlmnTryTimBaiDanhRa(Card* selectedCrad[13]);
-	///tìm bai để đánh vòng mới
-	BaiDanhRa* tlmnCpuTimBaiDanh(int player);
-	///tìm bài đỡ baidanh
-	BaiDanhRa* tlmnCpuTimBaiDo(BaiDanhRa *baidanh, int player);
-	///Gọi để CPU thực hiện việc select bài
-	void tlmnCpuChonBaiDanhRa(int player, int level);
-	void tlmnBoLuot(int player);
+	private://------------------------------------------------------------------
 	///UI:
 	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;
 	///Message and S
 	Label* messageBox = nullptr, *lblP1CardCount = nullptr, *lblP2CardCount = nullptr, *lblP3CardCount = nullptr;
 	///Bỏ lượt overlay icon:
 	Sprite *iconSkipPlayer[4], *iconWinner = nullptr;
-
 	void EnableControls(bool state);
-	///bool 
+	///Audio:
 	CocosDenshion::SimpleAudioEngine* audio = CocosDenshion::SimpleAudioEngine::getInstance();
 };
 

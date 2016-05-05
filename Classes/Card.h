@@ -23,8 +23,6 @@ enum KieuXapBo {
 	BO_DOITHONG,
 };
 
-
-
 class Card : public Sprite {
 	public:
 	static Texture2D* cardsImage;
@@ -42,6 +40,8 @@ class Card : public Sprite {
 	void addTouchEvents();
 	//Quan bài
 	int cardIndex = 0, cardElement = 0;
+	KieuXapBo xapBoKieu = BO_RAC;
+	Card* xapBoVoi = nullptr;
 	//Hiển thị
 	cardstate cardState = CARD_STATE_NORM; 
 	int zIndex = 1;
@@ -51,6 +51,7 @@ class Card : public Sprite {
 	bool daDanh = false;
 	//Dùng để đổi trạng thái hiển thị
 	void ChangeState(cardstate state);
+
 };
 
 

@@ -8,9 +8,20 @@ public:
 	int soLuong;
 	Card *danhSach[13];
 	KieuXapBo kieuBai;
-
-
 };
+
+///Đánh bài là việc fill đầy cái Log này
+class LogLuotDanhBai {
+public:
+	int nguoiDangDanh = 0;
+	bool nguoiDaBoVong[4] = { false,false,false,false };
+	int nguoiDaBoVongCount = 0;
+	BaiDanhRa *baiDanh;
+	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
+};
+
+typedef KieuXapBo DanhDau[13];
+
 
 struct TinhDiem {
 	int soDiem;
@@ -35,12 +46,17 @@ class GPlayer {
 	int diemRoundIndex = 0; //Index của cái trên
 
 	int State = 0;
-	BaiDanhRa* cpuChonQuanDanh();
-	BaiDanhRa* cpuChonQuanDo(BaiDanhRa *baidanhsang);
-	void RepairMask();
+	//BaiDanhRa* cpuChonQuanDanh();
+	BaiDanhRa* cpuChonQuanDanh(LogLuotDanhBai *baidanhsang);
+	KieuXapBo GPlayer::ValidateBaiDanhRa(BaiDanhRa *baidanh);
 	void Sort();
+	void maskRepair();
+	void maskSapBo(int step, DanhDau maskbai);
 
-	//BaiDanhRa* DetectBai
+private:
+	BaiDanhRa* maskKieuBo(int idx, DanhDau maskbai);
+	BaiDanhRa* findKieuBo(KieuXapBo type, int idx, int len, DanhDau maskbai);
+	BaiDanhRa findBai(KieuXapBo type);
 };
 
 

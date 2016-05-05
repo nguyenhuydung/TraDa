@@ -114,11 +114,11 @@ bool GameTienLenMNScene::init() {
 				}
 				///xây struct baidanhra:
 				if (baiDanhRa->soLuong != 0) {
-					baiDanhRa->kieuBai = tlmnKiemTraKieuSapBo(baiDanhRa->danhSach, baiDanhRa->soLuong);
+					baiDanhRa->kieuBai = CPplayer[0]->ValidateBaiDanhRa(baiDanhRa);
 					if (baiDanhRa->kieuBai != BO_FALSE) {
 						if (danhBaiKiemTraHopLe(baiDanhRa)) {
 							///Đánh bài thành công
-							CPplayer[0]->BaiCount -= baiDanhRa->soLuong;
+							CPplayer[0]->SoQuanBaiConLai -= baiDanhRa->soLuong;
 							logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
 							EnableControls(false);
 							///Goi đánh animation
@@ -156,7 +156,7 @@ bool GameTienLenMNScene::init() {
 					messageBox->setString("Bạn đang được quyền đánh, không bỏ lượt được.");
 					return;
 				}
-				tlmnBoLuot(0);
+				danhBaiBoLuot(0);
 				danhBaiAnimation();
 			}
 				break;
@@ -277,7 +277,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 		Card::allCard[inx]->daChia = true;
 		CPplayer[0]->Bai[i] = Card::allCard[inx];
 	}
-	CPplayer[0]->BaiCount = 13;
+	CPplayer[0]->SoQuanBaiConLai = 13;
 
 	CPplayer[1] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
@@ -288,7 +288,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 		Card::allCard[inx]->daChia = true;
 		CPplayer[1]->Bai[i] = Card::allCard[inx];
 	}
-	CPplayer[1]->BaiCount = 13;
+	CPplayer[1]->SoQuanBaiConLai = 13;
 
 	CPplayer[2] = new GPlayer();
 	for (auto i = 0; i < 13; i++) {
@@ -299,7 +299,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 		Card::allCard[inx]->daChia = true;
 		CPplayer[2]->Bai[i] = Card::allCard[inx];
 	}
-	CPplayer[2]->BaiCount = 13;
+	CPplayer[2]->SoQuanBaiConLai = 13;
 
 	CPplayer[3] = new GPlayer();
 	auto inx = 0;
@@ -310,7 +310,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 			inx ++;
 		}
 	}
-	CPplayer[3]->BaiCount = 13;
+	CPplayer[3]->SoQuanBaiConLai = 13;
 
 	//create animation:
 	chiaBaiIndex = 0;
@@ -329,17 +329,16 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 			auto player = 0; ///tự cho nó = 0 đã
 			///Tạo cái log đầu tiên
 			logDanhBaiIndex = 0;
-			logDanhBai[logDanhBaiIndex] = new LuotDanhBai;
+			logDanhBai[logDanhBaiIndex] = new LogLuotDanhBai();
 			logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
 		}
 		drawUpdatePlayerStatus();
 		///Test
-		tlmnCpuMaskRepair();
-		for (auto i = 0; i < 4; i++) {
-			auto x = DanhDauXapBo::Create(i);
-			tlmnCpuMaskSapBo(i, 0, x);
-		}
+		CPplayer[0]->maskRepair();
+		DanhDau x = { BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC };
+		CPplayer[0]->maskSapBo(0, x);
+		
 		///show :
 		std::ostringstream s2;
 		for (auto i = 0; i < 13; i++) {
@@ -397,7 +396,7 @@ int GameTienLenMNScene::danhBaiKhoiTaoLog() {
 		player = logDanhBai[logDanhBaiIndex]->nguoiDangDanh;
 		logDanhBaiIndex++;
 		if (logDanhBai[logDanhBaiIndex] == nullptr) {
-			logDanhBai[logDanhBaiIndex] = new LuotDanhBai();
+			logDanhBai[logDanhBaiIndex] = new LogLuotDanhBai();
 		}
 		logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 		logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = 0;
@@ -417,7 +416,7 @@ int GameTienLenMNScene::danhBaiKhoiTaoLog() {
 		}
 		logDanhBaiIndex++;
 		if (logDanhBai[logDanhBaiIndex] == nullptr) {
-			logDanhBai[logDanhBaiIndex] = new LuotDanhBai();
+			logDanhBai[logDanhBaiIndex] = new LogLuotDanhBai();
 		}
 		logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 		logDanhBai[logDanhBaiIndex]->nguoiDaBoVongCount = logDanhBai[logDanhBaiIndex - 1]->nguoiDaBoVongCount;
@@ -440,7 +439,10 @@ void GameTienLenMNScene::danhBai() {
 		///sau khi ấn đánh, kiemr tra so với log trước
 	} else {
 		///CPU danh
-		tlmnCpuChonBaiDanhRa(player, 0);
+		logDanhBai[logDanhBaiIndex]->baiDanh = CPplayer[player]->cpuChonQuanDanh(logDanhBai[logDanhBaiIndex - 1]);
+		if (logDanhBai[logDanhBaiIndex]->baiDanh->soLuong == 0) {
+			danhBaiBoLuot(player);
+		}
 		danhBaiAnimation();
 	}
 }
@@ -448,7 +450,7 @@ void GameTienLenMNScene::danhBai() {
 void GameTienLenMNScene::danhBaiAnimationDone(Node* sender) {
 	//Kieem tra wwiner
 	for (auto p = 0; p < 4; p++) {
-		if (CPplayer[p]->BaiCount == 0) {
+		if (CPplayer[p]->SoQuanBaiConLai == 0) {
 			iconWinner->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 			iconWinner->setVisible(true);
 			auto shake = FShake::actionWithDuration(0.03f, 10.0f);
@@ -546,231 +548,19 @@ void GameTienLenMNScene::drawInitPlayerStatus() {
 void GameTienLenMNScene::drawUpdatePlayerStatus() {
 	//Số lượng quân bài
 	std::ostringstream s1;
-	s1 << "x" << CPplayer[1]->BaiCount;
+	s1 << "x" << CPplayer[1]->SoQuanBaiConLai;
 	lblP1CardCount->setString(s1.str());
 
 	std::ostringstream s2;
-	s2 << "x" << CPplayer[2]->BaiCount;
+	s2 << "x" << CPplayer[2]->SoQuanBaiConLai;
 	lblP2CardCount->setString(s2.str());
 
 	std::ostringstream s3;
-	s3 << "x" << CPplayer[3]->BaiCount;
+	s3 << "x" << CPplayer[3]->SoQuanBaiConLai;
 	lblP3CardCount->setString(s3.str());
 	//Trạng thái bỏ vòng
 	for (auto i = 0; i < 4; i++) {
 		iconSkipPlayer[i]->setVisible(logDanhBai[logDanhBaiIndex]->nguoiDaBoVong[i]);
-	}
-}
-
-
-void GameTienLenMNScene::tlmnCpuMaskRepair() {
-	for (auto i = 0; i < 4; i++) {
-		//danhDauXapBo[i] = DanhDauXapBo::Create(i);
-		CPplayer[i]->RepairMask();
-	}
-}
-
-bool GameTienLenMNScene::tlmnCpuMaskKieuBo(int player, int idx, DanhDauXapBo* maskbai) {
-	auto ret = tlmnCpuMaskKieuBo(player, BO_DOITHONG, idx, maskbai);
-	if (!ret) {
-		ret = tlmnCpuMaskKieuBo(player, BO_TUQUY, idx, maskbai);
-	}
-	if (!ret) {
-		ret = tlmnCpuMaskKieuBo(player, BO_DAY, idx, maskbai);
-	}
-	if (!ret) {
-		ret = tlmnCpuMaskKieuBo(player, BO_BA, idx, maskbai);
-	}
-	if (!ret) {
-		ret = tlmnCpuMaskKieuBo(player, BO_DOI, idx, maskbai);
-	}
-	return ret;
-}
-
-bool GameTienLenMNScene::tlmnCpuMaskKieuBo(int player, KieuXapBo type, int idx, DanhDauXapBo* maskbai) {
-	///Doi thoong:
-	if (type == BO_DOITHONG) {
-		auto count = 1;
-		int doithong[12] = {idx, -1 ,-1 ,-1,-1 ,-1 ,-1, -1 ,-1 ,-1, -1, -1};
-		bool danhdaudachon[13] = {false, false ,false, false ,false, false ,false, false ,false, false ,false, false};
-		danhdaudachon[idx] = true;
-		for (auto doi = 0; doi < 13; doi = doi + 2) {
-			auto foundDoi = false;
-			for (auto d = 0; d < 13; d++) {
-				///tim cap doi voi idx
-				if (!danhdaudachon[d] && CPplayer[player]->Bai[d]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && maskbai->DanhDau[d] == BO_RAC) {
-					doithong[doi + 1] = d;
-					danhdaudachon[d] = true;
-					count = count + 1;
-					foundDoi = true;
-					break;
-				}
-			}
-			if (foundDoi) {
-				///tim doi lon hon
-				auto foundNext = -1;
-				for (auto d = 0; d < 13; d++) {
-					if (!danhdaudachon[d] && CPplayer[player]->Bai[d]->cardIndex - 1 == CPplayer[player]->Bai[idx]->cardIndex && maskbai->DanhDau[d] == BO_RAC) {
-						doithong[doi + 2] = d;
-						danhdaudachon[d] = true;
-						count = count + 1;
-						foundNext = d;
-						break;
-					}
-				}
-				if (foundNext == -1) {
-					return false;
-				} 
-				idx = foundNext;
-			} else {
-				return false;
-			}
-		}
-
-		if (count >= 6) {
-			count = count + 1;
-			for (auto i = 0; i <= count; i++) {
-				maskbai->DanhDau[doithong[i]] = BO_DOITHONG;
-			}
-			return true;
-		}
-		return false;
-	}
-	///Danh dau sanh:
-	if (type == BO_DAY) {
-		auto count = 0;
-		int sanh[13] = { idx, -1 ,-1 ,-1,-1 ,-1,-1 ,-1,-1 ,-1,-1 ,-1,-1 };
-		bool danhdaudachon[13] = { false, false ,false, false ,false, false ,false, false ,false, false ,false, false };
-		danhdaudachon[idx] = true;
-		for (auto i = 1; i < 13; i++) {
-			for (auto j = 0; j < 13; j++) {
-				if (!danhdaudachon[j] && CPplayer[player]->Bai[j]->cardIndex - 1 == CPplayer[player]->Bai[idx]->cardIndex && maskbai->DanhDau[j] == BO_RAC) {
-					count += 1;
-					sanh[count] = j;
-					idx = j;
-					danhdaudachon[idx] = true;
-					break;
-				}
-			}
-		}
-
-		if (count >= 3) {
-			count = count + 1;
-			for (auto i = 0; i < 4; i++) {
-				//danhDauXapBo[player][tuquy[i]] = BO_TUQUY;
-				maskbai->DanhDau[sanh[i]] = BO_DAY;
-			}
-			return true;
-		}
-		return false;
-	}
-	///Danh dau tu quy:
-	if (type == BO_TUQUY) {
-		auto count = 0;
-		int tuquy[4] = {idx, -1 ,-1 ,-1};
-		for (auto j = 0; j < 13; j++) {
-			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && maskbai->DanhDau[j] == BO_RAC) {
-				count += 1;
-				tuquy[count] = j;
-			}
-		}
-		if (count == 3) {
-			count = count + 1;
-			for (auto i = 0; i < 4; i++) {
-				//danhDauXapBo[player][tuquy[i]] = BO_TUQUY;
-				maskbai->DanhDau[tuquy[i]] = BO_TUQUY;
-			}
-			return true;
-		}
-		return false;
-	}
-	///Danh dau Bo ba:
-	if (type == BO_BA) {
-		auto count = 0;
-		int boba[3] = {idx, -1 ,-1};
-		for (auto j = 0; j < 13; j++) {
-			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && maskbai->DanhDau[j] == BO_RAC && count < 2) {
-				count += 1;
-				boba[count] = j;
-			}
-		}
-		if (count == 2) {
-			for (auto i = 0; i < 3; i++) {
-				//danhDauXapBo[player][boba[i]] = BO_BA;
-				maskbai->DanhDau[boba[i]] = BO_BA;
-			}
-			return true;
-		}
-		return false;
-	}
-	///Danh dau Bo doi:
-	if (type == BO_DOI) {
-		auto count = 0;
-		int bodoi[2] = {idx, -1};
-		for (auto j = 0; j < 13; j++) {
-			if (j != idx && CPplayer[player]->Bai[j]->cardIndex == CPplayer[player]->Bai[idx]->cardIndex && maskbai->DanhDau[j] == BO_RAC && count == 0) {
-				count += 1;
-				bodoi[count] = j;
-			}
-		}
-		if (count == 1) {
-			for (auto i = 0; i < 2; i++) {
-				//danhDauXapBo[player][bodoi[i]] = BO_DOI;
-				maskbai->DanhDau[bodoi[i]] = BO_DOI;
-			}
-			return true;
-		}
-		return false;
-	}
-	return false;
-}
-
-///Đánh dấu bộ tối ưu
-void GameTienLenMNScene::tlmnCpuMaskSapBo(int player, int step, DanhDauXapBo* maskbai) {
-	///Trang thai de quay lui
-	auto danhdau = DanhDauXapBo::Create(player);
-
-	for (auto i = 0; i < 13; i++) {
-		danhdau->DanhDau[i] = maskbai->DanhDau[i];
-	}
-	///De quy :
-	for (auto i = 0; i < 13; i++) {
-		if (danhdau->DanhDau[i] == BO_RAC) {
-			///Tìm sắp bộ cho quân i:
-			if (tlmnCpuMaskKieuBo(player, i, danhdau)) {
-				tlmnCpuMaskSapBo(player, step + 1, danhdau);
-			}
-
-			//if (tlmnCpuMaskKieuBo(player, BO_DAY, i, danhdau)) {
-			//	tlmnCpuMaskSapBo(player, step + 1, danhdau);
-			//}
-
-			//if (tlmnCpuMaskKieuBo(player, BO_TUQUY, i, danhdau)) {
-			//	tlmnCpuMaskSapBo(player, step + 1, danhdau);
-			//}
-
-			//if (tlmnCpuMaskKieuBo(player, BO_BA, i, danhdau)) {
-			//	tlmnCpuMaskSapBo(player, step + 1, danhdau);
-			//}
-
-			//if (tlmnCpuMaskKieuBo(player, BO_DOI, i, danhdau)) {
-			//	tlmnCpuMaskSapBo(player, step + 1, danhdau);
-			//}
-			///tối ưu đếm quân lẻ
-			auto demquanle = 0;
-			for (auto c = 0; c < 13; c++) {
-				if (danhdau->DanhDau[c] == BO_RAC) {
-					demquanle += 1;
-				}
-			}
-			if (demquanle < CPplayer[player]->BaiLeCount) {
-				///luu trang thai danh dau nay
-				CPplayer[player]->BaiLeCount = demquanle;
-				for (auto j = 0; j < 13; j++) {
-					CPplayer[player]->DanhDauBo[j] = danhdau->DanhDau[j];
-				}
-			}
-		}
 	}
 }
 
@@ -781,75 +571,7 @@ bool GameTienLenMNScene::danhBaiKiemTraHopLe(BaiDanhRa* baidanhra) {
 }
 
 
-//De quy toi uu bai danh ra:
-BaiDanhRa* GameTienLenMNScene::tlmnTryTimBaiDanhRa(Card* selectedCrad[13]) {
-	//chonj bai de danh:
-	auto baiDanh = new BaiDanhRa();
-	auto soBai = RandomHelper::random_int(-3, 3);
-
-	auto i = 0;
-	baiDanh->soLuong = 0;
-	while (i < 13 && baiDanh->soLuong < soBai) {
-		if (!selectedCrad[i]->daDanh) {
-			selectedCrad[i]->cardState = CARD_STATE_SELT;
-			baiDanh->danhSach[baiDanh->soLuong] = selectedCrad[i];
-			baiDanh->soLuong++;
-		}
-		i++;
-	}
-
-	return baiDanh;
-}
-
-//Hàm này chọn bài để đánh vòng mới
-BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDanh(int player) {
-	auto baiDanh = new BaiDanhRa();
-	auto soBai = RandomHelper::random_int(1, 3);
-	auto i = 0;
-	baiDanh->soLuong = 0;
-	while (i < 13 && baiDanh->soLuong < soBai) {
-		if (!CPplayer[player]->Bai[i]->daDanh) {
-			CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
-			baiDanh->danhSach[baiDanh->soLuong] = CPplayer[player]->Bai[i];
-			baiDanh->soLuong++;
-		}
-		i++;
-	}
-	logDanhBai[logDanhBaiIndex]->baiDanh = baiDanh;
-	CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
-	return baiDanh;
-}
-
-//hàm này select các quân bài để đỡ bài đánh sang
-BaiDanhRa* GameTienLenMNScene::tlmnCpuTimBaiDo(BaiDanhRa* baidanh, int player) {
-	auto baiDo = new BaiDanhRa();
-	auto soBai = RandomHelper::random_int(-3, 3);
-	if (soBai > 0) {
-		auto i = 0;
-		baiDo->soLuong = 0;
-		while (i < 13 && baiDo->soLuong < soBai) {
-			if (!CPplayer[player]->Bai[i]->daDanh) {
-				CPplayer[player]->Bai[i]->cardState = CARD_STATE_SELT;
-				baiDo->danhSach[baiDo->soLuong] = CPplayer[player]->Bai[i];
-				baiDo->soLuong++;
-			}
-			i++;
-		}
-		logDanhBai[logDanhBaiIndex]->baiDanh = baiDo;
-		CPplayer[player]->BaiCount = CPplayer[player]->BaiCount - logDanhBai[logDanhBaiIndex]->baiDanh->soLuong;
-	} else {
-		tlmnBoLuot(player);
-	}
-	return baiDo;
-}
-
-///CPU chon quan de danh 
-void GameTienLenMNScene::tlmnCpuChonBaiDanhRa(int player, int level) {
-	//CPU Chon quan de đánh and Fill log:
-	(logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) ? tlmnCpuTimBaiDanh(player) : tlmnCpuTimBaiDo(logDanhBai[logDanhBaiIndex - 1]->baiDanh, player);
-}
-
-void GameTienLenMNScene::tlmnBoLuot(int player) {
+void GameTienLenMNScene::danhBaiBoLuot(int player) {
 	auto luotNguoiDanh = logDanhBai[logDanhBaiIndex];
 	auto baiDanh = new BaiDanhRa();
 	baiDanh->soLuong = 0;
@@ -875,68 +597,3 @@ void GameTienLenMNScene::EnableControls(bool state) {
 	btnUserXep->setEnabled(state);
 	btnUserBoChon->setEnabled(state);
 }
-
-//Private for Tien Len Mien Nam:
-KieuXapBo GameTienLenMNScene::tlmnKiemTraKieuSapBo(Card* selectedCrad[13], int selectedCradLen) {
-	if (selectedCradLen == 1) {
-		///Rác:
-		return BO_RAC;
-	}
-	if (selectedCradLen == 2) {
-		///Đôi
-		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex) {
-			return BO_DOI;
-		}
-		return BO_FALSE;
-	}
-	if (selectedCradLen == 3) {
-		///Sám
-		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex && selectedCrad[1]->cardIndex == selectedCrad[2]->cardIndex) {
-			return BO_BA;
-		}
-	}
-	if (selectedCradLen == 4) {
-		///Tứ quý
-		if (selectedCrad[0]->cardIndex == selectedCrad[1]->cardIndex && selectedCrad[1]->cardIndex == selectedCrad[2]->cardIndex && selectedCrad[2]->cardIndex == selectedCrad[3]->cardIndex) {
-			return BO_TUQUY;
-		}
-	}
-	///Kiểm tra sảnh:
-	Card* tmpar[13];
-	for (auto i = 0; i < selectedCradLen; i++) {
-		tmpar[i] = selectedCrad[i];
-	}
-	///sort teamp
-	for (auto i = 0; i < selectedCradLen; i++) {
-		for (auto j = i + 1; j < selectedCradLen; j++) {
-			if ((tmpar[i]->cardIndex > tmpar[j]->cardIndex) || (tmpar[i]->cardIndex == tmpar[j]->cardIndex && tmpar[i]->cardElement > tmpar[j]->cardElement)) {
-				auto tmpx = tmpar[i];
-				tmpar[i] = tmpar[j];
-				tmpar[j] = tmpx;
-			}
-		}
-	}
-	///dây
-	auto i = 1;
-	auto isValid = true;
-	do {
-		if (tmpar[0]->cardIndex != tmpar[i]->cardIndex - i) {
-			isValid = false;
-		}
-		i++;
-	} while (isValid && i < selectedCradLen);
-	if (isValid) return BO_DAY;
-	///Đôi thông
-	if (selectedCradLen == 6 || selectedCradLen == 8 || selectedCradLen == 10 || selectedCradLen == 12) {
-		i = 0;
-		do {
-			if ((tmpar[i]->cardIndex != tmpar[i + 1]->cardIndex) && (tmpar[i]->cardIndex != tmpar[i + 2]->cardIndex - 1) && (tmpar[i + 1]->cardIndex != tmpar[i + 3]->cardIndex - 1)) {
-				isValid = false;
-			}
-			i = i + 2;
-		} while (isValid && i < selectedCradLen - 4);
-	}
-	if (isValid) return BO_DOITHONG;
-	return BO_FALSE;
-}
-
