@@ -322,20 +322,6 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 }
 
 //auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-int CardElement(int elm) {
-	if (elm == 0) return 9824;
-	if (elm == 1) return 9827;
-	if (elm == 2) return 9829;
-	return 9830;
-}
-int CardIndex(int ind) {
-	if (ind == 12) return 50;
-	if (ind == 11) return 65;
-	if (ind == 10) return 75;
-	if (ind == 9) return 81;
-	if (ind == 8) return 74;
-	return 10104 + ind;
-}
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex >= 52) {
 		//Chia bài xong:

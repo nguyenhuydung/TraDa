@@ -15,33 +15,40 @@ BaiDanhRa* GPlayer::cpuChonQuanDanh(LogLuotDanhBai* baidanhsang) {
 	if (baidanhsang->vongKetThuc) {
 		//Đánh bài
 		Sort();
-		maskSapBo(0, nullptr);
+		maskRepair(DanhDauBo);
+		maskSapBo(0, DanhDauBo);
 		///Chon bộ bé nhất
 		baiDanh->soLuong = 1;
-
-
-
+		///Tìm quân chưa đánh đầu tiên:
+		auto f = 0;
+		while (Bai[f]->daDanh) f++;
+		Bai[f]->cardState = CARD_STATE_SELT;
+		while (DanhDauBo->lienKet[f] != -1) {
+			f = DanhDauBo->lienKet[f];
+			Bai[f]->cardState = CARD_STATE_SELT;
+			baiDanh->soLuong++;
+		}
+		baiDanh->kieuBai = ValidateBaiDanhRa(baiDanh);
 	} else {
 		//Đỡ bài đánh sang:
 		soBai = RandomHelper::random_int(-4, 4);
-
-	}
-	///tesst
-	if (soBai > 0) {
-		auto i = 0;
-		baiDanh->soLuong = 0;
-		while (i < 13 && baiDanh->soLuong < soBai) {
-			if (!Bai[i]->daDanh) {
-				Bai[i]->cardState = CARD_STATE_SELT;
-				baiDanh->danhSach[baiDanh->soLuong] = Bai[i];
-				baiDanh->soLuong++;
+		///tesst
+		if (soBai > 0) {
+			auto i = 0;
+			baiDanh->soLuong = 0;
+			while (i < 13 && baiDanh->soLuong < soBai) {
+				if (!Bai[i]->daDanh) {
+					Bai[i]->cardState = CARD_STATE_SELT;
+					baiDanh->danhSach[baiDanh->soLuong] = Bai[i];
+					baiDanh->soLuong++;
+				}
+				i++;
 			}
-			i++;
+			baidanhsang->baiDanh = baiDanh;
+			SoQuanBaiConLai = SoQuanBaiConLai - baiDanh->soLuong;
+		} else {
+			baiDanh->soLuong = 0;
 		}
-		baidanhsang->baiDanh = baiDanh;
-		SoQuanBaiConLai = SoQuanBaiConLai - baiDanh->soLuong;
-	} else {
-		baiDanh->soLuong = 0;
 	}
 	return baiDanh;
 }
@@ -55,18 +62,16 @@ void GPlayer::maskRepair(DanhDau *danhdau) {
 		if (Bai[i]->daDanh) {
 			SoQuanBaiLe -= 1;
 			danhdau->danhDau[i] = BO_FALSE;
-			danhdau->lienKet[i] = 0;
+			danhdau->lienKet[i] = -1;
 		} else {
 			danhdau->danhDau[i] = BO_RAC;
+			danhdau->lienKet[i] = -1;
 		}
 	}
 }
 
 ///Tim bộ kiểu: type, bắt đầu từ idx, với hệ đánh dấu maskbai:
 BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
-	if (maskbai == nullptr) {
-		maskRepair(maskbai);
-	}
 	auto len = 0;
 	auto ret = new BaiDanhRa();
 	///TÌM ĐÔI THÔNG:
@@ -133,7 +138,7 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
 			count = count + 1;
 			for (auto i = 0; i <= count; i++) {
 				maskbai->danhDau[doithong[i]] = ret->kieuBai;
-				maskbai->lienKet[i] = doithong[i];
+				maskbai->lienKet[doithong[i]] = (i < len) ? doithong[i + 1] : -1;
 			}
 			ret->soLuong = count;
 			return ret;
@@ -186,7 +191,7 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
 				break;
 			case BO_SANH13:
 				len = 13;
-				ret->kieuBai = BO_DOITHONG3;
+				ret->kieuBai = BO_SANH13;
 				break;
 		}
 		auto count = 0;
@@ -207,10 +212,10 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
 
 		if (count == len) {
 			count = count + 1;
-			for (auto i = 0; i < 4; i++) {
+			for (auto i = 0; i < count; i++) {
 				//danhDauXapBo[player][tuquy[i]] = BO_TUQUY;
 				maskbai->danhDau[sanh[i]] = ret->kieuBai;
-				maskbai->lienKet[i] = sanh[i];
+				maskbai->lienKet[sanh[i]] = (i < len) ? sanh[i + 1] : -1;
 			}
 			ret->soLuong = count;
 			return ret;
@@ -234,7 +239,7 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
 			for (auto i = 0; i < 4; i++) {
 				//danhDauXapBo[player][tuquy[i]] = BO_TUQUY;
 				maskbai->danhDau[tuquy[i]] = BO_TUQUY;
-				maskbai->lienKet[i] = tuquy[i];
+				maskbai->lienKet[tuquy[i]] = (i < 3) ? tuquy[i + 1] : -1;
 			}
 			ret->soLuong = count;
 			return ret;
@@ -257,7 +262,7 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
 			for (auto i = 0; i < 3; i++) {
 				//danhDauXapBo[player][boba[i]] = BO_BA;
 				maskbai->danhDau[boba[i]] = BO_BA;
-				maskbai->lienKet[i] = boba[i];
+				maskbai->lienKet[boba[i]] = (i < 2) ? boba[i + 1] : -1;
 			}
 			ret->soLuong = count;
 			return ret;
@@ -280,7 +285,7 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
 			for (auto i = 0; i < 2; i++) {
 				//danhDauXapBo[player][bodoi[i]] = BO_DOI;
 				maskbai->danhDau[bodoi[i]] = BO_DOI;
-				maskbai->lienKet[i] = bodoi[i];
+				maskbai->lienKet[bodoi[i]] = (i < 1) ? bodoi[i + 1] : -1;
 			}
 			ret->soLuong = count;
 			return ret;;
@@ -302,19 +307,15 @@ BaiDanhRa GPlayer::findBai(KieuXapBo type, int length) {
 void GPlayer::maskSapBo(int step, DanhDau *maskbai) {
 	///Trang thai de quay lui
 	auto hasvip = false;
-	auto masklocal = new DanhDau();;
-	if (maskbai == nullptr) {
-		maskRepair(masklocal);
-	} else {
-		///copy masklocal:
-		for (auto i =0; i<13; i++) {
-			masklocal->danhDau[i] = maskbai->danhDau[i];
-			masklocal->lienKet[i] = maskbai->lienKet[i];
-		}
+	auto masklocal = new DanhDau();
+	///copy masklocal:
+	for (auto i =0; i<13; i++) {
+		masklocal->danhDau[i] = maskbai->danhDau[i];
+		masklocal->lienKet[i] = maskbai->lienKet[i];
 	}
 	///De quy :
 	for (auto i = 0; i < 13; i++) {
-		if (masklocal->danhDau[i] == BO_RAC) {
+		if (masklocal->danhDau[i] == BO_RAC && masklocal->danhDau[i] != BO_FALSE) {
 			for (auto k = BO_DOI; k < BO_DOITHONG6; k = static_cast<KieuXapBo>(k + 1)) {
 				auto res = findKieuBo(k, i, masklocal);
 				if (res->soLuong != 0) {
@@ -338,8 +339,13 @@ void GPlayer::maskSapBo(int step, DanhDau *maskbai) {
 	if (demquanle < SoQuanBaiLe) {
 		///luu trang thai danh dau nay
 		SoQuanBaiLe = demquanle;
-		DanhDauBo = masklocal;
+		///copy đanhau:
+		for (auto i = 0; i<13; i++) {
+			DanhDauBo->danhDau[i] = masklocal->danhDau[i];
+			DanhDauBo->lienKet[i] = masklocal->lienKet[i];
+		}
 	}
+	delete masklocal;
 }
 
 void GPlayer::Sort() {
@@ -476,5 +482,5 @@ void GPlayer::GPlayerTest() {
 	Sort();
 	maskRepair(DanhDauBo);
 	//DanhDau danhdau = { BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC,BO_RAC };
-	maskSapBo(0, nullptr);
+	maskSapBo(0, DanhDauBo);
 }

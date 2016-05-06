@@ -20,10 +20,11 @@ public:
 	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
 };
 
-typedef struct {
+class DanhDau {
+public:
 	KieuXapBo danhDau[13];
 	int lienKet[13];
-} DanhDau;
+} ;
 
 
 struct TinhDiem {
@@ -37,7 +38,7 @@ class GPlayer {
 	~GPlayer();
 
 	Card* Bai[13];
-	DanhDau *DanhDauBo = nullptr;
+	DanhDau *DanhDauBo = new DanhDau();
 	int SoQuanBaiConLai = 13;
 	int SoQuanBaiLe = 13;
 
