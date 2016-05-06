@@ -18,9 +18,22 @@ enum KieuXapBo {
 	BO_RAC,
 	BO_DOI,
 	BO_BA,
-	BO_DAY,
+	BO_SANH3,
+	BO_SANH4,
+	BO_SANH5,
+	BO_SANH6,
 	BO_TUQUY,
-	BO_DOITHONG,
+	BO_SANH7,
+	BO_SANH8,
+	BO_SANH9,
+	BO_SANH10,
+	BO_SANH11,
+	BO_SANH12,
+	BO_SANH13,
+	BO_DOITHONG3,
+	BO_DOITHONG4,
+	BO_DOITHONG5,
+	BO_DOITHONG6,
 };
 
 class Card : public Sprite {
@@ -51,7 +64,6 @@ class Card : public Sprite {
 	bool daDanh = false;
 	//Dùng để đổi trạng thái hiển thị
 	void ChangeState(cardstate state);
-
 };
 
 

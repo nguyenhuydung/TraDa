@@ -107,6 +107,8 @@ BaiDanhRa* GPlayer::maskKieuBo(int idx, DanhDau maskbai) {
 	return ret;
 }
 
+
+
 BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, int len, DanhDau maskbai) {
 	if (maskbai == nullptr) {
 		maskbai = new DanhDau{BO_RAC, BO_RAC ,BO_RAC, BO_RAC ,BO_RAC, BO_RAC ,BO_RAC, BO_RAC ,BO_RAC, BO_RAC ,BO_RAC, BO_RAC};
@@ -267,7 +269,7 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, int len, DanhDau maskbai
 	return ret;
 }
 
-BaiDanhRa GPlayer::findBai(KieuXapBo type) {
+BaiDanhRa GPlayer::findBai(KieuXapBo type, int length) {
 	auto found = BaiDanhRa();
 
 

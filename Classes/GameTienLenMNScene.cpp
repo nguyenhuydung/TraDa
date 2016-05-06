@@ -5,7 +5,8 @@
 #include "HelloWorldScene.h"
 #include "FrozaxShake/FShake.h"
 #include <SimpleAudioEngine.h>
-#include <iostream>
+
+
 
 USING_NS_CC;
 
@@ -318,7 +319,20 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 }
 
 //auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-
+int CardElement(int elm) {
+	if (elm == 0) return 9824;
+	if (elm == 1) return 9827;
+	if (elm == 2) return 9829;
+	return 9830;
+}
+int CardIndex(int ind) {
+	if (ind == 12) return 50;
+	if (ind == 11) return 65;
+	if (ind == 10) return 75;
+	if (ind == 9) return 81;
+	if (ind == 8) return 74;
+	return 10104 + ind;
+}
 void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 	if (chiaBaiIndex >= 52) {
 		//Chia bài xong:
@@ -340,11 +354,20 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		CPplayer[0]->maskSapBo(0, x);
 		
 		///show :
-		std::ostringstream s2;
+		auto s00 = CCString::createWithFormat("P0:");
+		auto s01 = CCString::createWithFormat("P1:");
+		auto s02 = CCString::createWithFormat("P2:");
+		auto s03 = CCString::createWithFormat("P3:");
 		for (auto i = 0; i < 13; i++) {
-			s2 << CPplayer[0]->DanhDauBo[i] << ",";
+			s00->appendWithFormat("[%c%c]", CardIndex(CPplayer[0]->Bai[i]->cardIndex), CardElement(CPplayer[0]->Bai[i]->cardElement));
+			s01->appendWithFormat("[%c%c]", CardIndex(CPplayer[1]->Bai[i]->cardIndex), CardElement(CPplayer[1]->Bai[i]->cardElement));
+			s02->appendWithFormat("[%c%c]", CardIndex(CPplayer[2]->Bai[i]->cardIndex), CardElement(CPplayer[2]->Bai[i]->cardElement));
+			s03->appendWithFormat("[%c%c]", CardIndex(CPplayer[3]->Bai[i]->cardIndex), CardElement(CPplayer[3]->Bai[i]->cardElement));
 		}
-		messageBox->setString(s2.str());
+		messageBox->setString(s00->getCString());
+		lblP1CardCount->setString(s01->getCString());
+		lblP2CardCount->setString(s02->getCString());
+		lblP3CardCount->setString(s03->getCString());
 
 		danhBai();
 		return;

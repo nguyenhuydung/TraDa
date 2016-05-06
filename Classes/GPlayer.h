@@ -56,7 +56,9 @@ class GPlayer {
 private:
 	BaiDanhRa* maskKieuBo(int idx, DanhDau maskbai);
 	BaiDanhRa* findKieuBo(KieuXapBo type, int idx, int len, DanhDau maskbai);
-	BaiDanhRa findBai(KieuXapBo type);
+	BaiDanhRa findBai(KieuXapBo type, int length);
+	///Tim bo 
+
 };
 
 
