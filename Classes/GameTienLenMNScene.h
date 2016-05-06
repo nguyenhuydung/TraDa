@@ -17,23 +17,6 @@ static float scaleY = 0.0f;
 static float scaleXL = 0.0f;
 static float scaleYL = 0.0f;
 
-
-
-
-
-
-class DanhDauXapBo {
-public:
-	KieuXapBo DanhDau[13];
-	static DanhDauXapBo* Create(int p) {
-		auto x = new DanhDauXapBo();
-		for (auto i = 0; i < 13; i++) {
-			x->DanhDau[i] = BO_RAC; // { BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC };
-		}
-		return x;
-	}
-};
-
 class GameTienLenMNScene : public Layer {
 	public:
 	GameTienLenMNScene();

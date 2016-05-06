@@ -184,7 +184,7 @@ bool GameTienLenMNScene::init() {
 
 				std::ostringstream s2;
 				for (auto i = 0; i < 13; i++) {
-					s2 << CPplayer[0]->DanhDauBo[i] << ",";
+					s2 << CPplayer[0]->DanhDauBo->danhDau[i] << ",";
 
 					if (!CPplayer[0]->Bai[i]->daDanh) {
 						auto actionMove = MoveTo::create(0.5, Vec2(Vec2(scaleXL * (PP0.x + i * Card::cardWidth), scaleYL * PP0.y)));
@@ -265,6 +265,9 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 		Card::allCard[i]->setScaleX(scaleX);
 		Card::allCard[i]->setScaleY(scaleY);
 		Card::allCard[i]->ChangeState(CARD_STATE_DOWN);
+
+		Card::allCard[i]->xapBoKieu = BO_RAC;
+		Card::allCard[i]->xapBoVoi = nullptr;
 	}
 	iconWinner->setVisible(false);
 	EnableControls(false);
@@ -349,9 +352,10 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		}
 		drawUpdatePlayerStatus();
 		///Test
-		CPplayer[0]->maskRepair();
-		DanhDau x = { BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC, BO_RAC };
-		CPplayer[0]->maskSapBo(0, x);
+		CPplayer[0]->GPlayerTest();
+		CPplayer[1]->GPlayerTest();
+		CPplayer[2]->GPlayerTest();
+		CPplayer[3]->GPlayerTest();
 		
 		///show :
 		auto s00 = CCString::createWithFormat("P0:");
@@ -359,10 +363,10 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 		auto s02 = CCString::createWithFormat("P2:");
 		auto s03 = CCString::createWithFormat("P3:");
 		for (auto i = 0; i < 13; i++) {
-			s00->appendWithFormat("[%c%c]", CardIndex(CPplayer[0]->Bai[i]->cardIndex), CardElement(CPplayer[0]->Bai[i]->cardElement));
-			s01->appendWithFormat("[%c%c]", CardIndex(CPplayer[1]->Bai[i]->cardIndex), CardElement(CPplayer[1]->Bai[i]->cardElement));
-			s02->appendWithFormat("[%c%c]", CardIndex(CPplayer[2]->Bai[i]->cardIndex), CardElement(CPplayer[2]->Bai[i]->cardElement));
-			s03->appendWithFormat("[%c%c]", CardIndex(CPplayer[3]->Bai[i]->cardIndex), CardElement(CPplayer[3]->Bai[i]->cardElement));
+			s00->appendWithFormat("[%d]", CPplayer[0]->DanhDauBo->danhDau[i]);
+			s01->appendWithFormat("[%d]", CPplayer[1]->DanhDauBo->danhDau[i]);
+			s02->appendWithFormat("[%d]", CPplayer[2]->DanhDauBo->danhDau[i]);
+			s03->appendWithFormat("[%d]", CPplayer[3]->DanhDauBo->danhDau[i]);
 		}
 		messageBox->setString(s00->getCString());
 		lblP1CardCount->setString(s01->getCString());

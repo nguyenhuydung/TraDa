@@ -20,7 +20,10 @@ public:
 	bool vongKetThuc = false; //nếu true -> nguoiDangDanh là nguoi danh tiếp theo
 };
 
-typedef KieuXapBo DanhDau[13];
+typedef struct {
+	KieuXapBo danhDau[13];
+	int lienKet[13];
+} DanhDau;
 
 
 struct TinhDiem {
@@ -34,7 +37,7 @@ class GPlayer {
 	~GPlayer();
 
 	Card* Bai[13];
-	KieuXapBo DanhDauBo[13];
+	DanhDau *DanhDauBo = nullptr;
 	int SoQuanBaiConLai = 13;
 	int SoQuanBaiLe = 13;
 
@@ -49,13 +52,13 @@ class GPlayer {
 	//BaiDanhRa* cpuChonQuanDanh();
 	BaiDanhRa* cpuChonQuanDanh(LogLuotDanhBai *baidanhsang);
 	KieuXapBo ValidateBaiDanhRa(BaiDanhRa *baidanh);
+	void GPlayerTest();
 	void Sort();
-	void maskRepair();
-	void maskSapBo(int step, DanhDau maskbai);
-
 private:
-	BaiDanhRa* maskKieuBo(int idx, DanhDau maskbai);
-	BaiDanhRa* findKieuBo(KieuXapBo type, int idx, int len, DanhDau maskbai);
+	//BaiDanhRa* maskKieuBo(int idx, DanhDau maskbai);
+	void maskRepair(DanhDau *danhdau);
+	void maskSapBo(int step, DanhDau *maskbai);
+	BaiDanhRa* findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai);
 	BaiDanhRa findBai(KieuXapBo type, int length);
 	///Tim bo 
 
