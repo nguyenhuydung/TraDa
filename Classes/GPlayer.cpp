@@ -18,14 +18,17 @@ BaiDanhRa* GPlayer::cpuChonQuanDanh(LogLuotDanhBai* baidanhsang) {
 		maskRepair(DanhDauBo);
 		maskSapBo(0, DanhDauBo);
 		///Chon bộ bé nhất
-		baiDanh->soLuong = 1;
+		
 		///Tìm quân chưa đánh đầu tiên:
 		auto f = 0;
 		while (Bai[f]->daDanh) f++;
 		Bai[f]->cardState = CARD_STATE_SELT;
+		baiDanh->danhSach[0] = Bai[f];
+		baiDanh->soLuong = 1;
 		while (DanhDauBo->lienKet[f] != -1) {
 			f = DanhDauBo->lienKet[f];
 			Bai[f]->cardState = CARD_STATE_SELT;
+			baiDanh->danhSach[baiDanh->soLuong] = Bai[f];
 			baiDanh->soLuong++;
 		}
 		baiDanh->kieuBai = ValidateBaiDanhRa(baiDanh);
