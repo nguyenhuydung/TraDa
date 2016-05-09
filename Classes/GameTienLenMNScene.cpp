@@ -374,7 +374,10 @@ void GameTienLenMNScene::chiaBaiAnimation(Node* sender) {
 			logDanhBai[logDanhBaiIndex] = new LogLuotDanhBai();
 			logDanhBai[logDanhBaiIndex]->nguoiDangDanh = player;
 			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
+		} else {
+
 		}
+
 		drawUpdatePlayerStatus();
 		///Test
 		CPplayer[0]->GPlayerTest();
@@ -507,6 +510,9 @@ void GameTienLenMNScene::danhBaiAnimationDone(Node* sender) {
 		if (CPplayer[p]->SoQuanBaiConLai == 0) {
 			iconWinner->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 			iconWinner->setVisible(true);
+			logDanhBaiIndex = 0;
+			logDanhBai[logDanhBaiIndex]->nguoiDangDanh = p;
+			logDanhBai[logDanhBaiIndex]->vongKetThuc = true;
 			auto shake = FShake::actionWithDuration(0.03f, 10.0f);
 			this->runAction(shake);
 			//Report điểm ở đây:

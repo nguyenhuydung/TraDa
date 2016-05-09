@@ -34,7 +34,7 @@ BaiDanhRa* GPlayer::cpuChonQuanDanh(LogLuotDanhBai* baidanhsang) {
 		baiDanh->kieuBai = ValidateBaiDanhRa(baiDanh);
 	} else {
 		//Đỡ bài đánh sang:
-		///Tìm quân chưa đánh đầu tiên:
+		///Tìm quân chưa đánh, đầu tiên:
 		auto f = 0;
 		while (f < 13 && 
 			(Bai[f]->daDanh || DanhDauBo->danhDau[f] != baidanhsang->baiDanh->kieuBai || baidanhsang->baiDanh->danhSach[0]->cardIndex > Bai[f]->cardIndex ||
