@@ -290,12 +290,20 @@ bool GameTienLenMNScene::init() {
 		logDanhBai[i] = nullptr;
 	}
 	logDanhBaiIndex = -1;
+	//Khởi tạo Player:
+	CPplayer[0] = new GPlayer("Me", 0);
+	CPplayer[1] = new GPlayer("Huy DUng", 1);
+	CPplayer[2] = new GPlayer("Quang ANh", 2);
+	CPplayer[3] = new GPlayer("Minh Son", 3);
+
 	drawInitPlayerStatus();
 	chiaBai(nullptr);
 	return true;
 }
 
+
 void GameTienLenMNScene::chiaBai(Node* sender) {
+
 	//Reset
 	for (auto i = 0; i < 52; i++) {
 		Card::allCard[i]->daChia = false;
@@ -304,14 +312,14 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 		Card::allCard[i]->setScaleX(scaleX);
 		Card::allCard[i]->setScaleY(scaleY);
 		Card::allCard[i]->ChangeState(CARD_STATE_DOWN);
-
-		Card::allCard[i]->xapBoKieu = BO_RAC;
-		Card::allCard[i]->xapBoVoi = nullptr;
 	}
 	iconWinner->setVisible(false);
 	EnableControls(false);
+	
+	
 	//Chia ngau nhien
-	CPplayer[0] = new GPlayer("Me", 0);
+
+	
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
@@ -322,7 +330,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 	}
 	CPplayer[0]->SoQuanBaiConLai = 13;
 
-	CPplayer[1] = new GPlayer("Huy DUng", 1);
+	
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
@@ -333,7 +341,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 	}
 	CPplayer[1]->SoQuanBaiConLai = 13;
 
-	CPplayer[2] = new GPlayer("Quang ANh", 2);
+	
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
@@ -344,7 +352,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 	}
 	CPplayer[2]->SoQuanBaiConLai = 13;
 
-	CPplayer[3] = new GPlayer("Minh Son", 3);
+	
 	auto inx = 0;
 	for (auto i = 0; i < 52; i++) {
 		if (!Card::allCard[i]->daChia) {
