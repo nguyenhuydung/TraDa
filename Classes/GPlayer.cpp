@@ -2,7 +2,9 @@
 
 //lksjdflk sjdglk jdslhkj
 //Comit
-GPlayer::GPlayer() {
+GPlayer::GPlayer(std::string name, int index) {
+	playerName = name;
+	playerIndex = index;
 }
 
 
@@ -10,18 +12,16 @@ GPlayer::~GPlayer() {
 }
 
 BaiDanhRa* GPlayer::cpuChonQuanDanh(LogLuotDanhBai* baidanhsang) {
+	Sort();
+	maskRepair(DanhDauBo);
+	maskSapBo(0, DanhDauBo);
 	auto baiDanh = new BaiDanhRa();
-	auto soBai = 0;
 	if (baidanhsang->vongKetThuc) {
 		//Đánh bài
-		Sort();
-		maskRepair(DanhDauBo);
-		maskSapBo(0, DanhDauBo);
-		///Chon bộ bé nhất
 		
 		///Tìm quân chưa đánh đầu tiên:
 		auto f = 0;
-		while (Bai[f]->daDanh) f++;
+		while (Bai[f]->daDanh && f < 13) f++;
 		Bai[f]->cardState = CARD_STATE_SELT;
 		baiDanh->danhSach[0] = Bai[f];
 		baiDanh->soLuong = 1;
@@ -34,25 +34,30 @@ BaiDanhRa* GPlayer::cpuChonQuanDanh(LogLuotDanhBai* baidanhsang) {
 		baiDanh->kieuBai = ValidateBaiDanhRa(baiDanh);
 	} else {
 		//Đỡ bài đánh sang:
-		soBai = RandomHelper::random_int(-4, 4);
-		///tesst
-		if (soBai > 0) {
-			auto i = 0;
+		///Tìm quân chưa đánh đầu tiên:
+		auto f = 0;
+		while (f < 13 && 
+			(Bai[f]->daDanh || DanhDauBo->danhDau[f] != baidanhsang->baiDanh->kieuBai || baidanhsang->baiDanh->danhSach[0]->cardIndex > Bai[f]->cardIndex ||
+			 (baidanhsang->baiDanh->danhSach[0]->cardIndex == Bai[f]->cardIndex && baidanhsang->baiDanh->danhSach[0]->cardElement > Bai[f]->cardElement))){
+			f++;
+		}
+		if (f == 13) {
+			///khong tim thay
 			baiDanh->soLuong = 0;
-			while (i < 13 && baiDanh->soLuong < soBai) {
-				if (!Bai[i]->daDanh) {
-					Bai[i]->cardState = CARD_STATE_SELT;
-					baiDanh->danhSach[baiDanh->soLuong] = Bai[i];
-					baiDanh->soLuong++;
-				}
-				i++;
-			}
-			baidanhsang->baiDanh = baiDanh;
-			SoQuanBaiConLai = SoQuanBaiConLai - baiDanh->soLuong;
 		} else {
-			baiDanh->soLuong = 0;
+			Bai[f]->cardState = CARD_STATE_SELT;
+			baiDanh->danhSach[0] = Bai[f];
+			baiDanh->soLuong = 1;
+			while (DanhDauBo->lienKet[f] != -1 && baiDanh->soLuong < baidanhsang->baiDanh->soLuong) {
+				f = DanhDauBo->lienKet[f];
+				Bai[f]->cardState = CARD_STATE_SELT;
+				baiDanh->danhSach[baiDanh->soLuong] = Bai[f];
+				baiDanh->soLuong++;
+			}
+			baiDanh->kieuBai = ValidateBaiDanhRa(baiDanh);
 		}
 	}
+	SoQuanBaiConLai -= baiDanh->soLuong;
 	return baiDanh;
 }
 
@@ -302,6 +307,7 @@ BaiDanhRa* GPlayer::findKieuBo(KieuXapBo type, int idx, DanhDau *maskbai) {
 
 BaiDanhRa GPlayer::findBai(KieuXapBo type, int length) {
 	auto found = BaiDanhRa();
+	///Đệ quy theo tiêu chí:
 
 
 	return found;

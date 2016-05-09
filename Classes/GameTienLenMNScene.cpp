@@ -113,18 +113,57 @@ bool GameTienLenMNScene::init() {
 						baiDanhRa->soLuong ++;
 					}
 				}
-				///xây struct baidanhra:
 				if (baiDanhRa->soLuong != 0) {
-					baiDanhRa->kieuBai = CPplayer[0]->ValidateBaiDanhRa(baiDanhRa);
-					if (baiDanhRa->kieuBai != BO_FALSE) {
-						if (danhBaiKiemTraHopLe(baiDanhRa)) {
-							///Đánh bài thành công
-							CPplayer[0]->SoQuanBaiConLai -= baiDanhRa->soLuong;
-							logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
-							EnableControls(false);
-							///Goi đánh animation
-							danhBaiAnimation();
-							break;
+					if (logDanhBai[logDanhBaiIndex - 1]->vongKetThuc) {
+						///xây struct baidanhra:
+
+						baiDanhRa->kieuBai = CPplayer[0]->ValidateBaiDanhRa(baiDanhRa);
+						if (baiDanhRa->kieuBai != BO_FALSE) {
+							if (danhBaiKiemTraHopLe(baiDanhRa)) {
+								///Đánh bài thành công
+								CPplayer[0]->SoQuanBaiConLai -= baiDanhRa->soLuong;
+								logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
+								EnableControls(false);
+								///Goi đánh animation
+								danhBaiAnimation();
+								break;
+							}
+						}
+
+					} else {
+						//Đỡ bài đánh sang
+						auto i = logDanhBaiIndex - 1;
+						auto baidanhsang = logDanhBai[i]->baiDanh;
+						while (i> 0 && baidanhsang->soLuong == 0) {
+							i = i - 1;
+							baidanhsang = logDanhBai[i]->baiDanh;
+						}
+						//kieu
+						baiDanhRa->kieuBai = CPplayer[0]->ValidateBaiDanhRa(baiDanhRa);
+						if (baiDanhRa->kieuBai == baidanhsang->kieuBai) {
+							//so luong	
+							if (baiDanhRa->soLuong == baidanhsang->soLuong) {
+								//sort:
+								for (auto i = 0; i< baiDanhRa->soLuong; i++) {
+									for (auto j = i + 1; j < baiDanhRa->soLuong; j++) {
+										if (baiDanhRa->danhSach[j]->cardIndex < baiDanhRa->danhSach[i]->cardIndex || (baiDanhRa->danhSach[i]->cardIndex == baiDanhRa->danhSach[j]->cardIndex && baiDanhRa->danhSach[j]->cardElement < baiDanhRa->danhSach[i]->cardElement)) {
+											auto tmp = baiDanhRa->danhSach[i];
+											baiDanhRa->danhSach[i] = baiDanhRa->danhSach[j];
+											baiDanhRa->danhSach[j] = tmp;
+										}
+									}
+								}
+								//
+								if (baidanhsang->danhSach[0]->cardIndex < baiDanhRa->danhSach[0]->cardIndex ||
+									(baidanhsang->danhSach[0]->cardIndex == baiDanhRa->danhSach[0]->cardIndex && baidanhsang->danhSach[0]->cardElement < baiDanhRa->danhSach[0]->cardElement)) {
+									CPplayer[0]->SoQuanBaiConLai -= baiDanhRa->soLuong;
+									logDanhBai[logDanhBaiIndex]->baiDanh = baiDanhRa;
+									EnableControls(false);
+									///Goi đánh animation
+									danhBaiAnimation();
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -272,7 +311,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 	iconWinner->setVisible(false);
 	EnableControls(false);
 	//Chia ngau nhien
-	CPplayer[0] = new GPlayer();
+	CPplayer[0] = new GPlayer("Me", 0);
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
@@ -283,7 +322,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 	}
 	CPplayer[0]->SoQuanBaiConLai = 13;
 
-	CPplayer[1] = new GPlayer();
+	CPplayer[1] = new GPlayer("Huy DUng", 1);
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
@@ -294,7 +333,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 	}
 	CPplayer[1]->SoQuanBaiConLai = 13;
 
-	CPplayer[2] = new GPlayer();
+	CPplayer[2] = new GPlayer("Quang ANh", 2);
 	for (auto i = 0; i < 13; i++) {
 		auto inx = RandomHelper::random_int(0, 51);
 		while (Card::allCard[inx]->daChia) {
@@ -305,7 +344,7 @@ void GameTienLenMNScene::chiaBai(Node* sender) {
 	}
 	CPplayer[2]->SoQuanBaiConLai = 13;
 
-	CPplayer[3] = new GPlayer();
+	CPplayer[3] = new GPlayer("Minh Son", 3);
 	auto inx = 0;
 	for (auto i = 0; i < 52; i++) {
 		if (!Card::allCard[i]->daChia) {
@@ -452,7 +491,9 @@ void GameTienLenMNScene::danhBai() {
 		///sau khi ấn đánh, kiemr tra so với log trước
 	} else {
 		///CPU danh
-		logDanhBai[logDanhBaiIndex]->baiDanh = CPplayer[player]->cpuChonQuanDanh(logDanhBai[logDanhBaiIndex - 1]);
+		auto i = logDanhBaiIndex - 1;
+		while (i > 0 && logDanhBai[i]->baiDanh->soLuong == 0 && !logDanhBai[i]->vongKetThuc) i = i - 1;
+		logDanhBai[logDanhBaiIndex]->baiDanh = CPplayer[player]->cpuChonQuanDanh(logDanhBai[i]);
 		if (logDanhBai[logDanhBaiIndex]->baiDanh->soLuong == 0) {
 			danhBaiBoLuot(player);
 		}

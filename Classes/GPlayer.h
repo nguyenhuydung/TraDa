@@ -34,8 +34,11 @@ struct TinhDiem {
 
 class GPlayer {
 	public:
-	GPlayer();
+	GPlayer(std::string name, int index);
 	~GPlayer();
+
+	std::string playerName;
+	int playerIndex;
 
 	Card* Bai[13];
 	DanhDau *DanhDauBo = new DanhDau();
