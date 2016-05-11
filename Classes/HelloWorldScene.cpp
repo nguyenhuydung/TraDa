@@ -2,7 +2,9 @@
 #include "RankingScene.h"
 #include "Card.h"
 #include "GameTienLenMNScene.h"
-
+#ifdef SDKBOX_ENABLED
+#include "PluginFacebook/PluginFacebook.h"
+#endif
 USING_NS_CC;
 
 Scene* HelloWorld::createScene() {
@@ -33,6 +35,9 @@ bool HelloWorld::init() {
 	sprite->setScaleY(visibleSize.height / sprite->getContentSize().height);
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
+#ifdef SDKBOX_ENABLED
+	sdkbox::PluginFacebook::login();
+#endif
 	return true;
 }
 
