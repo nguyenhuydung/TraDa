@@ -6,6 +6,7 @@
 class HelloWorld : public cocos2d::Layer {
 	public:
 	static cocos2d::Scene* createScene();
+	static std::string* playerName;
 	bool init() override;
 	void onEnter() override;
 	void finishSplash(float dt);

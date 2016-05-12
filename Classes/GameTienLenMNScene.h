@@ -32,7 +32,6 @@ class GameTienLenMNScene : public Layer {
 		delete pRet;
 		return nullptr;
 	};
-
 	//------------------------------------------------------------------
 	bool init() override;
 	///Bai bac
@@ -52,7 +51,6 @@ class GameTienLenMNScene : public Layer {
 	int danhBaiKhoiTaoLog(); //retun player đánh tiếp theo		
 	bool danhBaiKiemTraHopLe(BaiDanhRa *baidanhra); ///kiem tra xem bai danh có đúng không
 	void danhBaiBoLuot(int player);
-
 	private://------------------------------------------------------------------
 	///UI:
 	ui::Button *btnConfig = nullptr, *btnBack = nullptr, *btnUserPlay = nullptr, *btnUserThoi = nullptr, *btnUserXep = nullptr, *btnUserBoChon = nullptr;

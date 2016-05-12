@@ -2,10 +2,13 @@
 #include "RankingScene.h"
 #include "Card.h"
 #include "GameTienLenMNScene.h"
+
 #ifdef SDKBOX_ENABLED
 #include "PluginFacebook/PluginFacebook.h"
 #endif
 USING_NS_CC;
+
+std::string* HelloWorld::playerName = nullptr;
 
 Scene* HelloWorld::createScene() {
 	// 'scene' is an autorelease object
@@ -35,9 +38,7 @@ bool HelloWorld::init() {
 	sprite->setScaleY(visibleSize.height / sprite->getContentSize().height);
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
-#ifdef SDKBOX_ENABLED
-	sdkbox::PluginFacebook::login();
-#endif
+
 	return true;
 }
 
@@ -47,6 +48,16 @@ void HelloWorld::onEnter() {
 }
 
 void HelloWorld::finishSplash(float dt) {
+	auto u = UserDefault::sharedUserDefault();
+	if (u->getStringForKey("PLAYER_NAME").length() != 0) {
+		std::string s;
+		s.append("Doc thong tin UserDefault Playername: ");
+		s.append(u->getStringForKey("PLAYER_NAME"));
+		MessageBox(s.c_str(), "Title");
+	} else {
+		u->setStringForKey("PLAYER_NAME", "Dungnh");
+		MessageBox("Da set ten use la Dungnh", "Title");
+	}
 	Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
 }
 

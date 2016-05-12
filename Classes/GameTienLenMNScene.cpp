@@ -5,7 +5,9 @@
 #include "HelloWorldScene.h"
 #include "FrozaxShake/FShake.h"
 #include <SimpleAudioEngine.h>
-
+#ifdef SDKBOX_ENABLED
+#include "PluginFacebook/PluginFacebook.h"
+#endif
 
 
 USING_NS_CC;
@@ -66,7 +68,11 @@ bool GameTienLenMNScene::init() {
 			case ui::Widget::TouchEventType::BEGAN:
 				break;
 			case ui::Widget::TouchEventType::ENDED:
-				Director::getInstance()->replaceScene(TransitionFade::create(1, HelloWorld::createScene(), Color3B(0, 0, 0)));
+//				Director::getInstance()->replaceScene(TransitionFade::create(1, HelloWorld::createScene(), Color3B(0, 0, 0)));
+			#ifdef SDKBOX_ENABLED
+				sdkbox::PluginFacebook::login();
+			#endif
+
 				break;
 			default:
 				break;
