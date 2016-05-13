@@ -2,6 +2,7 @@
 #include "RankingScene.h"
 #include "Card.h"
 #include "GameTienLenMNScene.h"
+#include "EnterYourName.h"
 
 #ifdef SDKBOX_ENABLED
 #include "PluginFacebook/PluginFacebook.h"
@@ -49,6 +50,8 @@ void HelloWorld::onEnter() {
 
 void HelloWorld::finishSplash(float dt) {
 	auto u = UserDefault::sharedUserDefault();
+	Director::getInstance()->replaceScene(TransitionFade::create(1, EnterYourName::createScene(), Color3B(0, 0, 0)));
+	return;
 	if (u->getStringForKey("PLAYER_NAME").length() != 0) {
 		std::string s;
 		s.append("Doc thong tin UserDefault Playername: ");
