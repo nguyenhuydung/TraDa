@@ -26,11 +26,11 @@ bool EnterYourName::init() {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	auto origin = Director::getInstance()->getVisibleOrigin();
 	// add "HelloWorld" splash screen"
-	auto sprite = Sprite::create("splash.png");
+	auto sprite = Sprite::create("EnterName.png");
 	// position the sprite on the center of the screen
 	sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	sprite->setScaleX(visibleSize.width / sprite->getContentSize().width);
-	sprite->setScaleY(visibleSize.height / sprite->getContentSize().height);
+	sprite->setScaleX((visibleSize.width / 2) / sprite->getContentSize().width);
+	sprite->setScaleY((visibleSize.height / 2) / sprite->getContentSize().height);
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
 
