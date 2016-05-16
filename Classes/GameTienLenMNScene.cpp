@@ -150,16 +150,16 @@ bool GameTienLenMNScene::init() {
 							//so luong	
 							if (baiDanhRa->soLuong == baidanhsang->soLuong) {
 								//sort:
-								for (auto i = 0; i< baiDanhRa->soLuong; i++) {
-									for (auto j = i + 1; j < baiDanhRa->soLuong; j++) {
-										if (baiDanhRa->danhSach[j]->cardIndex < baiDanhRa->danhSach[i]->cardIndex || (baiDanhRa->danhSach[i]->cardIndex == baiDanhRa->danhSach[j]->cardIndex && baiDanhRa->danhSach[j]->cardElement < baiDanhRa->danhSach[i]->cardElement)) {
-											auto tmp = baiDanhRa->danhSach[i];
-											baiDanhRa->danhSach[i] = baiDanhRa->danhSach[j];
+								for (auto ii = 0; ii< baiDanhRa->soLuong; ii++) {
+									for (auto j = ii + 1; j < baiDanhRa->soLuong; j++) {
+										if (baiDanhRa->danhSach[j]->cardIndex < baiDanhRa->danhSach[ii]->cardIndex || (baiDanhRa->danhSach[ii]->cardIndex == baiDanhRa->danhSach[j]->cardIndex && baiDanhRa->danhSach[j]->cardElement < baiDanhRa->danhSach[ii]->cardElement)) {
+											auto tmp = baiDanhRa->danhSach[ii];
+											baiDanhRa->danhSach[ii] = baiDanhRa->danhSach[j];
 											baiDanhRa->danhSach[j] = tmp;
 										}
 									}
 								}
-								//
+								//tìm
 								if (baidanhsang->danhSach[0]->cardIndex < baiDanhRa->danhSach[0]->cardIndex ||
 									(baidanhsang->danhSach[0]->cardIndex == baiDanhRa->danhSach[0]->cardIndex && baidanhsang->danhSach[0]->cardElement < baiDanhRa->danhSach[0]->cardElement)) {
 									CPplayer[0]->SoQuanBaiConLai -= baiDanhRa->soLuong;
@@ -173,7 +173,7 @@ bool GameTienLenMNScene::init() {
 						}
 					}
 				}
-				///Faill: 
+				//Chọn bài đánh, đỡ không hợp lệ: 
 				auto shake = FShake::actionWithDuration(0.03f, 10.0f);
 				this->runAction(shake);
 				messageBox->setString("Bài chọn không hợp lệ, mời chọn lại");
@@ -543,7 +543,6 @@ void GameTienLenMNScene::danhBaiAnimationDone(Node* sender) {
 void GameTienLenMNScene::danhBaiAnimation() {
 	//Bỏ lượt: animation bỏ
 	if (logDanhBai[logDanhBaiIndex]->baiDanh->soLuong == 0) {
-
 
 	} else {
 		//không bỏ, animation di chuyển quân bài:
