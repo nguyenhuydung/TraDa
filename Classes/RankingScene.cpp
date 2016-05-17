@@ -1,7 +1,11 @@
-#include "cocos2d.h"
+﻿#include "cocos2d.h"
 #include "RankingScene.h"
 #include "ui/CocosGUI.h"
 #include "GameTienLenMNScene.h"
+#include "HelloWorldScene.h"
+#ifdef SDKBOX_ENABLED
+#include "PluginFacebook/PluginFacebook.h"
+#endif
 
 USING_NS_CC;
 using namespace ui;
@@ -33,7 +37,10 @@ bool RankingScene::init() {
 	auto button = Button::create("score.play.button.nor.png", "score.play.button.prd.png", "score.play.button.dis.png");
 	button->setScaleX(visibleSize.width / sprite->getContentSize().width);
 	button->setScaleY(visibleSize.height / sprite->getContentSize().height);
-	button->setPosition(Vec2(visibleSize.width * 1120 / sprite->getContentSize().width, visibleSize.height * 675 / sprite->getContentSize().height));
+	button->setTitleText("Chơi ngay");
+	button->setTitleFontSize(20);
+	button->setTitleColor(Color3B(33, 33, 33));
+	button->setPosition(Vec2(visibleSize.width * 1185.0f / sprite->getContentSize().width, visibleSize.height * 670.0f / sprite->getContentSize().height));
 	button->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
 		switch (type) {
 			case Widget::TouchEventType::BEGAN:
@@ -47,6 +54,29 @@ bool RankingScene::init() {
 	});
 	this->addChild(button);
 
+	//Nut dis connect facebook:
+	auto disConnectFace = Button::create("score.play.button.nor.png", "score.play.button.prd.png", "score.play.button.dis.png");
+	disConnectFace->setScaleX(visibleSize.width / sprite->getContentSize().width);
+	disConnectFace->setScaleY(visibleSize.height / sprite->getContentSize().height);
+	disConnectFace->setTitleText("Off Face");
+	disConnectFace->setTitleFontSize(20);
+	disConnectFace->setTitleColor(Color3B(33, 33, 33));
+	disConnectFace->setPosition(Vec2(visibleSize.width * 1020 / sprite->getContentSize().width, visibleSize.height * 670.0f / sprite->getContentSize().height));
+	disConnectFace->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
+		switch (type) {
+			case Widget::TouchEventType::BEGAN:
+				break;
+			case Widget::TouchEventType::ENDED:
+			#ifdef SDKBOX_ENABLED
+				sdkbox::PluginFacebook::logout();
+			#endif
+				break;
+			default:
+				break;
+		}
+	});
+	this->addChild(disConnectFace);
+
 	auto touchListener = EventListenerKeyboard::create();
 	touchListener->onKeyReleased = [](EventKeyboard::KeyCode keyCode, Event *event) {
 		if (keyCode == EventKeyboard::KeyCode::KEY_BACK) {
@@ -55,6 +85,35 @@ bool RankingScene::init() {
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 
+	auto u = UserDefault::sharedUserDefault();
+	auto name = u->getStringForKey("PLAYER_NAME");
+	auto lblName = Label::create(name, "Arial", 20);
+	lblName->setPosition(Vec2(visibleSize.width * 115.0f / sprite->getContentSize().width, visibleSize.height * 500.0f / sprite->getContentSize().height));
+	this->addChild(lblName);
+
+	/// test reset data
+	///Nut dis connect facebook:
+	auto resetData = Button::create("score.play.button.nor.png", "score.play.button.prd.png", "score.play.button.dis.png");
+	resetData->setScaleX(visibleSize.width / sprite->getContentSize().width);
+	resetData->setScaleY(visibleSize.height / sprite->getContentSize().height);
+	resetData->setTitleText("Off Face");
+	resetData->setTitleFontSize(20);
+	resetData->setTitleColor(Color3B(33, 33, 33));
+	resetData->setPosition(Vec2(visibleSize.width * 920 / sprite->getContentSize().width, visibleSize.height * 670.0f / sprite->getContentSize().height));
+	resetData->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type) {
+		switch (type) {
+			case Widget::TouchEventType::BEGAN:
+				break;
+			case Widget::TouchEventType::ENDED:
+				//u = UserDefault::sharedUserDefault();
+				u->flush();
+				Director::getInstance()->replaceScene(TransitionFade::create(1, HelloWorld::createScene(), Color3B(0, 0, 0)));
+				break;
+			default:
+				break;
+		}
+	});
+	this->addChild(resetData);
 	return true;
 }
 

@@ -1,4 +1,4 @@
-#include "HelloWorldScene.h"
+﻿#include "HelloWorldScene.h"
 #include "RankingScene.h"
 #include "Card.h"
 #include "GameTienLenMNScene.h"
@@ -40,28 +40,34 @@ bool HelloWorld::init() {
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
 
+
+
 	return true;
 }
 
 void HelloWorld::onEnter() {
 	Layer::onEnter();
-	this->scheduleOnce(schedule_selector(HelloWorld::finishSplash), 2.0f);
+	this->scheduleOnce(schedule_selector(HelloWorld::finishSplash), 0.5f);
 }
 
 void HelloWorld::finishSplash(float dt) {
 	auto u = UserDefault::sharedUserDefault();
+	//Director::getInstance()->replaceScene(TransitionFade::create(1, EnterYourName::createScene(), Color3B(0, 0, 0)));
+#ifdef SDKBOX_ENABLED
+	if (sdkbox::PluginFacebook::isLoggedIn()) {
+		Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
+	}
+#endif
+
 	Director::getInstance()->replaceScene(TransitionFade::create(1, EnterYourName::createScene(), Color3B(0, 0, 0)));
 	return;
 	if (u->getStringForKey("PLAYER_NAME").length() != 0) {
-		std::string s;
-		s.append("Doc thong tin UserDefault Playername: ");
-		s.append(u->getStringForKey("PLAYER_NAME"));
-		MessageBox(s.c_str(), "Title");
+		Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
 	} else {
-		u->setStringForKey("PLAYER_NAME", "Dungnh");
-		MessageBox("Da set ten use la Dungnh", "Title");
+		/// Chuyển đến hỏi tên
+		Director::getInstance()->replaceScene(TransitionFade::create(1, EnterYourName::createScene(), Color3B(0, 0, 0)));
 	}
-	Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
+	
 }
 
 void HelloWorld::menuCloseCallback(Ref* pSender) {
