@@ -40,8 +40,6 @@ bool HelloWorld::init() {
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
 
-
-
 	return true;
 }
 
@@ -59,8 +57,8 @@ void HelloWorld::finishSplash(float dt) {
 	}
 #endif
 
-	Director::getInstance()->replaceScene(TransitionFade::create(1, EnterYourName::createScene(), Color3B(0, 0, 0)));
-	return;
+	//Director::getInstance()->replaceScene(TransitionFade::create(1, EnterYourName::createScene(), Color3B(0, 0, 0)));
+	//return;
 	if (u->getStringForKey("PLAYER_NAME").length() != 0) {
 		Director::getInstance()->replaceScene(TransitionFade::create(1, RankingScene::createScene(), Color3B(0, 0, 0)));
 	} else {

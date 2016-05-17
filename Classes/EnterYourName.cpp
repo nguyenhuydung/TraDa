@@ -38,7 +38,7 @@ bool EnterYourName::init() {
 	scaleX = visibleSize.width / sprite->getContentSize().width;
 	scaleY = visibleSize.height / sprite->getContentSize().height;
 
-	auto _editName = ui::EditBox::create(cocos2d::Size(340.f * scaleX, 45.f * scaleY), ui::Scale9Sprite::create("frame_img.png"), nullptr, nullptr);
+	_editName = ui::EditBox::create(cocos2d::Size(340.f * scaleX, 45.f * scaleY), ui::Scale9Sprite::create("frame_img.png"), nullptr, nullptr);
 	_editName->setPosition(Vec2(420.0f * scaleX, 280.0f * scaleY));
 	_editName->setFontSize(25);
 	_editName->setFontColor(Color3B::BLACK);

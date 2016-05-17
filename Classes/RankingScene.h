@@ -7,6 +7,8 @@ class RankingScene : public cocos2d::Layer {
 	public:
 	RankingScene();
 	~RankingScene();
+	cocos2d::UserDefault* userdata;
+
 	static cocos2d::Scene* createScene();
 	bool init() override;
 	// implement the "static create()" method manually
