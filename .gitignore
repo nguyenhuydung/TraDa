@@ -3,3 +3,11 @@
 ################################################################################
 
 /proj.android/jni/pluginfacebook
+/bin/debug/android
+/.idea
+/cocos2d
+/proj.android/gen
+/proj.android/bin
+/proj.android/assets
+/proj.android/.settings
+/proj.android/.externalToolBuilders

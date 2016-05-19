@@ -79,7 +79,7 @@ TableViewCell* GridViewTestLayer::tableCellAtIndex(TableView *table, ssize_t idx
     if (!cell) {
         cell = new (std::nothrow) CustomTableViewCell();
         cell->autorelease();
-        auto sprite = Sprite::create("Images/Icon.png");
+        auto sprite = Sprite::create("check.png");
         sprite->setAnchorPoint(Vec2::ZERO);
         sprite->setPosition(Vec2(0, 0));
         cell->addChild(sprite);

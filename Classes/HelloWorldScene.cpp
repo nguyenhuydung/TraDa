@@ -3,6 +3,8 @@
 #include "Card.h"
 #include "GameTienLenMNScene.h"
 #include "EnterYourName.h"
+#include "extensions/cocos-ext.h"
+//#include "GridView/GridViewTest/GridViewTestScene.h"
 
 #ifdef SDKBOX_ENABLED
 #include "PluginFacebook/PluginFacebook.h"
@@ -39,9 +41,9 @@ bool HelloWorld::init() {
 	sprite->setScaleY(visibleSize.height / sprite->getContentSize().height);
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
-	//extension::TableViewDataSource *x;// = new extension::TableViewDataSource();
+	//extension::TableViewDataSource *x  = new extension::TableViewDataSource();
 	
-
+	
 	
 	return true;
 }
@@ -52,6 +54,8 @@ void HelloWorld::onEnter() {
 }
 
 void HelloWorld::finishSplash(float dt) {
+	//runGridViewTest();
+	//return;
 	auto u = UserDefault::sharedUserDefault();
 	//Director::getInstance()->replaceScene(TransitionFade::create(1, EnterYourName::createScene(), Color3B(0, 0, 0)));
 #ifdef SDKBOX_ENABLED
