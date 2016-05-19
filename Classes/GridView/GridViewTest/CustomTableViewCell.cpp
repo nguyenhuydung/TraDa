@@ -17,3 +17,4 @@ void CustomTableViewCell::draw(Renderer *renderer, const Mat4 &transform, uint32
 // 	DrawPrimitives::drawColor4B(0, 0, 255, 255);
 // 	DrawPrimitives::drawPoly(vertices, 4, true);
 }
+
