@@ -84,7 +84,7 @@ void GridView::_updateContentSize()
     _cellSize =  _dataSource->tableCellSizeForIndex(this, 0);
     _cellsCount = _dataSource->numberOfCellsInTableView(this);
 
-    Size size = Size::ZERO;
+	auto size = Size::ZERO;
 
     if (_rowNum == 0 && _colNum == 0) {
         return ;
@@ -132,8 +132,8 @@ void GridView::_updateContentSize()
 
 long GridView::_indexFromOffset(Vec2 offset)
 {
-    long index = 0;
-    const long maxIdx = _dataSource->numberOfCellsInTableView(this) - 1;
+    long index;
+    const auto maxIdx = _dataSource->numberOfCellsInTableView(this) - 1;
 
     if (_vordering == VerticalFillOrder::TOP_DOWN)
     {
@@ -162,9 +162,9 @@ Vec2 GridView::__offsetFromIndex(ssize_t index)
 
 Vec2 GridView::_offsetFromIndex(ssize_t index)
 {
-    Vec2 offset = this->__offsetFromIndex(index);
+	auto offset = this->__offsetFromIndex(index);
 
-    const Size cellSize = _dataSource->tableCellSizeForIndex(this, index);
+    const auto cellSize = _dataSource->tableCellSizeForIndex(this, index);
     if (_vordering == VerticalFillOrder::TOP_DOWN)
     {
         offset.y = this->getContainer()->getContentSize().height - offset.y - cellSize.height;
@@ -181,13 +181,13 @@ long GridView::__indexFromOffset(Vec2 offset)
     _cellSize =  _dataSource->tableCellSizeForIndex(this, 0);
     _cellsCount = _dataSource->numberOfCellsInTableView(this);
 
-    long index = -1;
+    long index;
     switch (this->getDirection())
     {
         case Direction::HORIZONTAL:
             {
                 CCASSERT(_rowNum != 0, "_rowNum != 0");
-                index = (int) (offset.y / _cellSize.height) + _rowNum * (int) (offset.x / _cellSize.width);
+                index = static_cast<int>(offset.y / _cellSize.height) + _rowNum * static_cast<int>(offset.x / _cellSize.width);
                 break;
             }
         default:
@@ -196,7 +196,7 @@ long GridView::__indexFromOffset(Vec2 offset)
 //                int rowNum = (_cellsCount + _colNum - 1) / _colNum;
 //                int maxHeight = std::max(rowNum * _cellSize.height, _viewSize.height);
 //                index = _colNum * (int) ((maxHeight - offset.y) / _cellSize.height) + (int) (offset.x / _cellSize.width);
-                index = _colNum * (int) (offset.y / _cellSize.height) + (int) (offset.x / _cellSize.width);
+                index = _colNum * static_cast<int>(offset.y / _cellSize.height) + static_cast<int>(offset.x / _cellSize.width);
                 break;
             }
     }
@@ -276,7 +276,7 @@ void GridView::_updateCellPositions()
 
 int GridView::rowOfIndex(const long index) const
 {
-    int row = 0;
+    int row;
     switch (this->getDirection())
     {
         case Direction::HORIZONTAL:
@@ -296,7 +296,7 @@ int GridView::rowOfIndex(const long index) const
 
 int GridView::colOfIndex(const long index) const
 {
-    int col = 0;
+    int col;
     switch (this->getDirection())
     {
         case Direction::HORIZONTAL:
@@ -316,7 +316,7 @@ int GridView::colOfIndex(const long index) const
 
 int GridView::maxRowIdx() const
 {
-    int maxRowIdx = 0;
+    int maxRowIdx;
     switch (this->getDirection())
     {
         case Direction::HORIZONTAL:
@@ -341,7 +341,7 @@ int GridView::maxRowIdx() const
 
 int GridView::maxColIdx() const
 {
-    int maxColIdx = 0;
+    int maxColIdx;
     switch (this->getDirection())
     {
         case Direction::HORIZONTAL:
@@ -411,16 +411,16 @@ void GridView::scrollViewDidScroll(ScrollView* view)
         _tableViewDelegate->scrollViewDidScroll(this);
     }
 
-    ssize_t idx = 0;
-    ssize_t maxIdx = 0;
-    Vec2 offset = this->getContentOffset() * -1;
+    ssize_t idx;
+    ssize_t maxIdx;
+	auto offset = this->getContentOffset() * -1;
     maxIdx = MAX(countOfItems-1, 0);
-    int startRow = 0;
-    int endRow = 0;
-    int maxRowIdx = this->maxRowIdx();
-    int maxColIdx = this->maxColIdx();
-    int startCol = 0;
-    int endCol = 0;
+	auto startRow = 0;
+	auto endRow = 0;
+	auto maxRowIdx = this->maxRowIdx();
+	auto maxColIdx = this->maxColIdx();
+	auto startCol = 0;
+	auto endCol = 0;
     
     switch (this->getDirection())
     {
@@ -531,8 +531,8 @@ void GridView::scrollViewDidScroll(ScrollView* view)
                 }
             }
 
-            for (int i = startRow; i <= endRow; i++) {
-                for (int j = 0; j < _colNum; j++) {
+            for (auto i = startRow; i <= endRow; i++) {
+                for (auto j = 0; j < _colNum; j++) {
                     long index = i * _colNum + j;
                     if (_indices->find(index) != _indices->end()) {
                         continue;
@@ -553,7 +553,7 @@ void GridView::onTouchEnded(Touch *pTouch, Event *pEvent)
     }
 
     if (_touchedCell){
-		Rect bb = this->getBoundingBox();
+	    auto bb = this->getBoundingBox();
 		bb.origin = _parent->convertToWorldSpace(bb.origin);
 
 		if (bb.containsPoint(pTouch->getLocation()) && _tableViewDelegate != nullptr)
@@ -575,7 +575,7 @@ bool GridView::onTouchBegan(Touch *pTouch, Event *pEvent)
         return false;
     }
 
-    bool touchResult = ScrollView::onTouchBegan(pTouch, pEvent);
+	auto touchResult = ScrollView::onTouchBegan(pTouch, pEvent);
 
     if(_touches.size() == 1)
     {

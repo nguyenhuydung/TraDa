@@ -4,7 +4,6 @@
 #include "GameTienLenMNScene.h"
 #include "EnterYourName.h"
 #include "extensions/cocos-ext.h"
-//#include "GridView/GridViewTest/GridViewTestScene.h"
 
 #ifdef SDKBOX_ENABLED
 #include "PluginFacebook/PluginFacebook.h"

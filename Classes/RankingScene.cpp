@@ -3,6 +3,7 @@
 #include "ui/CocosGUI.h"
 #include "GameTienLenMNScene.h"
 #include "HelloWorldScene.h"
+#include "GridViewGlobal.h"
 #ifdef SDKBOX_ENABLED
 #include "PluginFacebook/PluginFacebook.h"
 #endif
@@ -127,6 +128,10 @@ bool RankingScene::init() {
 		}
 	});
 	this->addChild(resetData);
+
+	auto layer = GridViewTestLayer::create();
+	this->addChild(layer);
+	
 	return true;
 }
 
