@@ -4,6 +4,7 @@
 #include "PluginFacebook/PluginFacebook.h"
 #endif
 
+
 USING_NS_CC;
 
 static Size designResolutionSize = Size(1280, 720);
@@ -38,6 +39,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #ifdef SDKBOX_ENABLED
     sdkbox::PluginFacebook::init();
 #endif
+#ifdef SDKBOX_ENABLED
+    sdkbox::PluginFacebook::init();
+#endif
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
@@ -50,6 +54,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setOpenGLView(glview);
     }
     // create a scene. it's an autorelease object
+	
+    //auto scene = GridViewTestLayer::create();
     auto scene = HelloWorld::createScene();
 	//sdkbox::PluginFacebook::init();
     // run

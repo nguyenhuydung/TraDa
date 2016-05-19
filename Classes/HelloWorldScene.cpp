@@ -39,7 +39,10 @@ bool HelloWorld::init() {
 	sprite->setScaleY(visibleSize.height / sprite->getContentSize().height);
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
+	//extension::TableViewDataSource *x;// = new extension::TableViewDataSource();
+	
 
+	
 	return true;
 }
 
